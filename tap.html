@@ -66,12 +66,7 @@
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
-    
-    <div id="loading">
-        <div class="loader-icon">⚡</div>
-        <div class="loader-title">RAMCOIN</div>
-        <div class="loader-sub">Подключение к сети...</div>
-    </div>
+    <div id="loading"><div class="loader-icon">⚡</div><div class="loader-title">RAMCOIN</div><div class="loader-sub">Подключение к сети...</div></div>
 
     <div class="app" id="app">
         <div class="header">
@@ -83,32 +78,16 @@
                 <button class="icon-btn" onclick="openM('achs')">⭐</button>
             </div>
         </div>
-        
-        <div class="balance-area">
-            <div class="balance" id="bal">0</div>
-            <div class="balance-sub">NANO RAM</div>
-        </div>
+        <div class="balance-area"><div class="balance" id="bal">0</div><div class="balance-sub">NANO RAM</div></div>
         <div class="level-badge" id="lvl">🟢 Уровень 1</div>
-        
-        <div class="coin-area">
-            <div class="coin" id="coin" ontouchstart="tap(event)" onmousedown="tap(event)">
-                <img src="https://raw.githubusercontent.com/ramcoinnode-debug/ramcoinnode-debug.github.io/main/ramcoin_logo.png" alt="RAMCOIN" onerror="this.style.display='none';this.parentElement.innerHTML='⚡'">
-            </div>
-        </div>
-        
-        <div class="energy-area">
-            <div class="energy-bar"><div class="energy-fill" id="eFill" style="width:100%;"></div></div>
-            <div class="energy-text" id="eText">500 / 500</div>
-        </div>
-        
-        <div class="bottom-panel">
-            <div class="bottom-grid">
-                <button class="action-btn" onclick="daily()"><span class="icon">🎁</span><span class="label">Бонус</span></button>
-                <button class="action-btn" onclick="openM('boost')"><span class="icon">⚡</span><span class="label">Буст</span></button>
-                <button class="action-btn" onclick="openM('shop')"><span class="icon">🛒</span><span class="label">Магазин</span></button>
-                <button class="action-btn" onclick="invite()"><span class="icon">👥</span><span class="label">Друзья</span></button>
-            </div>
-        </div>
+        <div class="coin-area"><div class="coin" id="coin" ontouchstart="tap(event)" onmousedown="tap(event)"><img src="https://raw.githubusercontent.com/ramcoinnode-debug/ramcoinnode-debug.github.io/main/ramcoin_logo.png" alt="RAMCOIN" onerror="this.style.display='none';this.parentElement.innerHTML='⚡'"></div></div>
+        <div class="energy-area"><div class="energy-bar"><div class="energy-fill" id="eFill" style="width:100%;"></div></div><div class="energy-text" id="eText">500 / 500</div></div>
+        <div class="bottom-panel"><div class="bottom-grid">
+            <button class="action-btn" onclick="daily()"><span class="icon">🎁</span><span class="label">Бонус</span></button>
+            <button class="action-btn" onclick="openM('boost')"><span class="icon">⚡</span><span class="label">Буст</span></button>
+            <button class="action-btn" onclick="openM('shop')"><span class="icon">🛒</span><span class="label">Магазин</span></button>
+            <button class="action-btn" onclick="invite()"><span class="icon">👥</span><span class="label">Друзья</span></button>
+        </div></div>
     </div>
     
     <div class="modal" id="m-wheel"><div class="modal-content"><h2>🎰 Колесо фортуны</h2><p style="color:#94a3b8;font-size:11px;text-align:center;">Крути раз в день!</p><div class="wheel-container"><canvas id="wheelCanvas" width="260" height="260"></canvas></div><div id="wheelResult" style="text-align:center;font-size:16px;font-weight:900;margin:6px 0;"></div><button class="wheel-btn" id="spinBtn" onclick="spinWheel()">🎰 КРУТИТЬ</button><p style="font-size:9px;color:#94a3b8;text-align:center;">Призы: 10-5000 nRAM</p><button class="close" onclick="closeM('wheel')">Закрыть</button></div></div>
@@ -120,11 +99,39 @@
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        let B=parseInt(localStorage.getItem('rcB')||'0'),E=parseInt(localStorage.getItem('rcE')||'500'),T=parseInt(localStorage.getItem('rcT')||'0'),L=parseInt(localStorage.getItem('rcL')||'1'),R=parseInt(localStorage.getItem('rcR')||'0'),S=parseInt(localStorage.getItem('rcS')||'0'),D=parseInt(localStorage.getItem('rcD')||'0'),boost=localStorage.getItem('rcX')==='1',bEnd=parseInt(localStorage.getItem('rcBE')||'0'),tasksDone=JSON.parse(localStorage.getItem('rcTD')||'[]'),achs=JSON.parse(localStorage.getItem('rcA')||'[0,0,0,0,0]'),wheelUsed=localStorage.getItem('rcW')||'';
+        
+        // Привязка к Telegram ID — у каждого свой аккаунт!
+        const uid = tg.initDataUnsafe?.user?.id || 'anon';
+        const P = 'rc_'+uid+'_'; // Префикс для localStorage
+        
+        let B=parseInt(localStorage.getItem(P+'B')||'0'),E=parseInt(localStorage.getItem(P+'E')||'500'),T=parseInt(localStorage.getItem(P+'T')||'0'),L=parseInt(localStorage.getItem(P+'L')||'1'),R=parseInt(localStorage.getItem(P+'R')||'0'),S=parseInt(localStorage.getItem(P+'S')||'0'),D=parseInt(localStorage.getItem(P+'D')||'0'),boost=localStorage.getItem(P+'X')==='1',bEnd=parseInt(localStorage.getItem(P+'BE')||'0'),tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]'),achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0]'),wheelUsed=localStorage.getItem(P+'W')||'';
         const MAX=500,prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
         let taps=[],W=0;
         
-        // CANVAS ФОН — БЛОКЧЕЙН
+        // Восстановление энергии раз в сутки
+        function restoreEnergy(){
+            let today = new Date().toDateString();
+            let lastRestore = localStorage.getItem(P+'LR')||'';
+            if(today !== lastRestore){
+                E = MAX;
+                localStorage.setItem(P+'LR', today);
+                U();S2();
+            }
+        }
+        restoreEnergy();
+        
+        // Проверка рефералов
+        let startParam = tg.initDataUnsafe?.start_param || '';
+        if(startParam.startsWith('ref_')){
+            let refId = startParam.replace('ref_','');
+            if(refId !== String(uid)){
+                if(!localStorage.getItem(P+'ref_joined')){B+=250;localStorage.setItem(P+'ref_joined','1');}
+                localStorage.setItem('rc_ref_bonus_'+refId,'1');
+            }
+        }
+        if(localStorage.getItem('rc_ref_bonus_'+uid)){B+=500;R++;localStorage.removeItem('rc_ref_bonus_'+uid);alert('🎉 +500 nRAM! Друг присоединился!');}
+        
+        // CANVAS ФОН
         const bg=document.getElementById('bgCanvas'),ctx=bg.getContext('2d');
         bg.width=window.innerWidth;bg.height=window.innerHeight;
         const nodes=Array.from({length:18},()=>({x:Math.random()*bg.width,y:Math.random()*bg.height,vx:(Math.random()-0.5)*0.25,vy:(Math.random()-0.5)*0.25,size:Math.random()*1.5+1,phase:Math.random()*Math.PI*2}));
@@ -132,69 +139,31 @@
         
         function drawBg(){
             tm+=0.004;ctx.clearRect(0,0,bg.width,bg.height);
-            
-            // СЕТКА
             ctx.strokeStyle='rgba(56,189,248,0.04)';ctx.lineWidth=0.3;
             for(let x=0;x<bg.width;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,bg.height);ctx.stroke();}
             for(let y=0;y<bg.height;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(bg.width,y);ctx.stroke();}
-            
-            // ГОРИЗОНТАЛЬНЫЕ ПОЛОСЫ ДАННЫХ
-            for(let y=0;y<bg.height;y+=80){
-                let alpha=0.03+Math.sin(tm*1.5+y*0.01)*0.02;
-                ctx.strokeStyle='rgba(56,189,248,'+alpha+')';ctx.lineWidth=1.2;
-                ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(bg.width,y);ctx.stroke();
-            }
-            
-            // ВЕРТИКАЛЬНЫЕ ПОЛОСЫ
-            for(let x=0;x<bg.width;x+=120){
-                let alpha=0.025+Math.cos(tm*1.3+x*0.01)*0.015;
-                ctx.strokeStyle='rgba(168,120,250,'+alpha+')';ctx.lineWidth=0.8;
-                ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,bg.height);ctx.stroke();
-            }
-            
-            // МАЛЕНЬКИЕ РОМБЫ
-            for(let x=40;x<bg.width;x+=80){
-                for(let y=40;y<bg.height;y+=80){
-                    let ox=x+Math.sin(tm*2+x*0.1)*8;
-                    let oy=y+Math.cos(tm*2+y*0.1)*8;
-                    ctx.strokeStyle='rgba(56,189,248,0.06)';ctx.lineWidth=0.4;
-                    ctx.beginPath();ctx.moveTo(ox,oy-6);ctx.lineTo(ox+6,oy);ctx.lineTo(ox,oy+6);ctx.lineTo(ox-6,oy);ctx.closePath();ctx.stroke();
-                }
-            }
-            
-            // БОЛЬШИЕ РОМБЫ (редкие)
-            for(let x=80;x<bg.width;x+=200){
-                for(let y=80;y<bg.height;y+=200){
-                    let ox=x+Math.sin(tm*1.2+x*0.05)*15;
-                    let oy=y+Math.cos(tm*1.2+y*0.05)*15;
-                    ctx.strokeStyle='rgba(168,120,250,0.05)';ctx.lineWidth=0.6;
-                    ctx.beginPath();ctx.moveTo(ox,oy-14);ctx.lineTo(ox+14,oy);ctx.lineTo(ox,oy+14);ctx.lineTo(ox-14,oy);ctx.closePath();ctx.stroke();
-                }
-            }
-            
-            // СОЕДИНЕНИЯ НОД
+            for(let y=0;y<bg.height;y+=80){let a=0.03+Math.sin(tm*1.5+y*0.01)*0.02;ctx.strokeStyle='rgba(56,189,248,'+a+')';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(bg.width,y);ctx.stroke();}
+            for(let x=0;x<bg.width;x+=120){let a=0.025+Math.cos(tm*1.3+x*0.01)*0.015;ctx.strokeStyle='rgba(168,120,250,'+a+')';ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,bg.height);ctx.stroke();}
+            for(let x=40;x<bg.width;x+=80){for(let y=40;y<bg.height;y+=80){let ox=x+Math.sin(tm*2+x*0.1)*8,oy=y+Math.cos(tm*2+y*0.1)*8;ctx.strokeStyle='rgba(56,189,248,0.06)';ctx.lineWidth=0.4;ctx.beginPath();ctx.moveTo(ox,oy-6);ctx.lineTo(ox+6,oy);ctx.lineTo(ox,oy+6);ctx.lineTo(ox-6,oy);ctx.closePath();ctx.stroke();}}
+            for(let x=80;x<bg.width;x+=200){for(let y=80;y<bg.height;y+=200){let ox=x+Math.sin(tm*1.2+x*0.05)*15,oy=y+Math.cos(tm*1.2+y*0.05)*15;ctx.strokeStyle='rgba(168,120,250,0.05)';ctx.lineWidth=0.6;ctx.beginPath();ctx.moveTo(ox,oy-14);ctx.lineTo(ox+14,oy);ctx.lineTo(ox,oy+14);ctx.lineTo(ox-14,oy);ctx.closePath();ctx.stroke();}}
             nodes.forEach((a,i)=>{nodes.forEach((b,j)=>{if(i<j){let d=Math.hypot(a.x-b.x,a.y-b.y);if(d<130){ctx.strokeStyle='rgba(56,189,248,'+(0.05*(1-d/130))+')';ctx.lineWidth=0.35;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}});});
-            
-            // НОДЫ
             nodes.forEach(n=>{n.x+=n.vx;n.y+=n.vy;if(n.x<0)n.x=bg.width;if(n.x>bg.width)n.x=0;if(n.y<0)n.y=bg.height;if(n.y>bg.height)n.y=0;let p=1+0.2*Math.sin(tm*3+n.phase);let s=n.size*p;ctx.fillStyle='rgba(56,189,248,0.06)';ctx.beginPath();ctx.arc(n.x,n.y,s*5,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(56,189,248,0.8)';ctx.beginPath();ctx.arc(n.x,n.y,s,0,Math.PI*2);ctx.fill();});
-            
-            // ЗОЛОТЫЕ ЧАСТИЦЫ
             if(Math.random()<0.3)particles.push({x:bg.width/2+Math.random()*120-60,y:bg.height/2+Math.random()*140-70,vx:(Math.random()-0.5)*0.3,vy:-Math.random()*1.8,life:1,size:Math.random()*2+0.8});
             particles.forEach((p,i)=>{p.x+=p.vx;p.y+=p.vy;p.life-=0.003;if(p.life<=0){particles.splice(i,1);return;}ctx.fillStyle='rgba(251,191,36,'+(p.life*0.55)+')';ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});
-            
             requestAnimationFrame(drawBg);
         }
         drawBg();
         
         window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loading').style.display='none';document.getElementById('app').style.display='flex';U();drawWheel();updateTasks();updateAchs();updateRank();},500);});
+        
         function tap(e){e.preventDefault();let n=Date.now();taps=taps.filter(t=>n-t<10000);if(taps.filter(t=>n-t<1000).length>10){W++;if(W>=3){E=0;U();}return;}if(E<=0)return;let g=boost&&n<bEnd?2:1;B+=g;E--;T++;taps.push(n);let lv=Math.floor(T/1000)+1;if(lv>L){L=lv;F('⬆ УРОВЕНЬ!','#a78bfa',e);}F('+'+g,'#fbbf24',e);checkAchs();U();S2();}
         function F(t,c,e){let el=document.createElement('div');el.className='float-text';el.textContent=t;el.style.color=c;el.style.left=((e.touches?.[0]?.clientX||e.clientX||innerWidth/2)-15)+'px';el.style.top=((e.touches?.[0]?.clientY||e.clientY||innerHeight/2)-20)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),800);}
         function U(){document.getElementById('bal').textContent=B.toLocaleString();document.getElementById('eFill').style.width=(E/MAX*100)+'%';document.getElementById('eText').textContent=E+' / '+MAX;document.getElementById('lvl').textContent='🟢 Ур.'+L+(boost&&Date.now()<bEnd?' | 🔥×2':'');}
-        function S2(){let d={rcB:B,rcE:E,rcT:T,rcL:L,rcR:R,rcS:S,rcD:D,rcX:boost?'1':'0',rcBE:bEnd,rcTD:JSON.stringify(tasksDone),rcA:JSON.stringify(achs),rcW:wheelUsed};Object.entries(d).forEach(([k,v])=>localStorage.setItem(k,v));}
+        function S2(){let d={};d[P+'B']=B;d[P+'E']=E;d[P+'T']=T;d[P+'L']=L;d[P+'R']=R;d[P+'S']=S;d[P+'D']=D;d[P+'X']=boost?'1':'0';d[P+'BE']=bEnd;d[P+'TD']=JSON.stringify(tasksDone);d[P+'A']=JSON.stringify(achs);d[P+'W']=wheelUsed;Object.entries(d).forEach(([k,v])=>localStorage.setItem(k,v));}
         function daily(){let n=Date.now(),day=86400000;if(n-D<day){alert('🎁 Уже получен!');return;}S=(n-D<day*2)?S+1:1;let bonus=Math.min(S*100,3000);B+=bonus;D=n;if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200;}alert('🎁 +'+bonus+' nRAM! День '+S);U();S2();updateTasks();}
         function activateBoost(){if(boost&&Date.now()<bEnd){alert('Уже активен!');closeM('boost');return;}boost=true;bEnd=Date.now()+3600000;if(tasksDone.indexOf('boost')===-1){tasksDone.push('boost');B+=100;}closeM('boost');U();S2();updateTasks();}
         function doTask(t){if(t==='tg'){tg.openTelegramLink('https://t.me/ramcoin_pow');if(tasksDone.indexOf('tg')===-1){tasksDone.push('tg');B+=200;U();S2();updateTasks();}}else if(t==='invite'){invite();}}
-        function invite(){tg.openTelegramLink('https://t.me/share/url?url=https://t.me/ramcoin_tap_bot&text=⚡%20RAMCOIN%20Tap!');R++;B+=500;if(tasksDone.indexOf('invite')===-1){tasksDone.push('invite');B+=500;}U();S2();updateTasks();checkAchs();}
+        function invite(){let refLink='https://t.me/ramcoin_tap_bot?startapp=ref_'+uid;tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(refLink)+'&text=⚡%20RAMCOIN%20Tap!%20Присоединяйся!');if(tasksDone.indexOf('invite')===-1){tasksDone.push('invite');R++;B+=500;U();S2();updateTasks();checkAchs();alert('✅ +500 nRAM за приглашение!');}}
         function updateTasks(){document.getElementById('tf1').style.width=Math.min(100,T)+'%';if(T>=100&&tasksDone.indexOf('tap100')===-1){tasksDone.push('tap100');B+=50;U();S2();}document.getElementById('tdp').textContent=Math.min(S,3);}
         function checkAchs(){if(T>=100&&achs[0]===0){achs[0]=1;alert('⭐ Новичок!');}if(T>=1000&&achs[1]===0){achs[1]=1;alert('⭐ Тапер!');}if(T>=10000&&achs[2]===0){achs[2]=1;alert('⭐ Мастер!');}if(R>=5&&achs[3]===0){achs[3]=1;alert('⭐ Друг!');}if(B>=1000000&&achs[4]===0){achs[4]=1;alert('⭐ Миллионер!');}updateAchs();S2();}
         function updateAchs(){let names=['Новичок (100 тапов)','Тапер (1000 тапов)','Мастер (10000 тапов)','Друг (5 друзей)','Миллионер (1M nRAM)'];let h='';for(let i=0;i<5;i++){let c=achs[i]===1?'done':'locked';let s=achs[i]===1?'✅':'🔒';h+='<div class="achievement '+c+'"><span>'+names[i]+'</span><span>'+s+'</span></div>';}document.getElementById('achList').innerHTML=h;}
@@ -203,7 +172,7 @@
         function spinWheel(){let today=new Date().toDateString();if(wheelUsed===today){alert('🎰 Уже крутили сегодня!');return;}wheelUsed=today;let btn=document.getElementById('spinBtn');btn.disabled=true;let idx=Math.floor(Math.random()*prizes.length),deg=360*5+idx*(360/prizes.length),c=document.getElementById('wheelCanvas');c.style.transition='transform 3s ease-out';c.style.transform='rotate('+deg+'deg)';setTimeout(()=>{let prize=prizes[idx];B+=prize;document.getElementById('wheelResult').textContent='🎉 +'+prize+' nRAM!';U();S2();c.style.transition='none';c.style.transform='rotate('+(deg%360)+'deg)';btn.disabled=false;},3100);}
         function openM(t){document.getElementById('m-'+t).classList.add('active');if(t==='rank')updateRank();if(t==='tasks')updateTasks();if(t==='achs')updateAchs();if(t==='wheel'){drawWheel();document.getElementById('wheelResult').textContent='';}}
         function closeM(t){document.getElementById('m-'+t).classList.remove('active');}
-        setInterval(()=>{if(E<MAX){E++;U();S2();}if(boost&&Date.now()>bEnd){boost=false;U();S2();}},21600);
+        setInterval(()=>{restoreEnergy();if(boost&&Date.now()>bEnd){boost=false;U();S2();}},3600000);
     </script>
 </body>
 </html>
