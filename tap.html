@@ -104,10 +104,15 @@
     <div class="modal" id="m-rank"><div class="modal-content"><h2>🏆 Рейтинг игроков</h2><div id="rankList"></div><button class="close" onclick="closeM('rank')">Закрыть</button></div></div>
     <div class="modal" id="m-tasks"><div class="modal-content"><h2>📋 Задания</h2>
         <div class="shop-item"><strong>🖐️ 100 тапов</strong> <span class="price-tag">+50 nRAM</span><div class="task-bar"><div class="task-fill" id="tf1" style="width:0%"></div></div></div>
+        <div class="shop-item"><strong>💪 1000 тапов</strong> <span class="price-tag">+200 nRAM</span><div class="task-bar"><div class="task-fill" id="tf2" style="width:0%"></div></div></div>
+        <div class="shop-item"><strong>🎯 10000 тапов</strong> <span class="price-tag">+1000 nRAM</span><div class="task-bar"><div class="task-fill" id="tf3" style="width:0%"></div></div></div>
         <div class="shop-item" onclick="doTask('tg')"><strong>💬 Канал Telegram</strong> <span class="price-tag">+200 nRAM</span></div>
         <div class="shop-item" onclick="doTask('group')"><strong>👥 Группа Telegram</strong> <span class="price-tag">+500 nRAM</span></div>
         <div class="shop-item" onclick="doTask('invite')"><strong>👥 Пригласить друга</strong> <span class="price-tag">+500 nRAM</span></div>
         <div class="shop-item"><strong>🔥 3 дня подряд</strong> <span class="price-tag">+200 nRAM</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp">0</span>/3</small></div>
+        <div class="shop-item"><strong>📅 7 дней подряд</strong> <span class="price-tag">+500 nRAM</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp7">0</span>/7</small></div>
+        <div class="shop-item"><strong>🟢 Достичь уровня 2</strong> <span class="price-tag">+1000 nRAM</span></div>
+        <div class="shop-item"><strong>🔵 Достичь уровня 3</strong> <span class="price-tag">+2000 nRAM</span></div>
         <button class="close" onclick="closeM('tasks')">Закрыть</button>
     </div></div>
     <div class="modal" id="m-achs"><div class="modal-content"><h2>⭐ Достижения</h2><div id="achList"></div><button class="close" onclick="closeM('achs')">Закрыть</button></div></div>
@@ -128,16 +133,46 @@
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
         const uid = tg.initDataUnsafe?.user?.id || 'anon';
-        const P = 'v2_'+uid+'_';
+        const P = 'v3_'+uid+'_';
         
         let B=parseInt(localStorage.getItem(P+'B')||'0'),E=parseInt(localStorage.getItem(P+'E')||'500'),T=parseInt(localStorage.getItem(P+'T')||'0'),L=parseInt(localStorage.getItem(P+'L')||'1'),R=parseInt(localStorage.getItem(P+'R')||'0'),S=parseInt(localStorage.getItem(P+'S')||'0'),D=parseInt(localStorage.getItem(P+'D')||'0'),boost=localStorage.getItem(P+'X')==='1',bEnd=parseInt(localStorage.getItem(P+'BE')||'0'),tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]'),achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0]'),wheelUsed=localStorage.getItem(P+'W')||'',pendingTask=localStorage.getItem(P+'pending')||'';
-        const MAX=500,prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
+        
+        // Уровни и энергия
+        const levels = [0, 100, 1000, 10000, 50000, 100000, 500000, 1000000];
+        const energyPerLevel = [0, 500, 1000, 2000, 3000, 5000, 7500, 10000];
+        const levelNames = ['','🟢','🔵','🟣','🟡','🔴','💎','👑'];
+        
+        function getMaxEnergy(){return energyPerLevel[Math.min(L,7)];}
+        function getLevelProgress(){return levels[Math.min(L,7)];}
+        const MAX = getMaxEnergy();
+        const prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
         let tapTimes=[],tapLock=false;
+        
+        // Проверка уровня и выдача наград
+        function checkLevelUp(){
+            let newL = 1;
+            for(let i=1;i<levels.length;i++){if(T>=levels[i])newL=i+1;else break;}
+            if(newL>L){
+                let oldL=L;
+                L=newL;
+                // Награда за уровень
+                let rewards=[0,0,1000,2000,3000,5000,10000,20000];
+                if(rewards[L]){
+                    B+=rewards[L];
+                    alert('🎉 Уровень '+L+'! +'+rewards[L]+' nRAM! Энергия: '+energyPerLevel[L]);
+                }
+                E=energyPerLevel[L];
+                // Отмечаем задания
+                if(L>=2&&tasksDone.indexOf('lvl2')===-1){tasksDone.push('lvl2');B+=1000;alert('✅ +1000 nRAM за уровень 2!');}
+                if(L>=3&&tasksDone.indexOf('lvl3')===-1){tasksDone.push('lvl3');B+=2000;alert('✅ +2000 nRAM за уровень 3!');}
+            }
+        }
+        checkLevelUp();
         
         function restoreEnergy(){
             let today=new Date().toDateString();
             let last=localStorage.getItem(P+'LR')||'';
-            if(today!==last){E=MAX;localStorage.setItem(P+'LR',today);U();S2();}
+            if(today!==last){E=getMaxEnergy();localStorage.setItem(P+'LR',today);U();S2();}
         }
         restoreEnergy();
         
@@ -188,15 +223,24 @@
         
         window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loading').style.display='none';document.getElementById('app').style.display='flex';U();drawWheel();updateTasks();updateAchs();updateRank();},500);});
         
-        function tap(e){e.preventDefault();if(tapLock)return;tapLock=true;let n=Date.now();tapTimes=tapTimes.filter(t=>n-t<1000);if(tapTimes.length>15){tapLock=false;return;}if(E<=0){tapLock=false;return;}let g=boost&&n<bEnd?2:1;B+=g;E--;T++;tapTimes.push(n);let lv=Math.floor(T/1000)+1;if(lv>L){L=lv;F('⬆ УРОВЕНЬ!','#a78bfa',e);}F('+'+g,'#fbbf24',e);checkAchs();U();S2();setTimeout(()=>{tapLock=false;},200);}
+        function tap(e){e.preventDefault();if(tapLock)return;tapLock=true;let n=Date.now();tapTimes=tapTimes.filter(t=>n-t<1000);if(tapTimes.length>15){tapLock=false;return;}if(E<=0){tapLock=false;return;}let g=boost&&n<bEnd?2:1;B+=g;E--;T++;tapTimes.push(n);let lv=Math.floor(T/1000)+1;if(lv>L){L=lv;F('⬆ УРОВЕНЬ!','#a78bfa',e);checkLevelUp();}F('+'+g,'#fbbf24',e);checkAchs();U();S2();setTimeout(()=>{tapLock=false;},200);}
         function F(t,c,e){let el=document.createElement('div');el.className='float-text';el.textContent=t;el.style.color=c;el.style.left=((e.touches?.[0]?.clientX||e.clientX||innerWidth/2)-15)+'px';el.style.top=((e.touches?.[0]?.clientY||e.clientY||innerHeight/2)-20)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),800);}
-        function U(){document.getElementById('bal').textContent=B.toLocaleString();document.getElementById('eFill').style.width=(E/MAX*100)+'%';document.getElementById('eText').textContent=E+' / '+MAX;document.getElementById('lvl').textContent='🟢 Ур.'+L+(boost&&Date.now()<bEnd?' | 🔥×2':'');}
+        function U(){let maxE=getMaxEnergy();document.getElementById('bal').textContent=B.toLocaleString();document.getElementById('eFill').style.width=(E/maxE*100)+'%';document.getElementById('eText').textContent=E+' / '+maxE;document.getElementById('lvl').textContent=levelNames[Math.min(L,7)]+' Ур.'+L+(boost&&Date.now()<bEnd?' | 🔥×2':'');}
         function S2(){let d={};d[P+'B']=B;d[P+'E']=E;d[P+'T']=T;d[P+'L']=L;d[P+'R']=R;d[P+'S']=S;d[P+'D']=D;d[P+'X']=boost?'1':'0';d[P+'BE']=bEnd;d[P+'TD']=JSON.stringify(tasksDone);d[P+'A']=JSON.stringify(achs);d[P+'W']=wheelUsed;d[P+'pending']=pendingTask;Object.entries(d).forEach(([k,v])=>localStorage.setItem(k,v));}
-        function daily(){let n=Date.now(),day=86400000;if(n-D<day){alert('🎁 Уже получен!');return;}S=(n-D<day*2)?S+1:1;let bonus=Math.min(S*100,3000);B+=bonus;D=n;if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200;}alert('🎁 +'+bonus+' nRAM! День '+S);U();S2();updateTasks();}
+        function daily(){let n=Date.now(),day=86400000;if(n-D<day){alert('🎁 Уже получен!');return;}S=(n-D<day*2)?S+1:1;let bonus=Math.min(S*100,3000);B+=bonus;D=n;if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200;}if(S>=7&&tasksDone.indexOf('day7')===-1){tasksDone.push('day7');B+=500;alert('🔥 7 дней! +500 nRAM!');}alert('🎁 +'+bonus+' nRAM! День '+S);U();S2();updateTasks();}
         function activateBoost(){if(boost&&Date.now()<bEnd){alert('Уже активен!');closeM('boost');return;}boost=true;bEnd=Date.now()+3600000;if(tasksDone.indexOf('boost')===-1){tasksDone.push('boost');B+=100;}closeM('boost');U();S2();updateTasks();}
         function doTask(t){if(t==='tg'){tg.openTelegramLink('https://t.me/ramcoin_pow');pendingTask='tg';localStorage.setItem(P+'pending','tg');S2();alert('📢 Откройте канал и возвращайтесь за наградой!');}else if(t==='group'){tg.openTelegramLink('https://t.me/ramcoin_pow');pendingTask='group';localStorage.setItem(P+'pending','group');S2();alert('📢 Откройте группу и возвращайтесь за наградой!');}else if(t==='invite'){invite();}}
         function invite(){let refLink='https://t.me/ramcoin_tap_bot?startapp=ref_'+uid;tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(refLink)+'&text=⚡%20RAMCOIN%20Tap!%20Присоединяйся!');alert('📤 Отправь ссылку другу! Бонус когда друг зайдет!');}
-        function updateTasks(){document.getElementById('tf1').style.width=Math.min(100,T)+'%';if(T>=100&&tasksDone.indexOf('tap100')===-1){tasksDone.push('tap100');B+=50;U();S2();}document.getElementById('tdp').textContent=Math.min(S,3);}
+        function updateTasks(){
+            document.getElementById('tf1').style.width=Math.min(100,T)+'%';
+            document.getElementById('tf2').style.width=Math.min(100,T/10)+'%';
+            document.getElementById('tf3').style.width=Math.min(100,T/100)+'%';
+            if(T>=100&&tasksDone.indexOf('tap100')===-1){tasksDone.push('tap100');B+=50;U();S2();}
+            if(T>=1000&&tasksDone.indexOf('tap1000')===-1){tasksDone.push('tap1000');B+=200;U();S2();alert('✅ +200 nRAM за 1000 тапов!');}
+            if(T>=10000&&tasksDone.indexOf('tap10000')===-1){tasksDone.push('tap10000');B+=1000;U();S2();alert('✅ +1000 nRAM за 10000 тапов!');}
+            document.getElementById('tdp').textContent=Math.min(S,3);
+            document.getElementById('tdp7').textContent=Math.min(S,7);
+        }
         function checkAchs(){if(T>=100&&achs[0]===0){achs[0]=1;}if(T>=1000&&achs[1]===0){achs[1]=1;}if(T>=10000&&achs[2]===0){achs[2]=1;}if(R>=5&&achs[3]===0){achs[3]=1;}if(B>=1000000&&achs[4]===0){achs[4]=1;}updateAchs();S2();}
         function updateAchs(){let names=['Новичок (100 тапов)','Тапер (1000 тапов)','Мастер (10000 тапов)','Друг (5 друзей)','Миллионер (1M nRAM)'];let h='';for(let i=0;i<5;i++){let c=achs[i]===1?'done':'locked';let s=achs[i]===1?'✅':'🔒';h+='<div class="achievement '+c+'"><span>'+names[i]+'</span><span>'+s+'</span></div>';}document.getElementById('achList').innerHTML=h;}
         function updateRank(){let h='<div class="rank-item" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);"><span class="rank-pos">🥇</span><span class="rank-name">⭐ Вы</span><span class="rank-score">'+B.toLocaleString()+' nRAM</span></div>';h+='<p style="color:#94a3b8;text-align:center;margin-top:18px;font-size:11px;">🏆 Реальные игроки появятся здесь,<br>когда к сети присоединятся участники!</p>';h+='<p style="color:#38bdf8;text-align:center;margin-top:8px;font-size:12px;">👥 Пригласи друга — займи первое место!</p>';document.getElementById('rankList').innerHTML=h;}
