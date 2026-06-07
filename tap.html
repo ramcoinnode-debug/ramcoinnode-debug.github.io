@@ -8,6 +8,8 @@
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#030712; color:#f1f5f9; font-family:-apple-system,sans-serif; touch-action:manipulation; user-select:none; -webkit-user-select:none; overflow:hidden; height:100vh; width:100vw; position:fixed; }
+        canvas#bgCanvas { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+        
         #loading { position:fixed;top:0;left:0;width:100%;height:100%;background:#030712;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center; }
         .loader-icon { font-size:60px;animation:pulse 1.5s infinite; }
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(0.9);} }
@@ -45,7 +47,7 @@
         .modal h2 { font-size:16px;margin-bottom:8px; }
         .modal .close { background:rgba(255,255,255,0.08);border:none;color:white;padding:10px;border-radius:10px;margin-top:8px;cursor:pointer;width:100%;font-weight:700;font-size:13px; }
         .wheel-container { text-align:center; }
-        canvas { max-width:100%; }
+        canvas#wheelCanvas { max-width:100%; }
         .wheel-btn { background:linear-gradient(135deg,#fbbf24,#f59e0b);border:none;color:#000;padding:12px;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;width:100%;margin-top:8px; }
         .wheel-btn:active { transform:scale(0.96); }
         .wheel-btn:disabled { opacity:0.5; }
@@ -65,6 +67,8 @@
     </style>
 </head>
 <body>
+    <canvas id="bgCanvas"></canvas>
+    
     <div id="loading">
         <div class="loader-icon">⚡</div>
         <div class="loader-title">RAMCOIN</div>
@@ -90,7 +94,7 @@
         
         <div class="coin-area">
             <div class="coin" id="coin" ontouchstart="tap(event)" onmousedown="tap(event)">
-                <img src="ramcoin_logo.png" alt="RAMCOIN" onerror="this.style.display='none';this.parentElement.innerHTML='⚡'">
+                <img src="https://raw.githubusercontent.com/ramcoinnode-debug/ramcoinnode-debug.github.io/main/ramcoin_logo.png" alt="RAMCOIN" onerror="this.style.display='none';this.parentElement.innerHTML='⚡'">
             </div>
         </div>
         
@@ -109,50 +113,13 @@
         </div>
     </div>
     
-    <div class="modal" id="m-wheel"><div class="modal-content">
-        <h2>🎰 Колесо фортуны</h2>
-        <p style="color:#94a3b8;font-size:11px;text-align:center;">Крути раз в день!</p>
-        <div class="wheel-container"><canvas id="wheelCanvas" width="260" height="260"></canvas></div>
-        <div id="wheelResult" style="text-align:center;font-size:16px;font-weight:900;margin:6px 0;"></div>
-        <button class="wheel-btn" id="spinBtn" onclick="spinWheel()">🎰 КРУТИТЬ</button>
-        <p style="font-size:9px;color:#94a3b8;text-align:center;">Призы: 10-5000 nRAM</p>
-        <button class="close" onclick="closeM('wheel')">Закрыть</button>
-    </div></div>
-    
-    <div class="modal" id="m-rank"><div class="modal-content">
-        <h2>🏆 Рейтинг игроков</h2>
-        <div id="rankList"></div>
-        <button class="close" onclick="closeM('rank')">Закрыть</button>
-    </div></div>
-    
-    <div class="modal" id="m-tasks"><div class="modal-content">
-        <h2>📋 Задания</h2>
-        <div class="shop-item"><strong>🖐️ 100 тапов</strong> <span class="price-tag">+50 nRAM</span><div class="task-bar"><div class="task-fill" id="tf1" style="width:0%"></div></div></div>
-        <div class="shop-item" onclick="doTask('tg')"><strong>💬 Канал Telegram</strong> <span class="price-tag">+200 nRAM</span></div>
-        <div class="shop-item" onclick="doTask('invite')"><strong>👥 Пригласить друга</strong> <span class="price-tag">+500 nRAM</span></div>
-        <div class="shop-item"><strong>🔥 3 дня подряд</strong> <span class="price-tag">+200 nRAM</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp">0</span>/3</small></div>
-        <button class="close" onclick="closeM('tasks')">Закрыть</button>
-    </div></div>
-    
-    <div class="modal" id="m-achs"><div class="modal-content">
-        <h2>⭐ Достижения</h2>
-        <div id="achList"></div>
-        <button class="close" onclick="closeM('achs')">Закрыть</button>
-    </div></div>
-    
-    <div class="modal" id="m-boost"><div class="modal-content">
-        <h2>⚡ Бустер ×2</h2>
-        <p style="color:#94a3b8;">Двойной заработок на 1 час!</p>
-        <button class="close" onclick="activateBoost()" style="background:linear-gradient(135deg,#a78bfa,#38bdf8);">Активировать</button>
-        <button class="close" onclick="closeM('boost')" style="margin-top:4px;background:rgba(255,255,255,0.05);">Отмена</button>
-    </div></div>
-    
-    <div class="modal" id="m-shop"><div class="modal-content">
-        <h2>🛒 Бустеры</h2>
-        <div class="shop-item" onclick="activateBoost()"><strong>⚡ Бустер ×2</strong><br><span class="price-tag">Бесплатно</span></div>
-        <div class="shop-item" onclick="alert('Скоро!')"><strong>🤖 Авто-тап 30м</strong><br><span class="price-tag">Скоро</span></div>
-        <button class="close" onclick="closeM('shop')">Закрыть</button>
-    </div></div>
+    <!-- Все модалки -->
+    <div class="modal" id="m-wheel"><div class="modal-content"><h2>🎰 Колесо фортуны</h2><p style="color:#94a3b8;font-size:11px;text-align:center;">Крути раз в день!</p><div class="wheel-container"><canvas id="wheelCanvas" width="260" height="260"></canvas></div><div id="wheelResult" style="text-align:center;font-size:16px;font-weight:900;margin:6px 0;"></div><button class="wheel-btn" id="spinBtn" onclick="spinWheel()">🎰 КРУТИТЬ</button><p style="font-size:9px;color:#94a3b8;text-align:center;">Призы: 10-5000 nRAM</p><button class="close" onclick="closeM('wheel')">Закрыть</button></div></div>
+    <div class="modal" id="m-rank"><div class="modal-content"><h2>🏆 Рейтинг игроков</h2><div id="rankList"></div><button class="close" onclick="closeM('rank')">Закрыть</button></div></div>
+    <div class="modal" id="m-tasks"><div class="modal-content"><h2>📋 Задания</h2><div class="shop-item"><strong>🖐️ 100 тапов</strong> <span class="price-tag">+50 nRAM</span><div class="task-bar"><div class="task-fill" id="tf1" style="width:0%"></div></div></div><div class="shop-item" onclick="doTask('tg')"><strong>💬 Канал Telegram</strong> <span class="price-tag">+200 nRAM</span></div><div class="shop-item" onclick="doTask('invite')"><strong>👥 Пригласить друга</strong> <span class="price-tag">+500 nRAM</span></div><div class="shop-item"><strong>🔥 3 дня подряд</strong> <span class="price-tag">+200 nRAM</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp">0</span>/3</small></div><button class="close" onclick="closeM('tasks')">Закрыть</button></div></div>
+    <div class="modal" id="m-achs"><div class="modal-content"><h2>⭐ Достижения</h2><div id="achList"></div><button class="close" onclick="closeM('achs')">Закрыть</button></div></div>
+    <div class="modal" id="m-boost"><div class="modal-content"><h2>⚡ Бустер ×2</h2><p style="color:#94a3b8;">Двойной заработок на 1 час!</p><button class="close" onclick="activateBoost()" style="background:linear-gradient(135deg,#a78bfa,#38bdf8);">Активировать</button><button class="close" onclick="closeM('boost')" style="margin-top:4px;background:rgba(255,255,255,0.05);">Отмена</button></div></div>
+    <div class="modal" id="m-shop"><div class="modal-content"><h2>🛒 Бустеры</h2><div class="shop-item" onclick="activateBoost()"><strong>⚡ Бустер ×2</strong><br><span class="price-tag">Бесплатно</span></div><div class="shop-item" onclick="alert('Скоро!')"><strong>🤖 Авто-тап 30м</strong><br><span class="price-tag">Скоро</span></div><button class="close" onclick="closeM('shop')">Закрыть</button></div></div>
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
@@ -160,6 +127,27 @@
         let B=parseInt(localStorage.getItem('rcB')||'0'),E=parseInt(localStorage.getItem('rcE')||'500'),T=parseInt(localStorage.getItem('rcT')||'0'),L=parseInt(localStorage.getItem('rcL')||'1'),R=parseInt(localStorage.getItem('rcR')||'0'),S=parseInt(localStorage.getItem('rcS')||'0'),D=parseInt(localStorage.getItem('rcD')||'0'),boost=localStorage.getItem('rcX')==='1',bEnd=parseInt(localStorage.getItem('rcBE')||'0'),tasksDone=JSON.parse(localStorage.getItem('rcTD')||'[]'),achs=JSON.parse(localStorage.getItem('rcA')||'[0,0,0,0,0]'),wheelUsed=localStorage.getItem('rcW')||'';
         const MAX=500,prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
         let taps=[],W=0;
+        
+        // Canvas фон
+        const bgCanvas = document.getElementById('bgCanvas');
+        const ctx = bgCanvas.getContext('2d');
+        bgCanvas.width = window.innerWidth;
+        bgCanvas.height = window.innerHeight;
+        const nodes = Array.from({length:12}, () => ({x:Math.random()*bgCanvas.width,y:Math.random()*bgCanvas.height,vx:(Math.random()-0.5)*0.4,vy:(Math.random()-0.5)*0.4,size:Math.random()*3+2,phase:Math.random()*Math.PI*2}));
+        const particles = [];
+        
+        function drawBg(){
+            ctx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
+            ctx.strokeStyle='rgba(255,255,255,0.03)';ctx.lineWidth=0.5;
+            for(let x=0;x<bgCanvas.width;x+=35){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,bgCanvas.height);ctx.stroke();}
+            for(let y=0;y<bgCanvas.height;y+=35){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(bgCanvas.width,y);ctx.stroke();}
+            nodes.forEach((n1,i)=>{nodes.forEach((n2,j)=>{if(i<j){let d=Math.hypot(n1.x-n2.x,n1.y-n2.y);if(d<150){ctx.strokeStyle='rgba(56,189,248,'+(0.06*(1-d/150))+')';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(n1.x,n1.y);ctx.lineTo(n2.x,n2.y);ctx.stroke();}}});});
+            nodes.forEach(n=>{n.x+=n.vx;n.y+=n.vy;if(n.x<0)n.x=bgCanvas.width;if(n.x>bgCanvas.width)n.x=0;if(n.y<0)n.y=bgCanvas.height;if(n.y>bgCanvas.height)n.y=0;let p=1+0.2*Math.sin(Date.now()/1000+n.phase);let s=n.size*p;ctx.fillStyle='rgba(56,189,248,0.1)';ctx.beginPath();ctx.arc(n.x,n.y,s*3,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(56,189,248,0.6)';ctx.beginPath();ctx.arc(n.x,n.y,s,0,Math.PI*2);ctx.fill();});
+            if(Math.random()<0.2)particles.push({x:bgCanvas.width/2+Math.random()*80-40,y:bgCanvas.height/2+Math.random()*100-50,vx:(Math.random()-0.5)*0.5,vy:-Math.random()*2,life:1,size:Math.random()*3+1});
+            particles.forEach((p,i)=>{p.x+=p.vx;p.y+=p.vy;p.life-=0.005;if(p.life<=0){particles.splice(i,1);return;}ctx.fillStyle='rgba(251,191,36,'+(p.life*0.4)+')';ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});
+            requestAnimationFrame(drawBg);
+        }
+        drawBg();
         
         window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loading').style.display='none';document.getElementById('app').style.display='flex';U();drawWheel();updateTasks();updateAchs();updateRank();},500);});
         
