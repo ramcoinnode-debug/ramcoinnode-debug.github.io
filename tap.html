@@ -99,14 +99,12 @@
 
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
-        
-        // Привязка к Telegram ID — у каждого свой аккаунт!
         const uid = tg.initDataUnsafe?.user?.id || 'anon';
-        const P = 'rc_'+uid+'_'; // Префикс для localStorage
+        const P = 'rc_'+uid+'_';
         
         let B=parseInt(localStorage.getItem(P+'B')||'0'),E=parseInt(localStorage.getItem(P+'E')||'500'),T=parseInt(localStorage.getItem(P+'T')||'0'),L=parseInt(localStorage.getItem(P+'L')||'1'),R=parseInt(localStorage.getItem(P+'R')||'0'),S=parseInt(localStorage.getItem(P+'S')||'0'),D=parseInt(localStorage.getItem(P+'D')||'0'),boost=localStorage.getItem(P+'X')==='1',bEnd=parseInt(localStorage.getItem(P+'BE')||'0'),tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]'),achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0]'),wheelUsed=localStorage.getItem(P+'W')||'';
         const MAX=500,prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
-        let taps=[],W=0;
+        let taps=[],W=0,tapCooldown=false;
         
         // Восстановление энергии раз в сутки
         function restoreEnergy(){
@@ -136,7 +134,6 @@
         bg.width=window.innerWidth;bg.height=window.innerHeight;
         const nodes=Array.from({length:18},()=>({x:Math.random()*bg.width,y:Math.random()*bg.height,vx:(Math.random()-0.5)*0.25,vy:(Math.random()-0.5)*0.25,size:Math.random()*1.5+1,phase:Math.random()*Math.PI*2}));
         const particles=[];let tm=0;
-        
         function drawBg(){
             tm+=0.004;ctx.clearRect(0,0,bg.width,bg.height);
             ctx.strokeStyle='rgba(56,189,248,0.04)';ctx.lineWidth=0.3;
@@ -156,14 +153,32 @@
         
         window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loading').style.display='none';document.getElementById('app').style.display='flex';U();drawWheel();updateTasks();updateAchs();updateRank();},500);});
         
-        function tap(e){e.preventDefault();let n=Date.now();taps=taps.filter(t=>n-t<10000);if(taps.filter(t=>n-t<1000).length>10){W++;if(W>=3){E=0;U();}return;}if(E<=0)return;let g=boost&&n<bEnd?2:1;B+=g;E--;T++;taps.push(n);let lv=Math.floor(T/1000)+1;if(lv>L){L=lv;F('⬆ УРОВЕНЬ!','#a78bfa',e);}F('+'+g,'#fbbf24',e);checkAchs();U();S2();}
+        // ТАП С ЗАЩИТОЙ ОТ МУЛЬТИ-КЛИКА
+        function tap(e){
+            e.preventDefault();
+            if(tapCooldown) return;
+            tapCooldown = true;
+            setTimeout(()=>{tapCooldown=false;},150);
+            
+            let n=Date.now();
+            taps=taps.filter(t=>n-t<10000);
+            if(taps.filter(t=>n-t<1000).length>8){W++;if(W>=3){E=0;U();}return;}
+            if(E<=0)return;
+            let g=boost&&n<bEnd?2:1;
+            B+=g;E--;T++;taps.push(n);
+            let lv=Math.floor(T/1000)+1;
+            if(lv>L){L=lv;F('⬆ УРОВЕНЬ!','#a78bfa',e);}
+            F('+'+g,'#fbbf24',e);
+            checkAchs();U();S2();
+        }
+        
         function F(t,c,e){let el=document.createElement('div');el.className='float-text';el.textContent=t;el.style.color=c;el.style.left=((e.touches?.[0]?.clientX||e.clientX||innerWidth/2)-15)+'px';el.style.top=((e.touches?.[0]?.clientY||e.clientY||innerHeight/2)-20)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),800);}
         function U(){document.getElementById('bal').textContent=B.toLocaleString();document.getElementById('eFill').style.width=(E/MAX*100)+'%';document.getElementById('eText').textContent=E+' / '+MAX;document.getElementById('lvl').textContent='🟢 Ур.'+L+(boost&&Date.now()<bEnd?' | 🔥×2':'');}
         function S2(){let d={};d[P+'B']=B;d[P+'E']=E;d[P+'T']=T;d[P+'L']=L;d[P+'R']=R;d[P+'S']=S;d[P+'D']=D;d[P+'X']=boost?'1':'0';d[P+'BE']=bEnd;d[P+'TD']=JSON.stringify(tasksDone);d[P+'A']=JSON.stringify(achs);d[P+'W']=wheelUsed;Object.entries(d).forEach(([k,v])=>localStorage.setItem(k,v));}
         function daily(){let n=Date.now(),day=86400000;if(n-D<day){alert('🎁 Уже получен!');return;}S=(n-D<day*2)?S+1:1;let bonus=Math.min(S*100,3000);B+=bonus;D=n;if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200;}alert('🎁 +'+bonus+' nRAM! День '+S);U();S2();updateTasks();}
         function activateBoost(){if(boost&&Date.now()<bEnd){alert('Уже активен!');closeM('boost');return;}boost=true;bEnd=Date.now()+3600000;if(tasksDone.indexOf('boost')===-1){tasksDone.push('boost');B+=100;}closeM('boost');U();S2();updateTasks();}
         function doTask(t){if(t==='tg'){tg.openTelegramLink('https://t.me/ramcoin_pow');if(tasksDone.indexOf('tg')===-1){tasksDone.push('tg');B+=200;U();S2();updateTasks();}}else if(t==='invite'){invite();}}
-        function invite(){let refLink='https://t.me/ramcoin_tap_bot?startapp=ref_'+uid;tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(refLink)+'&text=⚡%20RAMCOIN%20Tap!%20Присоединяйся!');if(tasksDone.indexOf('invite')===-1){tasksDone.push('invite');R++;B+=500;U();S2();updateTasks();checkAchs();alert('✅ +500 nRAM за приглашение!');}}
+        function invite(){let refLink='https://t.me/ramcoin_tap_bot?startapp=ref_'+uid;tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(refLink)+'&text=⚡%20RAMCOIN%20Tap!%20Присоединяйся!');alert('📤 Отправь ссылку другу! Бонус когда друг перейдет!');}
         function updateTasks(){document.getElementById('tf1').style.width=Math.min(100,T)+'%';if(T>=100&&tasksDone.indexOf('tap100')===-1){tasksDone.push('tap100');B+=50;U();S2();}document.getElementById('tdp').textContent=Math.min(S,3);}
         function checkAchs(){if(T>=100&&achs[0]===0){achs[0]=1;alert('⭐ Новичок!');}if(T>=1000&&achs[1]===0){achs[1]=1;alert('⭐ Тапер!');}if(T>=10000&&achs[2]===0){achs[2]=1;alert('⭐ Мастер!');}if(R>=5&&achs[3]===0){achs[3]=1;alert('⭐ Друг!');}if(B>=1000000&&achs[4]===0){achs[4]=1;alert('⭐ Миллионер!');}updateAchs();S2();}
         function updateAchs(){let names=['Новичок (100 тапов)','Тапер (1000 тапов)','Мастер (10000 тапов)','Друг (5 друзей)','Миллионер (1M nRAM)'];let h='';for(let i=0;i<5;i++){let c=achs[i]===1?'done':'locked';let s=achs[i]===1?'✅':'🔒';h+='<div class="achievement '+c+'"><span>'+names[i]+'</span><span>'+s+'</span></div>';}document.getElementById('achList').innerHTML=h;}
