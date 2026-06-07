@@ -133,7 +133,7 @@
     <script>
         const tg = window.Telegram.WebApp; tg.expand();
         const uid = tg.initDataUnsafe?.user?.id || 'anon';
-        const P = 'v3_'+uid+'_';
+        const P = 'v2_'+uid+'_';
         
         let B=parseInt(localStorage.getItem(P+'B')||'0'),E=parseInt(localStorage.getItem(P+'E')||'500'),T=parseInt(localStorage.getItem(P+'T')||'0'),L=parseInt(localStorage.getItem(P+'L')||'1'),R=parseInt(localStorage.getItem(P+'R')||'0'),S=parseInt(localStorage.getItem(P+'S')||'0'),D=parseInt(localStorage.getItem(P+'D')||'0'),boost=localStorage.getItem(P+'X')==='1',bEnd=parseInt(localStorage.getItem(P+'BE')||'0'),tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]'),achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0]'),wheelUsed=localStorage.getItem(P+'W')||'',pendingTask=localStorage.getItem(P+'pending')||'';
         
