@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAMCOIN Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #030712; color: #f1f5f9; font-family: -apple-system, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { font-size: 24px; color: #38bdf8; margin-bottom: 20px; }
+        .card { background: #0f172a; border-radius: 16px; padding: 20px; margin: 15px 0; border: 1px solid #1e293b; }
+        .card h2 { font-size: 18px; margin-bottom: 12px; color: #a78bfa; }
+        .request { background: rgba(255,255,255,0.02); border-radius: 12px; padding: 14px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.05); }
+        .request .addr { color: #38bdf8; font-size: 13px; word-break: break-all; }
+        .request .amount { color: #fbbf24; font-weight: 700; font-size: 18px; }
+        .request .tg { color: #94a3b8; font-size: 13px; }
+        .request .btns { margin-top: 10px; display: flex; gap: 8px; }
+        .btn { padding: 8px 18px; border-radius: 10px; border: none; cursor: pointer; font-weight: 700; color: white; font-size: 13px; }
+        .btn-ok { background: #10b981; }
+        .btn-no { background: #ef4444; }
+        .btn-done { background: #1e293b; color: #10b981; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 14px; text-align: center; }
+        .stat .val { font-size: 24px; font-weight: 900; color: #38bdf8; }
+        .stat .lbl { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+        input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #1e293b; background: #0f172a; color: white; margin: 8px 0; font-size: 14px; }
+        .password-section { text-align: center; margin-top: 100px; }
+    </style>
+</head>
+<body>
+    <div class="container" id="loginScreen">
+        <div class="password-section">
+            <h1>🔐 RAMCOIN Admin</h1>
+            <input type="password" id="pass" placeholder="Пароль администратора">
+            <button class="btn btn-ok" onclick="login()" style="width:100%;margin-top:10px;">Войти</button>
+        </div>
+    </div>
+    
+    <div class="container" id="adminScreen" style="display:none;">
+        <h1>🔧 Админ-панель RAMCOIN</h1>
+        
+        <div class="stats">
+            <div class="stat"><div class="val" id="totalUsers">0</div><div class="lbl">Пользователей</div></div>
+            <div class="stat"><div class="val" id="totalRAM">0</div><div class="lbl">Выдано RAM</div></div>
+            <div class="stat"><div class="val" id="pendingReq">0</div><div class="lbl">Заявок ожидает</div></div>
+            <div class="stat"><div class="val" id="totalTaps">0</div><div class="lbl">Всего тапов</div></div>
+        </div>
+        
+        <div class="card">
+            <h2>📋 Заявки на вывод RAM</h2>
+            <div id="requests"></div>
+        </div>
+        
+        <div class="card">
+            <h2>💰 Ручная отправка RAM</h2>
+            <input type="text" id="sendAddr" placeholder="Адрес (RAM_...)">
+            <input type="number" id="sendAmount" placeholder="Сумма RAM" step="0.001">
+            <button class="btn btn-ok" onclick="sendRAM()" style="width:100%;">Отправить RAM</button>
+        </div>
+        
+        <button class="btn btn-no" onclick="logout()" style="width:100%;margin-top:10px;">Выйти</button>
+    </div>
+
+    <script>
+        const ADMIN_PASS = 'RamCoin2026!';
+        let requests = JSON.parse(localStorage.getItem('rc_requests')||'[]');
+        
+        function login(){
+            if(document.getElementById('pass').value === ADMIN_PASS){
+                document.getElementById('loginScreen').style.display='none';
+                document.getElementById('adminScreen').style.display='block';
+                loadData();
+            }else{alert('Неверный пароль!');}
+        }
+        
+        function logout(){
+            document.getElementById('loginScreen').style.display='block';
+            document.getElementById('adminScreen').style.display='none';
+        }
+        
+        function loadData(){
+            document.getElementById('pendingReq').textContent = requests.filter(r=>r.status==='pending').length;
+            document.getElementById('totalRAM').textContent = requests.filter(r=>r.status==='done').reduce((a,r)=>a+r.amount,0).toFixed(3);
+            
+            let html = '';
+            requests.forEach((r,i) => {
+                html += `<div class="request">
+                    <div class="tg">👤 ${r.tg||'Аноним'}</div>
+                    <div class="addr">📍 ${r.address}</div>
+                    <div class="amount">💰 ${r.amount} RAM (${(r.amount_nRAM||0).toLocaleString()} nRAM)</div>
+                    <div class="btns">`;
+                if(r.status === 'pending'){
+                    html += `<button class="btn btn-ok" onclick="approve(${i})">✅ Отправить</button>
+                             <button class="btn btn-no" onclick="reject(${i})">❌ Отклонить</button>`;
+                } else if(r.status === 'done'){
+                    html += `<span class="btn btn-done">✅ Отправлено</span>`;
+                } else {
+                    html += `<span class="btn btn-no">❌ Отклонено</span>`;
+                }
+                html += `</div></div>`;
+            });
+            document.getElementById('requests').innerHTML = html || '<p style="color:#94a3b8;">Нет заявок</p>';
+        }
+        
+        function approve(i){
+            if(confirm(`Отправить ${requests[i].amount} RAM на ${requests[i].address}?`)){
+                requests[i].status = 'done';
+                localStorage.setItem('rc_requests', JSON.stringify(requests));
+                alert('✅ Отправлено! (Отправь RAM через кошелёк wallet2.py)');
+                loadData();
+            }
+        }
+        
+        function reject(i){
+            requests[i].status = 'rejected';
+            localStorage.setItem('rc_requests', JSON.stringify(requests));
+            loadData();
+        }
+        
+        function sendRAM(){
+            let addr = document.getElementById('sendAddr').value;
+            let amt = parseFloat(document.getElementById('sendAmount').value);
+            if(!addr.startsWith('RAM_')){alert('Неверный адрес!');return;}
+            if(!amt||amt<=0){alert('Введите сумму!');return;}
+            if(confirm(`Отправить ${amt} RAM на ${addr}?`)){
+                requests.push({address:addr,amount:amt,amount_nRAM:amt*1e9,tg:'Ручная отправка',status:'done',date:Date.now()});
+                localStorage.setItem('rc_requests',JSON.stringify(requests));
+                alert('✅ Добавлено в историю! Отправь через wallet2.py');
+                loadData();
+            }
+        }
+    </script>
+</body>
+</html>
