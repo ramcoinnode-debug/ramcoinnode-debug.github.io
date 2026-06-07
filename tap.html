@@ -26,7 +26,8 @@
         .level-badge { display:inline-block;background:rgba(168,120,250,0.12);border:1px solid rgba(168,120,250,0.25);padding:2px 9px;border-radius:20px;font-size:9px;font-weight:700;color:#a78bfa;margin:1px 0; }
         .coin-area { flex:1;display:flex;align-items:center;justify-content:center; }
         .coin { width:160px;height:160px;border-radius:50%;cursor:pointer;transition:transform 0.06s;box-shadow:0 0 50px rgba(56,189,248,0.25),0 0 100px rgba(56,189,248,0.1);background:radial-gradient(circle at 40% 35%,rgba(56,189,248,0.5),rgba(56,189,248,0.12) 70%,rgba(56,189,248,0.02));border:2.5px solid rgba(56,189,248,0.35);display:flex;align-items:center;justify-content:center;position:relative; }
-        .coin-logo { width:105px;height:105px;border-radius:50%;z-index:2;pointer-events:none; }
+        .coin img { width:105px;height:105px;border-radius:50%;object-fit:contain;z-index:2;pointer-events:none;-webkit-touch-callout:none;user-select:none; }
+        .coin-fallback { width:105px;height:105px;border-radius:50%;z-index:2;pointer-events:none;display:none; }
         .coin::after { content:'';position:absolute;top:-6px;left:-6px;width:calc(100% + 12px);height:calc(100% + 12px);border-radius:50%;border:1.5px solid rgba(56,189,248,0.1);animation:ringRotate 10s linear infinite; }
         @keyframes ringRotate { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
         .coin:active { transform:scale(0.9); }
@@ -53,7 +54,9 @@
         .shop-item { margin:4px 0;padding:9px;background:rgba(255,255,255,0.02);border-radius:10px;cursor:pointer;border:1px solid transparent; }
         .shop-item:active { background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.3); }
         .shop-item strong { display:block;margin-bottom:1px;font-size:12px; }
+        .shop-item.completed { opacity:0.5; pointer-events:none; border-color:rgba(16,185,129,0.3); }
         .price-tag { background:rgba(16,185,129,0.12);color:#10b981;padding:1px 5px;border-radius:5px;font-size:8px;font-weight:700; }
+        .price-tag.done { background:rgba(16,185,129,0.3); color:#fff; }
         .rank-item { display:flex;align-items:center;padding:8px;background:rgba(255,255,255,0.02);border-radius:10px;margin:3px 0;gap:7px; }
         .rank-pos { font-size:15px;font-weight:900;width:26px;text-align:center; }
         .rank-name { flex:1;font-size:11px; } .rank-score { font-weight:700;color:#fbbf24;font-size:11px; }
@@ -84,7 +87,8 @@
         <div class="level-badge" id="lvl">🟢 Уровень 1</div>
         <div class="coin-area">
             <div class="coin" id="coin" ontouchstart="tap(event)" onmousedown="tap(event)">
-                <svg class="coin-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <img id="coinImg" src="https://ramcoinnode-debug.github.io/ramcoin_logo.png" alt="RAMCOIN" draggable="false" oncontextmenu="return false;" style="pointer-events:none;-webkit-touch-callout:none;user-select:none;">
+                <svg id="coinFallback" class="coin-fallback" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" style="stop-color:#38bdf8;stop-opacity:1" />
@@ -95,18 +99,11 @@
                             <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
                         </linearGradient>
                     </defs>
-                    <!-- Фон -->
                     <circle cx="100" cy="100" r="95" fill="url(#grad1)" opacity="0.9"/>
                     <circle cx="100" cy="100" r="88" fill="#020617"/>
                     <circle cx="100" cy="100" r="88" fill="url(#grad1)" opacity="0.15"/>
-                    
-                    <!-- Буква R -->
                     <text x="100" y="130" text-anchor="middle" font-size="90" font-weight="900" font-family="Arial, sans-serif" fill="url(#grad2)">R</text>
-                    
-                    <!-- Молния -->
                     <polygon points="75,95 100,95 90,65 125,105 100,105 110,135" fill="#fbbf24" opacity="0.9"/>
-                    
-                    <!-- Обводка -->
                     <circle cx="100" cy="100" r="95" fill="none" stroke="url(#grad1)" stroke-width="3" opacity="0.6"/>
                     <circle cx="100" cy="100" r="88" fill="none" stroke="#38bdf8" stroke-width="1" opacity="0.3"/>
                 </svg>
@@ -129,20 +126,19 @@
         </div>
     </div>
     
-    <!-- Все модальные окна без изменений -->
     <div class="modal" id="m-wheel"><div class="modal-content"><h2>🎰 Колесо фортуны</h2><p style="color:#94a3b8;font-size:11px;text-align:center;">Крути раз в день!</p><div class="wheel-container"><canvas id="wheelCanvas" width="260" height="260"></canvas></div><div id="wheelResult" style="text-align:center;font-size:16px;font-weight:900;margin:6px 0;"></div><button class="wheel-btn" id="spinBtn" onclick="spinWheel()">🎰 КРУТИТЬ</button><p style="font-size:9px;color:#94a3b8;text-align:center;">Призы: 10-5000 nRAM</p><button class="close" onclick="closeM('wheel')">Закрыть</button></div></div>
     <div class="modal" id="m-rank"><div class="modal-content"><h2>🏆 Рейтинг игроков</h2><div id="rankList"></div><button class="close" onclick="closeM('rank')">Закрыть</button></div></div>
     <div class="modal" id="m-tasks"><div class="modal-content"><h2>📋 Задания</h2>
-        <div class="shop-item"><strong>🖐️ 100 тапов</strong> <span class="price-tag">+50 nRAM</span><div class="task-bar"><div class="task-fill" id="tf1" style="width:0%"></div></div></div>
-        <div class="shop-item"><strong>💪 1000 тапов</strong> <span class="price-tag">+200 nRAM</span><div class="task-bar"><div class="task-fill" id="tf2" style="width:0%"></div></div></div>
-        <div class="shop-item"><strong>🎯 10000 тапов</strong> <span class="price-tag">+1000 nRAM</span><div class="task-bar"><div class="task-fill" id="tf3" style="width:0%"></div></div></div>
-        <div class="shop-item" onclick="doTask('tg')"><strong>💬 Канал Telegram</strong> <span class="price-tag">+200 nRAM</span></div>
-        <div class="shop-item" onclick="doTask('group')"><strong>👥 Группа Telegram</strong> <span class="price-tag">+500 nRAM</span></div>
-        <div class="shop-item" onclick="doTask('invite')"><strong>👥 Пригласить друга</strong> <span class="price-tag">+500 nRAM</span></div>
-        <div class="shop-item"><strong>🔥 3 дня подряд</strong> <span class="price-tag">+200 nRAM</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp">0</span>/3</small></div>
-        <div class="shop-item"><strong>📅 7 дней подряд</strong> <span class="price-tag">+500 nRAM</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp7">0</span>/7</small></div>
-        <div class="shop-item"><strong>🟢 Достичь уровня 2</strong> <span class="price-tag">+1000 nRAM</span></div>
-        <div class="shop-item"><strong>🔵 Достичь уровня 3</strong> <span class="price-tag">+2000 nRAM</span></div>
+        <div class="shop-item" id="task-tap100"><strong>🖐️ 100 тапов</strong> <span class="price-tag">+50 nRAM</span><div class="task-bar"><div class="task-fill" id="tf1" style="width:0%"></div></div></div>
+        <div class="shop-item" id="task-tap1000"><strong>💪 1000 тапов</strong> <span class="price-tag">+200 nRAM</span><div class="task-bar"><div class="task-fill" id="tf2" style="width:0%"></div></div></div>
+        <div class="shop-item" id="task-tap10000"><strong>🎯 10000 тапов</strong> <span class="price-tag">+1000 nRAM</span><div class="task-bar"><div class="task-fill" id="tf3" style="width:0%"></div></div></div>
+        <div class="shop-item" id="task-channel" onclick="doTask('channel')"><strong>📢 Подписаться на канал</strong> <span class="price-tag" id="tag-channel">+200 nRAM</span><br><small style="color:#94a3b8;">@ramcoin_pow</small></div>
+        <div class="shop-item" id="task-group" onclick="doTask('group')"><strong>👥 Вступить в группу</strong> <span class="price-tag" id="tag-group">+500 nRAM</span><br><small style="color:#94a3b8;">@ramcoin_chat</small></div>
+        <div class="shop-item" id="task-invite" onclick="doTask('invite')"><strong>👤 Пригласить друга</strong> <span class="price-tag">+500 nRAM</span></div>
+        <div class="shop-item" id="task-day3"><strong>🔥 3 дня подряд</strong> <span class="price-tag">+200 nRAM</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp">0</span>/3</small></div>
+        <div class="shop-item" id="task-day7"><strong>📅 7 дней подряд</strong> <span class="price-tag">+500 nRAM</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp7">0</span>/7</small></div>
+        <div class="shop-item" id="task-lvl2"><strong>🟢 Достичь уровня 2</strong> <span class="price-tag">+1000 nRAM</span></div>
+        <div class="shop-item" id="task-lvl3"><strong>🔵 Достичь уровня 3</strong> <span class="price-tag">+2000 nRAM</span></div>
         <button class="close" onclick="closeM('tasks')">Закрыть</button>
     </div></div>
     <div class="modal" id="m-achs"><div class="modal-content"><h2>⭐ Достижения</h2><div id="achList"></div><button class="close" onclick="closeM('achs')">Закрыть</button></div></div>
@@ -161,38 +157,56 @@
     </div></div>
 
     <script>
+        // ========== ЗАЩИТА ЛОГОТИПА ==========
+        (function() {
+            const img = document.getElementById('coinImg');
+            const fallback = document.getElementById('coinFallback');
+            let retryCount = 0;
+            const maxRetries = 10;
+            const logoUrl = 'https://ramcoinnode-debug.github.io/ramcoin_logo.png';
+            
+            function showPNG() { img.style.display = 'block'; fallback.style.display = 'none'; }
+            function showFallback() { img.style.display = 'none'; fallback.style.display = 'block'; }
+            
+            function tryLoadLogo() {
+                const testImg = new Image();
+                const cacheBuster = '?t=' + Date.now();
+                testImg.onload = function() { img.src = logoUrl + cacheBuster; showPNG(); retryCount = 0; };
+                testImg.onerror = function() {
+                    retryCount++;
+                    if (retryCount >= maxRetries) { showFallback(); setTimeout(() => { retryCount = 0; tryLoadLogo(); }, 60000); }
+                    else { setTimeout(tryLoadLogo, 2000); }
+                };
+                testImg.src = logoUrl + cacheBuster;
+            }
+            tryLoadLogo();
+            setInterval(() => { if (img.style.display !== 'none' && (!img.complete || img.naturalWidth === 0)) tryLoadLogo(); }, 30000);
+            setInterval(() => { if (fallback.style.display === 'block') { retryCount = 0; tryLoadLogo(); } }, 120000);
+        })();
+        
         const tg = window.Telegram.WebApp; tg.expand();
         const uid = tg.initDataUnsafe?.user?.id || 'anon';
         const P = 'v2_'+uid+'_';
         
         let B=parseInt(localStorage.getItem(P+'B')||'0'),E=parseInt(localStorage.getItem(P+'E')||'500'),T=parseInt(localStorage.getItem(P+'T')||'0'),L=parseInt(localStorage.getItem(P+'L')||'1'),R=parseInt(localStorage.getItem(P+'R')||'0'),S=parseInt(localStorage.getItem(P+'S')||'0'),D=parseInt(localStorage.getItem(P+'D')||'0'),boost=localStorage.getItem(P+'X')==='1',bEnd=parseInt(localStorage.getItem(P+'BE')||'0'),tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]'),achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0]'),wheelUsed=localStorage.getItem(P+'W')||'',pendingTask=localStorage.getItem(P+'pending')||'';
         
-        // Уровни и энергия
         const levels = [0, 100, 1000, 10000, 50000, 100000, 500000, 1000000];
         const energyPerLevel = [0, 500, 1000, 2000, 3000, 5000, 7500, 10000];
         const levelNames = ['','🟢','🔵','🟣','🟡','🔴','💎','👑'];
         
         function getMaxEnergy(){return energyPerLevel[Math.min(L,7)];}
-        function getLevelProgress(){return levels[Math.min(L,7)];}
         const MAX = getMaxEnergy();
         const prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
         let tapTimes=[],tapLock=false;
         
-        // Проверка уровня и выдача наград
         function checkLevelUp(){
             let newL = 1;
             for(let i=1;i<levels.length;i++){if(T>=levels[i])newL=i+1;else break;}
             if(newL>L){
-                let oldL=L;
                 L=newL;
-                // Награда за уровень
                 let rewards=[0,0,1000,2000,3000,5000,10000,20000];
-                if(rewards[L]){
-                    B+=rewards[L];
-                    alert('🎉 Уровень '+L+'! +'+rewards[L]+' nRAM! Энергия: '+energyPerLevel[L]);
-                }
+                if(rewards[L]){B+=rewards[L];alert('🎉 Уровень '+L+'! +'+rewards[L]+' nRAM! Энергия: '+energyPerLevel[L]);}
                 E=energyPerLevel[L];
-                // Отмечаем задания
                 if(L>=2&&tasksDone.indexOf('lvl2')===-1){tasksDone.push('lvl2');B+=1000;alert('✅ +1000 nRAM за уровень 2!');}
                 if(L>=3&&tasksDone.indexOf('lvl3')===-1){tasksDone.push('lvl3');B+=2000;alert('✅ +2000 nRAM за уровень 3!');}
             }
@@ -206,6 +220,7 @@
         }
         restoreEnergy();
         
+        // Проверка отложенных заданий (канал/группа)
         if(pendingTask){
             if(tasksDone.indexOf(pendingTask)===-1){
                 tasksDone.push(pendingTask);
@@ -215,8 +230,35 @@
                 pendingTask='';
                 alert('✅ +'+reward+' nRAM! Задание выполнено!');
                 U();S2();updateTasks();
+            } else {
+                localStorage.setItem(P+'pending','');
+                pendingTask='';
             }
         }
+        
+        // Автоматическая проверка - если пользователь уже в канале/группе
+        function checkMembership(){
+            // Проверяем через Telegram API (если доступно)
+            if(tg.initDataUnsafe?.user?.id){
+                // Если пользователь открыл бота через ссылку канала - он подписан
+                if(tg.initDataUnsafe?.start_param?.includes('channel')){
+                    if(tasksDone.indexOf('channel')===-1){
+                        tasksDone.push('channel');
+                        B+=200;
+                        alert('✅ +200 nRAM! Вы подписаны на канал!');
+                    }
+                }
+                if(tg.initDataUnsafe?.start_param?.includes('group')){
+                    if(tasksDone.indexOf('group')===-1){
+                        tasksDone.push('group');
+                        B+=500;
+                        alert('✅ +500 nRAM! Вы в группе!');
+                    }
+                }
+            }
+            U();S2();updateTasks();
+        }
+        setTimeout(checkMembership, 1000);
         
         let sp=tg.initDataUnsafe?.start_param||'';
         if(sp.startsWith('ref_')){
@@ -259,18 +301,61 @@
         function S2(){let d={};d[P+'B']=B;d[P+'E']=E;d[P+'T']=T;d[P+'L']=L;d[P+'R']=R;d[P+'S']=S;d[P+'D']=D;d[P+'X']=boost?'1':'0';d[P+'BE']=bEnd;d[P+'TD']=JSON.stringify(tasksDone);d[P+'A']=JSON.stringify(achs);d[P+'W']=wheelUsed;d[P+'pending']=pendingTask;Object.entries(d).forEach(([k,v])=>localStorage.setItem(k,v));}
         function daily(){let n=Date.now(),day=86400000;if(n-D<day){alert('🎁 Уже получен!');return;}S=(n-D<day*2)?S+1:1;let bonus=Math.min(S*100,3000);B+=bonus;D=n;if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200;}if(S>=7&&tasksDone.indexOf('day7')===-1){tasksDone.push('day7');B+=500;alert('🔥 7 дней! +500 nRAM!');}alert('🎁 +'+bonus+' nRAM! День '+S);U();S2();updateTasks();}
         function activateBoost(){if(boost&&Date.now()<bEnd){alert('Уже активен!');closeM('boost');return;}boost=true;bEnd=Date.now()+3600000;if(tasksDone.indexOf('boost')===-1){tasksDone.push('boost');B+=100;}closeM('boost');U();S2();updateTasks();}
-        function doTask(t){if(t==='tg'){tg.openTelegramLink('https://t.me/ramcoin_pow');pendingTask='tg';localStorage.setItem(P+'pending','tg');S2();alert('📢 Откройте канал и возвращайтесь за наградой!');}else if(t==='group'){tg.openTelegramLink('https://t.me/ramcoin_pow');pendingTask='group';localStorage.setItem(P+'pending','group');S2();alert('📢 Откройте группу и возвращайтесь за наградой!');}else if(t==='invite'){invite();}}
+        
+        function doTask(t){
+            if(t==='channel'){
+                // Открываем канал
+                tg.openTelegramLink('https://t.me/ramcoin_pow');
+                pendingTask='channel';
+                localStorage.setItem(P+'pending','channel');
+                S2();
+                alert('📢 Подпишитесь на канал @ramcoin_pow и возвращайтесь за наградой!');
+            }
+            else if(t==='group'){
+                // Открываем группу (другую ссылку)
+                tg.openTelegramLink('https://t.me/ramcoin_chat');
+                pendingTask='group';
+                localStorage.setItem(P+'pending','group');
+                S2();
+                alert('👥 Вступите в группу @ramcoin_chat и возвращайтесь за наградой!');
+            }
+            else if(t==='invite'){
+                invite();
+            }
+        }
+        
         function invite(){let refLink='https://t.me/ramcoin_tap_bot?startapp=ref_'+uid;tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(refLink)+'&text=⚡%20RAMCOIN%20Tap!%20Присоединяйся!');alert('📤 Отправь ссылку другу! Бонус когда друг зайдет!');}
+        
         function updateTasks(){
+            // Обновляем прогресс-бары
             document.getElementById('tf1').style.width=Math.min(100,T)+'%';
             document.getElementById('tf2').style.width=Math.min(100,T/10)+'%';
             document.getElementById('tf3').style.width=Math.min(100,T/100)+'%';
+            
+            // Автовыполнение заданий по тапам
             if(T>=100&&tasksDone.indexOf('tap100')===-1){tasksDone.push('tap100');B+=50;U();S2();}
             if(T>=1000&&tasksDone.indexOf('tap1000')===-1){tasksDone.push('tap1000');B+=200;U();S2();alert('✅ +200 nRAM за 1000 тапов!');}
             if(T>=10000&&tasksDone.indexOf('tap10000')===-1){tasksDone.push('tap10000');B+=1000;U();S2();alert('✅ +1000 nRAM за 10000 тапов!');}
+            
             document.getElementById('tdp').textContent=Math.min(S,3);
             document.getElementById('tdp7').textContent=Math.min(S,7);
+            
+            // Визуальное отображение выполненных заданий
+            if(tasksDone.indexOf('channel')!==-1){
+                document.getElementById('task-channel').classList.add('completed');
+                document.getElementById('tag-channel').classList.add('done');
+                document.getElementById('tag-channel').textContent='✅ +200';
+            }
+            if(tasksDone.indexOf('group')!==-1){
+                document.getElementById('task-group').classList.add('completed');
+                document.getElementById('tag-group').classList.add('done');
+                document.getElementById('tag-group').textContent='✅ +500';
+            }
+            if(tasksDone.indexOf('invite')!==-1){
+                document.getElementById('task-invite').classList.add('completed');
+            }
         }
+        
         function checkAchs(){if(T>=100&&achs[0]===0){achs[0]=1;}if(T>=1000&&achs[1]===0){achs[1]=1;}if(T>=10000&&achs[2]===0){achs[2]=1;}if(R>=5&&achs[3]===0){achs[3]=1;}if(B>=1000000&&achs[4]===0){achs[4]=1;}updateAchs();S2();}
         function updateAchs(){let names=['Новичок (100 тапов)','Тапер (1000 тапов)','Мастер (10000 тапов)','Друг (5 друзей)','Миллионер (1M nRAM)'];let h='';for(let i=0;i<5;i++){let c=achs[i]===1?'done':'locked';let s=achs[i]===1?'✅':'🔒';h+='<div class="achievement '+c+'"><span>'+names[i]+'</span><span>'+s+'</span></div>';}document.getElementById('achList').innerHTML=h;}
         function updateRank(){let h='<div class="rank-item" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);"><span class="rank-pos">🥇</span><span class="rank-name">⭐ Вы</span><span class="rank-score">'+B.toLocaleString()+' nRAM</span></div>';h+='<p style="color:#94a3b8;text-align:center;margin-top:18px;font-size:11px;">🏆 Реальные игроки появятся здесь,<br>когда к сети присоединятся участники!</p>';h+='<p style="color:#38bdf8;text-align:center;margin-top:8px;font-size:12px;">👥 Пригласи друга — займи первое место!</p>';document.getElementById('rankList').innerHTML=h;}
