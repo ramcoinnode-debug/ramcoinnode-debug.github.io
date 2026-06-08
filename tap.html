@@ -75,7 +75,7 @@
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
-    <div id="loading"><div class="loader-icon">⚡</div><div class="loader-title">RAMCOIN</div><div class="loader-sub">Подключение к сети...</div></div>
+    <div id="loading"><div class="loader-icon">⚡</div><div class="loader-title">RAMCOIN</div><div class="loader-sub">Загрузка...</div></div>
 
     <div class="app" id="app">
         <div class="header">
@@ -161,7 +161,7 @@
     </div></div>
 
     <script>
-        // ========== ЛОГОТИП - НАДЁЖНАЯ ЗАГРУЗКА ==========
+        // ========== ЛОГОТИП - ЗАГРУЗКА ==========
         (function(){
             var img=document.getElementById('coinImg');
             var fb=document.getElementById('coinFallback');
@@ -179,20 +179,29 @@
 
         var tg=window.Telegram.WebApp;tg.expand();
         var uid=tg.initDataUnsafe?.user?.id||'anon';
-        
-        // ПРЕФИКСЫ ДЛЯ СОХРАНЕНИЯ (v2 - старый, v5 - новый)
-        var P_old='v2_'+uid+'_';
+
+        // ========== МИГРАЦИЯ - ИЩЕМ ВСЕ СТАРЫЕ ДАННЫЕ ==========
+        var P_old2='v2_'+uid+'_';
+        var P_old3='v3_'+uid+'_';
+        var P_old4='v4_'+uid+'_';
         var P='v5_'+uid+'_';
-        
-        // ПРОБУЕМ ЗАГРУЗИТЬ СТАРЫЙ БАЛАНС
-        var B_old=parseInt(localStorage.getItem(P_old+'B')||'0');
-        var T_old=parseInt(localStorage.getItem(P_old+'T')||'0');
-        var L_old=parseInt(localStorage.getItem(P_old+'L')||'1');
-        var R_old=parseInt(localStorage.getItem(P_old+'R')||'0');
-        var S_old=parseInt(localStorage.getItem(P_old+'S')||'0');
-        var D_old=parseInt(localStorage.getItem(P_old+'D')||'0');
-        
-        // ЗАГРУЖАЕМ НОВЫЕ ДАННЫЕ
+
+        var B_old=0,T_old=0,L_old=1,R_old=0,S_old=0,D_old=0,E_old=500;
+        var oldPrefixes=[P_old2,P_old3,P_old4];
+        for(var i=0;i<oldPrefixes.length;i++){
+            var pf=oldPrefixes[i];
+            var b=parseInt(localStorage.getItem(pf+'B')||'0');
+            if(b>0){
+                B_old=b;T_old=parseInt(localStorage.getItem(pf+'T')||'0');
+                L_old=parseInt(localStorage.getItem(pf+'L')||'1');
+                R_old=parseInt(localStorage.getItem(pf+'R')||'0');
+                S_old=parseInt(localStorage.getItem(pf+'S')||'0');
+                D_old=parseInt(localStorage.getItem(pf+'D')||'0');
+                E_old=parseInt(localStorage.getItem(pf+'E')||'500');
+                break;
+            }
+        }
+
         var B=parseInt(localStorage.getItem(P+'B')||'0');
         var E=parseInt(localStorage.getItem(P+'E')||'500');
         var T=parseInt(localStorage.getItem(P+'T')||'0');
@@ -200,55 +209,56 @@
         var R=parseInt(localStorage.getItem(P+'R')||'0');
         var S=parseInt(localStorage.getItem(P+'S')||'0');
         var D=parseInt(localStorage.getItem(P+'D')||'0');
-        
-        // МИГРАЦИЯ: ЕСЛИ СТАРЫЙ БАЛАНС БОЛЬШЕ НОВОГО - БЕРЁМ СТАРЫЙ
-        if(B_old>0&&B===0){
-            B=B_old;T=T_old;L=L_old||1;R=R_old;S=S_old;D=D_old;
-            E=parseInt(localStorage.getItem(P_old+'E')||'500');
-            if(E<500)E=500;
-            localStorage.setItem(P+'migrated','1');
-            B+=10000;
-            setTimeout(function(){alert('🎉 ОБНОВЛЕНИЕ!\n\nВаш баланс: '+B.toLocaleString()+' nRAM\n💰 Бонус: +10 000 nRAM!\n\n⚡ Улучшения до x50\n📋 20 заданий\n⭐ 15 достижений\n👥 Реферальные награды');U();S2();},1500);
-        }
-        
+
         var boost=localStorage.getItem(P+'X')==='1';
         var bEnd=parseInt(localStorage.getItem(P+'BE')||'0');
         var tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]');
         var achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]');
         var wheelUsed=localStorage.getItem(P+'W')||'';
         var pendingTask=localStorage.getItem(P+'pending')||'';
-        
-        // ПЕРЕНОС СТАРЫХ ЗАДАНИЙ
-        var oldTasks=JSON.parse(localStorage.getItem(P_old+'TD')||'[]');
-        oldTasks.forEach(function(t){if(tasksDone.indexOf(t)===-1)tasksDone.push(t);});
-        var oldAchs=JSON.parse(localStorage.getItem(P_old+'A')||'[0,0,0,0,0]');
-        for(var i=0;i<oldAchs.length;i++){if(oldAchs[i]===1&&achs[i]===0)achs[i]=1;}
-        
-        // УЛУЧШЕНИЯ
+
+        // МИГРИРУЕМ ЕСЛИ НУЖНО
+        var migrated=localStorage.getItem(P+'migrated');
+        if(!migrated&&B_old>0&&B===0){
+            B=B_old;T=T_old;L=L_old||1;R=R_old;S=S_old;D=D_old;E=E_old>0?E_old:500;
+            if(E<500)E=500;
+            B+=10000;
+            localStorage.setItem(P+'migrated','1');
+            // Переносим старые задания
+            for(var i=0;i<oldPrefixes.length;i++){
+                var ot=JSON.parse(localStorage.getItem(oldPrefixes[i]+'TD')||'[]');
+                ot.forEach(function(t){if(tasksDone.indexOf(t)===-1)tasksDone.push(t);});
+                var oa=JSON.parse(localStorage.getItem(oldPrefixes[i]+'A')||'[]');
+                for(var j=0;j<oa.length;j++){if(oa[j]===1&&achs[j]===0)achs[j]=1;}
+            }
+            setTimeout(function(){
+                alert('🎉 ОБНОВЛЕНИЕ!\n\nБаланс: '+B.toLocaleString()+' nRAM\nУровень: '+L+'\nТапов: '+T.toLocaleString()+'\n💰 Бонус: +10 000 nRAM!');
+                checkLevelUp();U();S2();
+            },1500);
+        }
+
         var tapMultiplier=parseInt(localStorage.getItem(P+'TM')||'1');
         var upgradeCost=parseInt(localStorage.getItem(P+'UC')||'50000');
         var upgradesBought=parseInt(localStorage.getItem(P+'UB')||'0');
         var MAX_MULTIPLIER=50;
-        
-        // РЕФЕРАЛЫ
         var referralMilestones=JSON.parse(localStorage.getItem(P+'REF')||'[]');
         var referralRewards={5:1000,10:5000,15:10000,20:25000,30:50000,40:100000,50:500000};
-        
+
         var levels=[0,100,1000,10000,50000,100000,500000,1000000];
         var energyPerLevel=[0,500,1000,2000,3000,5000,7500,10000];
         var levelNames=['','🟢','🔵','🟣','🟡','🔴','💎','👑'];
-        
+
         function getMaxEnergy(){return energyPerLevel[Math.min(L,7)];}
         var prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
         var tapTimes=[],tapLock=false;
-        
+
         function checkLevelUp(){
-            var newL=1;
-            for(var i=1;i<levels.length;i++){if(T>=levels[i])newL=i+1;else break;}
-            if(newL>L){
-                L=newL;
-                var rewards=[0,0,1000,2000,3000,5000,10000,20000];
-                if(rewards[L]){B+=rewards[L];alert('🎉 Уровень '+L+'! +'+rewards[L]+' nRAM!');}
+            var nl=1;
+            for(var i=1;i<levels.length;i++){if(T>=levels[i])nl=i+1;else break;}
+            if(nl>L){
+                L=nl;
+                var rw=[0,0,1000,2000,3000,5000,10000,20000];
+                if(rw[L]){B+=rw[L];alert('🎉 Уровень '+L+'! +'+rw[L]+' nRAM!');}
                 E=energyPerLevel[L];
                 if(L>=2&&tasksDone.indexOf('lvl2')===-1){tasksDone.push('lvl2');B+=1000;}
                 if(L>=3&&tasksDone.indexOf('lvl3')===-1){tasksDone.push('lvl3');B+=2000;}
@@ -256,23 +266,22 @@
             }
         }
         checkLevelUp();
-        
+
         function restoreEnergy(){
-            var today=new Date().toDateString();
-            var last=localStorage.getItem(P+'LR')||'';
-            if(today!==last){E=getMaxEnergy();localStorage.setItem(P+'LR',today);U();S2();}
+            var td=new Date().toDateString();
+            var ls=localStorage.getItem(P+'LR')||'';
+            if(td!==ls){E=getMaxEnergy();localStorage.setItem(P+'LR',td);U();S2();}
         }
         restoreEnergy();
-        
+
         if(pendingTask){
             if(tasksDone.indexOf(pendingTask)===-1){
-                tasksDone.push(pendingTask);
-                B+=pendingTask==='group'?500:200;
+                tasksDone.push(pendingTask);B+=pendingTask==='group'?500:200;
                 localStorage.setItem(P+'pending','');pendingTask='';
                 alert('✅ Задание выполнено!');U();S2();updateTasks();
             }else{localStorage.setItem(P+'pending','');pendingTask='';}
         }
-        
+
         var sp=tg.initDataUnsafe?.start_param||'';
         if(sp.indexOf('ref_')===0){
             var refId=sp.replace('ref_','');
@@ -284,214 +293,109 @@
         }
         var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
         if(refs[uid]){B+=500;R++;delete refs[uid];localStorage.setItem('ram_refs',JSON.stringify(refs));alert('🎉 +500 nRAM! Друг присоединился!');U();S2();}
-        
-        // ========== БЛОКЧЕЙН-ФОН ==========
+
+        // ========== БЛОКЧЕЙН ФОН ==========
         var bg=document.getElementById('bgCanvas'),ctx=bg.getContext('2d');
-        function resize(){bg.width=window.innerWidth;bg.height=window.innerHeight;}
-        resize();window.addEventListener('resize',resize);
-        
-        // Блоки цепочки
+        function rs(){bg.width=window.innerWidth;bg.height=window.innerHeight;}
+        rs();window.addEventListener('resize',rs);
         var blocks=[];
-        for(var i=0;i<30;i++){
-            blocks.push({
-                x:Math.random()*bg.width,
-                y:Math.random()*bg.height,
-                w:60+Math.random()*40,
-                h:25+Math.random()*15,
-                vx:(Math.random()-0.5)*0.3,
-                vy:(Math.random()-0.5)*0.3,
-                hash:'0000'+Math.random().toString(16).substr(2,8),
-                opacity:0.3+Math.random()*0.4
-            });
-        }
-        
-        // Линии между блоками
+        for(var i=0;i<30;i++){blocks.push({x:Math.random()*bg.width,y:Math.random()*bg.height,w:60+Math.random()*40,h:25+Math.random()*15,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,hash:'0000'+Math.random().toString(16).substr(2,8),opacity:0.3+Math.random()*0.4});}
         var connections=[];
-        for(var i=0;i<blocks.length;i++){
-            for(var j=i+1;j<blocks.length;j++){
-                if(Math.random()<0.3){
-                    connections.push({a:i,b:j,opacity:0.05+Math.random()*0.1});
-                }
-            }
-        }
-        
-        var particles=[];
-        var tm=0;
-        
+        for(var i=0;i<blocks.length;i++){for(var j=i+1;j<blocks.length;j++){if(Math.random()<0.3){connections.push({a:i,b:j,opacity:0.05+Math.random()*0.1});}}}
+        var particles=[],tm=0;
         function drawBg(){
-            tm+=0.003;
-            ctx.clearRect(0,0,bg.width,bg.height);
-            
-            // Сетка
+            tm+=0.003;ctx.clearRect(0,0,bg.width,bg.height);
             ctx.strokeStyle='rgba(56,189,248,0.03)';ctx.lineWidth=0.3;
             for(var x=0;x<bg.width;x+=50){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,bg.height);ctx.stroke();}
             for(var y=0;y<bg.height;y+=50){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(bg.width,y);ctx.stroke();}
-            
-            // Соединения между блоками
-            connections.forEach(function(c){
-                var a=blocks[c.a],b=blocks[c.b];
-                var dx=a.x-b.x,dy=a.y-b.y;
-                var dist=Math.sqrt(dx*dx+dy*dy);
-                if(dist<300){
-                    ctx.strokeStyle='rgba(56,189,248,'+c.opacity+')';
-                    ctx.lineWidth=0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(a.x,a.y);
-                    ctx.lineTo(b.x,b.y);
-                    ctx.stroke();
-                }
-            });
-            
-            // Блоки
-            blocks.forEach(function(b){
-                b.x+=b.vx;b.y+=b.vy;
-                if(b.x<0||b.x>bg.width)b.vx*=-1;
-                if(b.y<0||b.y>bg.height)b.vy*=-1;
-                
-                ctx.fillStyle='rgba(15,23,42,'+(0.7+b.opacity*0.3)+')';
-                ctx.strokeStyle='rgba(56,189,248,'+b.opacity+')';
-                ctx.lineWidth=1;
-                roundRect(b.x-b.w/2,b.y-b.h/2,b.w,b.h,4);
-                ctx.fill();ctx.stroke();
-                
-                ctx.fillStyle='rgba(56,189,248,0.5)';
-                ctx.font='7px monospace';
-                ctx.fillText(b.hash,b.x-b.w/2+3,b.y+3);
-            });
-            
-            // Хеши летающие
-            if(Math.random()<0.5){
-                particles.push({
-                    x:Math.random()*bg.width,
-                    y:-10,
-                    vy:0.3+Math.random()*0.5,
-                    text:'0x'+Math.random().toString(16).substr(2,6),
-                    life:1
-                });
-            }
-            
-            particles.forEach(function(p,i){
-                p.y+=p.vy;p.life-=0.002;
-                if(p.life<=0){particles.splice(i,1);return;}
-                ctx.fillStyle='rgba(56,189,248,'+(p.life*0.4)+')';
-                ctx.font='8px monospace';
-                ctx.fillText(p.text,p.x,p.y);
-            });
-            
+            connections.forEach(function(c){var a=blocks[c.a],b=blocks[c.b];var dx=a.x-b.x,dy=a.y-b.y;var d=Math.sqrt(dx*dx+dy*dy);if(d<300){ctx.strokeStyle='rgba(56,189,248,'+c.opacity+')';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}});
+            blocks.forEach(function(b){b.x+=b.vx;b.y+=b.vy;if(b.x<0||b.x>bg.width)b.vx*=-1;if(b.y<0||b.y>bg.height)b.vy*=-1;
+                ctx.fillStyle='rgba(15,23,42,'+(0.7+b.opacity*0.3)+')';ctx.strokeStyle='rgba(56,189,248,'+b.opacity+')';ctx.lineWidth=1;
+                ctx.beginPath();var r=4;ctx.moveTo(b.x-b.w/2+r,b.y-b.h/2);ctx.lineTo(b.x+b.w/2-r,b.y-b.h/2);ctx.quadraticCurveTo(b.x+b.w/2,b.y-b.h/2,b.x+b.w/2,b.y-b.h/2+r);ctx.lineTo(b.x+b.w/2,b.y+b.h/2-r);ctx.quadraticCurveTo(b.x+b.w/2,b.y+b.h/2,b.x+b.w/2-r,b.y+b.h/2);ctx.lineTo(b.x-b.w/2+r,b.y+b.h/2);ctx.quadraticCurveTo(b.x-b.w/2,b.y+b.h/2,b.x-b.w/2,b.y+b.h/2-r);ctx.lineTo(b.x-b.w/2,b.y-b.h/2+r);ctx.quadraticCurveTo(b.x-b.w/2,b.y-b.h/2,b.x-b.w/2+r,b.y-b.h/2);ctx.closePath();ctx.fill();ctx.stroke();
+                ctx.fillStyle='rgba(56,189,248,0.5)';ctx.font='7px monospace';ctx.fillText(b.hash,b.x-b.w/2+3,b.y+3);});
+            if(Math.random()<0.5){particles.push({x:Math.random()*bg.width,y:-10,vy:0.3+Math.random()*0.5,text:'0x'+Math.random().toString(16).substr(2,6),life:1});}
+            particles.forEach(function(p,i){p.y+=p.vy;p.life-=0.002;if(p.life<=0){particles.splice(i,1);return;}ctx.fillStyle='rgba(56,189,248,'+(p.life*0.4)+')';ctx.font='8px monospace';ctx.fillText(p.text,p.x,p.y);});
             if(particles.length>50)particles.splice(0,10);
             requestAnimationFrame(drawBg);
         }
-        
-        function roundRect(x,y,w,h,r){
-            ctx.beginPath();
-            ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
-            ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-            ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-            ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-            ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
-            ctx.closePath();
-        }
         drawBg();
-        
+
         // ========== ЗАПУСК ==========
         window.addEventListener('load',function(){
             setTimeout(function(){
                 document.getElementById('loading').style.display='none';
                 document.getElementById('app').style.display='flex';
-                // Выдача наград за старые тапы
                 var tapTasks={100:'tap100',1000:'tap1000',5000:'tap5000',10000:'tap10000',50000:'tap50000',100000:'tap100000',500000:'tap500000',1000000:'tap1000000'};
                 var tapRewards={100:50,1000:200,5000:500,10000:1000,50000:5000,100000:10000,500000:25000,1000000:100000};
                 var given=false;
-                for(var count in tapTasks){
-                    if(T>=parseInt(count)&&tasksDone.indexOf(tapTasks[count])===-1){
-                        tasksDone.push(tapTasks[count]);B+=tapRewards[count];given=true;
-                    }
-                }
-                if(given){alert('✅ Награды за прошлые тапы начислены!');}
+                for(var c in tapTasks){if(T>=parseInt(c)&&tasksDone.indexOf(tapTasks[c])===-1){tasksDone.push(tapTasks[c]);B+=tapRewards[c];given=true;}}
+                if(given){setTimeout(function(){alert('✅ Награды за прошлые тапы начислены!');},500);}
                 U();drawWheel();updateTasks();updateAchs();updateRank();updateShop();
                 checkReferralRewards();checkMultiplierBonuses();
             },600);
         });
-        
+
         // ========== ТАП ==========
         function tap(e){
-            e.preventDefault();
-            if(tapLock)return;tapLock=true;
-            var n=Date.now();
-            tapTimes=tapTimes.filter(function(t){return n-t<1000;});
+            e.preventDefault();if(tapLock)return;tapLock=true;
+            var n=Date.now();tapTimes=tapTimes.filter(function(t){return n-t<1000;});
             if(tapTimes.length>15){tapLock=false;return;}
             if(E<=0){tapLock=false;return;}
-            var boostMul=(boost&&n<bEnd)?2:1;
-            var gain=1*tapMultiplier*boostMul;
+            var bm=(boost&&n<bEnd)?2:1;var gain=1*tapMultiplier*bm;
             B+=gain;E--;T++;tapTimes.push(n);
             var lv=Math.floor(T/1000)+1;
             if(lv>L){L=lv;F('⬆ УРОВЕНЬ!','#a78bfa',e);checkLevelUp();}
-            var txt='+'+gain;
-            if(tapMultiplier>1||boost)txt+=' (x'+tapMultiplier+(boost&&n<bEnd?'🔥':'')+')';
-            F(txt,'#fbbf24',e);
-            checkAchs();U();S2();updateTasks();
+            var txt='+'+gain;if(tapMultiplier>1||boost)txt+=' (x'+tapMultiplier+(boost&&n<bEnd?'🔥':'')+')';
+            F(txt,'#fbbf24',e);checkAchs();U();S2();updateTasks();
             setTimeout(function(){tapLock=false;},200);
         }
-        
+
         function F(t,c,e){
-            var el=document.createElement('div');
-            el.className='float-text';el.textContent=t;el.style.color=c;
+            var el=document.createElement('div');el.className='float-text';el.textContent=t;el.style.color=c;
             el.style.left=((e.touches?.[0]?.clientX||e.clientX||innerWidth/2)-15)+'px';
             el.style.top=((e.touches?.[0]?.clientY||e.clientY||innerHeight/2)-20)+'px';
-            document.body.appendChild(el);
-            setTimeout(function(){el.remove();},800);
+            document.body.appendChild(el);setTimeout(function(){el.remove();},800);
         }
-        
+
         function U(){
-            var maxE=getMaxEnergy();
-            document.getElementById('bal').textContent=B.toLocaleString();
-            document.getElementById('eFill').style.width=(E/maxE*100)+'%';
-            document.getElementById('eText').textContent=E+' / '+maxE;
-            var lvlText=levelNames[Math.min(L,7)]+' Ур.'+L;
-            if(boost&&Date.now()<bEnd)lvlText+=' | 🔥×2';
-            if(tapMultiplier>1)lvlText+=' | ⚡x'+tapMultiplier;
-            document.getElementById('lvl').textContent=lvlText;
+            var me=getMaxEnergy();document.getElementById('bal').textContent=B.toLocaleString();
+            document.getElementById('eFill').style.width=(E/me*100)+'%';
+            document.getElementById('eText').textContent=E+' / '+me;
+            var lt=levelNames[Math.min(L,7)]+' Ур.'+L;
+            if(boost&&Date.now()<bEnd)lt+=' | 🔥×2';
+            if(tapMultiplier>1)lt+=' | ⚡x'+tapMultiplier;
+            document.getElementById('lvl').textContent=lt;
         }
-        
+
         function S2(){
-            var d={};
-            d[P+'B']=B;d[P+'E']=E;d[P+'T']=T;d[P+'L']=L;d[P+'R']=R;d[P+'S']=S;d[P+'D']=D;
+            var d={};d[P+'B']=B;d[P+'E']=E;d[P+'T']=T;d[P+'L']=L;d[P+'R']=R;d[P+'S']=S;d[P+'D']=D;
             d[P+'X']=boost?'1':'0';d[P+'BE']=bEnd;d[P+'TD']=JSON.stringify(tasksDone);
             d[P+'A']=JSON.stringify(achs);d[P+'W']=wheelUsed;d[P+'pending']=pendingTask;
             d[P+'TM']=tapMultiplier;d[P+'UC']=upgradeCost;d[P+'UB']=upgradesBought;
             d[P+'REF']=JSON.stringify(referralMilestones);
             for(var k in d)localStorage.setItem(k,d[k].toString());
         }
-        
+
         function daily(){
-            var n=Date.now(),day=86400000;
-            if(n-D<day){alert('🎁 Уже получен!');return;}
-            S=(n-D<day*2)?S+1:1;
-            var bonus=Math.min(S*100,3000);
-            B+=bonus;D=n;
+            var n=Date.now(),day=86400000;if(n-D<day){alert('🎁 Уже получен!');return;}
+            S=(n-D<day*2)?S+1:1;var bonus=Math.min(S*100,3000);B+=bonus;D=n;
             if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200;}
             if(S>=7&&tasksDone.indexOf('day7')===-1){tasksDone.push('day7');B+=500;alert('🔥 7 дней! +500 nRAM!');}
             if(S>=30&&tasksDone.indexOf('day30')===-1){tasksDone.push('day30');B+=5000;alert('🔥 30 дней! +5 000 nRAM!');}
             if(S>=100&&tasksDone.indexOf('day100')===-1){tasksDone.push('day100');B+=50000;alert('👑 100 дней! +50 000 nRAM!');}
-            alert('🎁 +'+bonus+' nRAM! День '+S);
-            U();S2();updateTasks();
+            alert('🎁 +'+bonus+' nRAM! День '+S);U();S2();updateTasks();
         }
-        
+
         function activateBoost(){
             if(boost&&Date.now()<bEnd){alert('Уже активен!');closeM('boost');return;}
             boost=true;bEnd=Date.now()+3600000;
             if(tasksDone.indexOf('boost')===-1){tasksDone.push('boost');B+=100;}
             closeM('boost');U();S2();updateTasks();
         }
-        
+
         function buyUpgrade(){
             if(upgradesBought>=MAX_MULTIPLIER-1){alert('👑 x50! Легенда RAMCOIN!');return;}
-            if(B<upgradeCost){
-                var need=upgradeCost-B;
-                var hoursLeft=Math.ceil(need/(getMaxEnergy()*tapMultiplier*2));
-                alert('❌ Нужно: '+upgradeCost.toLocaleString()+'\nУ вас: '+B.toLocaleString()+'\nНе хватает: '+need.toLocaleString()+'\n⏰ ~'+hoursLeft+' ч тапать');
-                return;
-            }
+            if(B<upgradeCost){var need=upgradeCost-B;var hl=Math.ceil(need/(getMaxEnergy()*tapMultiplier*2));alert('❌ Нужно: '+upgradeCost.toLocaleString()+'\nУ вас: '+B.toLocaleString()+'\nНе хватает: '+need.toLocaleString()+'\n⏰ ~'+hl+' ч тапать');return;}
             B-=upgradeCost;upgradesBought++;tapMultiplier=upgradesBought+1;
             if(upgradesBought<5)upgradeCost=Math.floor(upgradeCost*2.5);
             else if(upgradesBought<10)upgradeCost=Math.floor(upgradeCost*3);
@@ -507,21 +411,14 @@
             alert('✅ x'+tapMultiplier+'!\n💰 Далее: '+upgradeCost.toLocaleString()+'\n📊 '+upgradesBought+'/'+(MAX_MULTIPLIER-1));
             U();S2();updateShop();
         }
-        
+
         function checkMultiplierBonuses(){
             var bonuses={5:1000,10:10000,15:50000,20:100000,25:200000,30:300000,35:400000,40:500000,45:750000,50:1000000};
-            for(var lvl in bonuses){
-                if(tapMultiplier>=lvl&&!localStorage.getItem(P+'MB_'+lvl)){
-                    B+=bonuses[lvl];localStorage.setItem(P+'MB_'+lvl,'1');
-                    alert('🎉 x'+lvl+'! Бонус: +'+bonuses[lvl].toLocaleString()+' nRAM!');
-                    U();S2();
-                }
-            }
+            for(var lvl in bonuses){if(tapMultiplier>=lvl&&!localStorage.getItem(P+'MB_'+lvl)){B+=bonuses[lvl];localStorage.setItem(P+'MB_'+lvl,'1');alert('🎉 x'+lvl+'! Бонус: +'+bonuses[lvl].toLocaleString()+' nRAM!');U();S2();}}
         }
-        
+
         function updateShop(){
-            var shop=document.getElementById('shop-items');
-            if(!shop)return;
+            var shop=document.getElementById('shop-items');if(!shop)return;
             var progress=(upgradesBought/(MAX_MULTIPLIER-1))*100;
             var h='<div style="margin-bottom:8px;padding:12px;background:rgba(56,189,248,0.1);border-radius:10px;text-align:center;">';
             h+='<div style="font-size:24px;font-weight:900;color:#38bdf8;">⚡ x'+tapMultiplier+'</div>';
@@ -530,169 +427,116 @@
             h+='<div style="background:linear-gradient(90deg,#38bdf8,#a78bfa);height:100%;width:'+progress+'%;"></div></div>';
             h+='<div style="color:#94a3b8;font-size:9px;margin-top:4px;">'+upgradesBought+'/'+(MAX_MULTIPLIER-1)+'</div></div>';
             h+='<div class="shop-item" onclick="activateBoost()"><strong>🔥 Бустер ×2 (1ч)</strong><br><span class="price-tag">Бесплатно</span></div>';
-            if(upgradesBought<MAX_MULTIPLIER-1){
-                h+='<div class="shop-item upgrade-highlight" onclick="buyUpgrade()"><strong>🔧 Улучшить до x'+(tapMultiplier+1)+'</strong><br><span class="price-tag">💰 '+upgradeCost.toLocaleString()+'</span><br><small style="color:#10b981;">Навсегда!</small></div>';
-            }else{
-                h+='<div class="shop-item" style="background:rgba(251,191,36,0.1);"><strong>👑 x50</strong><br><span class="price-tag done">🏆 Максимум!</span></div>';
-            }
-            h+='<div style="margin-top:8px;padding:8px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:9px;color:#94a3b8;">';
-            h+='🎯 Бонусы: x5:+1K x10:+10K x15:+50K x20:+100K<br>x25:+200K x30:+300K x35:+400K x40:+500K<br>x45:+750K <span style="color:#fbbf24;">x50:+1M 👑</span></div>';
+            if(upgradesBought<MAX_MULTIPLIER-1){h+='<div class="shop-item upgrade-highlight" onclick="buyUpgrade()"><strong>🔧 Улучшить до x'+(tapMultiplier+1)+'</strong><br><span class="price-tag">💰 '+upgradeCost.toLocaleString()+'</span><br><small style="color:#10b981;">Навсегда!</small></div>';}
+            else{h+='<div class="shop-item" style="background:rgba(251,191,36,0.1);"><strong>👑 x50</strong><br><span class="price-tag done">🏆 Максимум!</span></div>';}
+            h+='<div style="margin-top:8px;padding:8px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:9px;color:#94a3b8;">🎯 Бонусы: x5:+1K x10:+10K x15:+50K x20:+100K<br>x25:+200K x30:+300K x35:+400K x40:+500K<br>x45:+750K <span style="color:#fbbf24;">x50:+1M 👑</span></div>';
             shop.innerHTML=h;
         }
-        
+
         function checkReferralRewards(){
-            var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
-            var totalRefs=Object.keys(refs).length+R;
-            for(var count in referralRewards){
-                count=parseInt(count);
-                if(totalRefs>=count&&referralMilestones.indexOf(count)===-1){
-                    B+=referralRewards[count];referralMilestones.push(count);
-                    localStorage.setItem(P+'REF',JSON.stringify(referralMilestones));
-                    alert('🎉 '+count+' друзей! +'+referralRewards[count].toLocaleString()+' nRAM!');
-                    U();S2();
-                }
-            }
-            if(totalRefs>=5&&tasksDone.indexOf('invite5')===-1){tasksDone.push('invite5');B+=2500;}
-            if(totalRefs>=10&&tasksDone.indexOf('invite10')===-1){tasksDone.push('invite10');B+=10000;}
-            if(totalRefs>=5&&achs[3]===0)achs[3]=1;
-            if(totalRefs>=10&&achs[4]===0)achs[4]=1;
-            if(totalRefs>=25&&achs[5]===0)achs[5]=1;
-            if(totalRefs>=50&&achs[6]===0)achs[6]=1;
+            var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');var tr=Object.keys(refs).length+R;
+            for(var c in referralRewards){c=parseInt(c);if(tr>=c&&referralMilestones.indexOf(c)===-1){B+=referralRewards[c];referralMilestones.push(c);localStorage.setItem(P+'REF',JSON.stringify(referralMilestones));alert('🎉 '+c+' друзей! +'+referralRewards[c].toLocaleString()+' nRAM!');U();S2();}}
+            if(tr>=5&&tasksDone.indexOf('invite5')===-1){tasksDone.push('invite5');B+=2500;}
+            if(tr>=10&&tasksDone.indexOf('invite10')===-1){tasksDone.push('invite10');B+=10000;}
+            if(tr>=5&&achs[3]===0)achs[3]=1;if(tr>=10&&achs[4]===0)achs[4]=1;
+            if(tr>=25&&achs[5]===0)achs[5]=1;if(tr>=50&&achs[6]===0)achs[6]=1;
             updateAchs();S2();
         }
-        
+
         function invite(){
-            var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
-            var totalRefs=Object.keys(refs).length+R;
-            var next=null;
-            for(var c in referralRewards){c=parseInt(c);if(totalRefs<c){next=c;break;}}
-            var msg='📤 Друзей: '+totalRefs+'\n\n🎁 Награды:\n5:+1K 10:+5K 15:+10K 20:+25K\n30:+50K 40:+100K 50:+500K\n\n';
-            if(next)msg+='🎯 До '+next+': '+(next-totalRefs);
-            alert(msg);
-            tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent('https://t.me/ramcoin_tap_bot?startapp=ref_'+uid)+'&text=⚡%20RAMCOIN%20Tap!');
+            var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');var tr=Object.keys(refs).length+R;
+            var next=null;for(var c in referralRewards){c=parseInt(c);if(tr<c){next=c;break;}}
+            var msg='📤 Друзей: '+tr+'\n\n🎁 Награды:\n5:+1K 10:+5K 15:+10K 20:+25K\n30:+50K 40:+100K 50:+500K\n\n';
+            if(next)msg+='🎯 До '+next+': '+(next-tr);
+            alert(msg);tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent('https://t.me/ramcoin_tap_bot?startapp=ref_'+uid)+'&text=⚡%20RAMCOIN%20Tap!');
         }
-        
+
         function doTask(t){
             if(t==='channel'){tg.openTelegramLink('https://t.me/ramcoin_pow');pendingTask='channel';localStorage.setItem(P+'pending','channel');S2();alert('📢 Подпишись и возвращайся!');}
             else if(t==='group'){tg.openTelegramLink('https://t.me/ramcoin_chat');pendingTask='group';localStorage.setItem(P+'pending','group');S2();alert('👥 Вступи и возвращайся!');}
             else invite();
         }
-        
+
         function updateTasks(){
             var ids=['tf1','tf2','tf3','tf4','tf5','tf6','tf7','tf8'];
             var counts=[100,1000,5000,10000,50000,100000,500000,1000000];
-            var taskNames=['tap100','tap1000','tap5000','tap10000','tap50000','tap100000','tap500000','tap1000000'];
-            var rewards=[50,200,500,1000,5000,10000,25000,100000];
-            
-            for(var i=0;i<ids.length;i++){
-                var el=document.getElementById(ids[i]);
-                if(el)el.style.width=Math.min(100,T/counts[i]*100)+'%';
-                if(T>=counts[i]&&tasksDone.indexOf(taskNames[i])===-1){
-                    tasksDone.push(taskNames[i]);B+=rewards[i];
-                    if(counts[i]>=50000)alert('✅ +'+rewards[i].toLocaleString()+' за '+counts[i].toLocaleString()+' тапов!');
-                }
-            }
-            
+            var tns=['tap100','tap1000','tap5000','tap10000','tap50000','tap100000','tap500000','tap1000000'];
+            var rws=[50,200,500,1000,5000,10000,25000,100000];
+            for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.style.width=Math.min(100,T/counts[i]*100)+'%';if(T>=counts[i]&&tasksDone.indexOf(tns[i])===-1){tasksDone.push(tns[i]);B+=rws[i];if(counts[i]>=50000)alert('✅ +'+rws[i].toLocaleString()+' за '+counts[i].toLocaleString()+' тапов!');}}
             document.getElementById('tdp').textContent=Math.min(S,3);
             document.getElementById('tdp7').textContent=Math.min(S,7);
             document.getElementById('tdp30').textContent=Math.min(S,30);
             document.getElementById('tdp100').textContent=Math.min(S,100);
-            
             if(tasksDone.indexOf('channel')!==-1)document.getElementById('tag-channel').textContent='✅';
             if(tasksDone.indexOf('group')!==-1)document.getElementById('tag-group').textContent='✅';
             U();S2();
         }
-        
+
         function checkAchs(){
-            if(T>=100&&achs[0]===0)achs[0]=1;
-            if(T>=1000&&achs[1]===0)achs[1]=1;
-            if(T>=10000&&achs[2]===0)achs[2]=1;
-            if(T>=100000&&achs[7]===0)achs[7]=1;
+            if(T>=100&&achs[0]===0)achs[0]=1;if(T>=1000&&achs[1]===0)achs[1]=1;
+            if(T>=10000&&achs[2]===0)achs[2]=1;if(T>=100000&&achs[7]===0)achs[7]=1;
             if(T>=1000000&&achs[8]===0)achs[8]=1;
-            var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
-            var tr=Object.keys(refs).length+R;
-            if(tr>=5&&achs[3]===0)achs[3]=1;
-            if(tr>=10&&achs[4]===0)achs[4]=1;
-            if(tr>=25&&achs[5]===0)achs[5]=1;
-            if(tr>=50&&achs[6]===0)achs[6]=1;
-            if(B>=1000000&&achs[9]===0)achs[9]=1;
-            if(B>=10000000&&achs[10]===0)achs[10]=1;
+            var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');var tr=Object.keys(refs).length+R;
+            if(tr>=5&&achs[3]===0)achs[3]=1;if(tr>=10&&achs[4]===0)achs[4]=1;
+            if(tr>=25&&achs[5]===0)achs[5]=1;if(tr>=50&&achs[6]===0)achs[6]=1;
+            if(B>=1000000&&achs[9]===0)achs[9]=1;if(B>=10000000&&achs[10]===0)achs[10]=1;
             if(B>=100000000&&achs[11]===0)achs[11]=1;
-            if(tapMultiplier>=10&&achs[12]===0)achs[12]=1;
-            if(tapMultiplier>=25&&achs[13]===0)achs[13]=1;
+            if(tapMultiplier>=10&&achs[12]===0)achs[12]=1;if(tapMultiplier>=25&&achs[13]===0)achs[13]=1;
             if(tapMultiplier>=50&&achs[14]===0)achs[14]=1;
             updateAchs();S2();
         }
-        
+
         function updateAchs(){
             var names=['🥉 Новичок (100)','🥈 Тапер (1K)','🥇 Мастер (10K)','👥 Друг (5)','👥 Популярный (10)','👥 Звезда (25)','👥 Легенда (50)','💪 Железный палец (100K)','💪 Стальной палец (1M)','💰 Миллионер (1M)','💰 Магнат (10M)','💰 Олигарх (100M)','⚡ Улучшатель (x10)','⚡ Прокачанный (x25)','👑 Бог тапа (x50)'];
-            var h='';
-            for(var i=0;i<15;i++){h+='<div class="achievement '+(achs[i]===1?'done':'locked')+'"><span>'+names[i]+'</span><span>'+(achs[i]===1?'✅':'🔒')+'</span></div>';}
+            var h='';for(var i=0;i<15;i++){h+='<div class="achievement '+(achs[i]===1?'done':'locked')+'"><span>'+names[i]+'</span><span>'+(achs[i]===1?'✅':'🔒')+'</span></div>';}
             document.getElementById('achList').innerHTML=h;
         }
-        
+
         function updateRank(){
             var h='<div class="rank-item" style="background:rgba(251,191,36,0.1);"><span class="rank-pos">🥇</span><span class="rank-name">⭐ Вы</span><span class="rank-score">'+B.toLocaleString()+' nRAM</span></div>';
             h+='<div class="node-stat">🖥️ RAMCOIN NODE<br><span>Блоков: 18 617</span> | <span>Сложность: 40 KRam/s</span><br><span>Supply: 183 830 RAM</span> | <span>Майнеров: 5</span></div>';
             h+='<p style="color:#94a3b8;text-align:center;margin-top:8px;font-size:10px;">👥 Пригласи друга — займи первое место!</p>';
             document.getElementById('rankList').innerHTML=h;
         }
-        
+
         function drawWheel(){
             var c=document.getElementById('wheelCanvas'),ctx=c.getContext('2d'),cx=130,cy=130,r=120,n=prizes.length;
             var colors=['#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b'];
             ctx.clearRect(0,0,260,260);
-            for(var i=0;i<n;i++){
-                var a=(i*2*Math.PI)/n-Math.PI/2;
-                ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+(2*Math.PI)/n);
-                ctx.fillStyle=colors[i];ctx.fill();
-                ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.stroke();
-                ctx.save();ctx.translate(cx+Math.cos(a+Math.PI/n)*r*0.65,cy+Math.sin(a+Math.PI/n)*r*0.65);
-                ctx.rotate(a+Math.PI/n);ctx.fillStyle='#000';ctx.font='bold 11px sans-serif';ctx.fillText(prizes[i]+'n',-14,4);ctx.restore();
-            }
-            ctx.beginPath();ctx.arc(cx,cy,14,0,2*Math.PI);ctx.fillStyle='#0f172a';ctx.fill();
-            ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.moveTo(cx,cy-11);ctx.lineTo(cx-5,cy-20);ctx.lineTo(cx+5,cy-20);ctx.fill();
+            for(var i=0;i<n;i++){var a=(i*2*Math.PI)/n-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+(2*Math.PI)/n);ctx.fillStyle=colors[i];ctx.fill();ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.stroke();ctx.save();ctx.translate(cx+Math.cos(a+Math.PI/n)*r*0.65,cy+Math.sin(a+Math.PI/n)*r*0.65);ctx.rotate(a+Math.PI/n);ctx.fillStyle='#000';ctx.font='bold 11px sans-serif';ctx.fillText(prizes[i]+'n',-14,4);ctx.restore();}
+            ctx.beginPath();ctx.arc(cx,cy,14,0,2*Math.PI);ctx.fillStyle='#0f172a';ctx.fill();ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.moveTo(cx,cy-11);ctx.lineTo(cx-5,cy-20);ctx.lineTo(cx+5,cy-20);ctx.fill();
         }
-        
+
         function spinWheel(){
-            var today=new Date().toDateString();
-            if(wheelUsed===today){alert('🎰 Уже крутили!');return;}
-            wheelUsed=today;
-            var btn=document.getElementById('spinBtn');btn.disabled=true;
+            var today=new Date().toDateString();if(wheelUsed===today){alert('🎰 Уже крутили!');return;}
+            wheelUsed=today;var btn=document.getElementById('spinBtn');btn.disabled=true;
             var idx=Math.floor(Math.random()*prizes.length),deg=360*5+idx*(360/prizes.length),c=document.getElementById('wheelCanvas');
             c.style.transition='transform 3s ease-out';c.style.transform='rotate('+deg+'deg)';
-            setTimeout(function(){
-                B+=prizes[idx];document.getElementById('wheelResult').textContent='🎉 +'+prizes[idx]+' nRAM!';
-                U();S2();c.style.transition='none';c.style.transform='rotate('+(deg%360)+'deg)';btn.disabled=false;
-            },3100);
+            setTimeout(function(){B+=prizes[idx];document.getElementById('wheelResult').textContent='🎉 +'+prizes[idx]+' nRAM!';U();S2();c.style.transition='none';c.style.transform='rotate('+(deg%360)+'deg)';btn.disabled=false;},3100);
         }
-        
+
         function submitWithdraw(){
             var addr=document.getElementById('wAddr').value.trim();
             if(!addr.startsWith('RAM_')){alert('❌ Неверный адрес!');return;}
             if(addr.length<20){alert('❌ Неверный адрес!');return;}
             if(B<10000000){alert('❌ Минимум: 10 млн nRAM');return;}
-            var ramAmount=(B/1000000000).toFixed(6);
-            var requests=JSON.parse(localStorage.getItem('rc_requests')||'[]');
-            requests.push({tg:uid,address:addr,amount:B,ram:ramAmount,date:new Date().toISOString()});
-            localStorage.setItem('rc_requests',JSON.stringify(requests));
-            B=0;U();S2();
+            var ra=(B/1000000000).toFixed(6);
+            var rq=JSON.parse(localStorage.getItem('rc_requests')||'[]');
+            rq.push({tg:uid,address:addr,amount:B,ram:ra,date:new Date().toISOString()});
+            localStorage.setItem('rc_requests',JSON.stringify(rq));B=0;U();S2();
             document.getElementById('withdrawForm').style.display='none';
-            document.getElementById('withdrawDone').style.display='block';
-            alert('✅ Заявка отправлена!');
+            document.getElementById('withdrawDone').style.display='block';alert('✅ Заявка отправлена!');
         }
-        
+
         function openM(t){
             document.getElementById('m-'+t).classList.add('active');
-            if(t==='rank')updateRank();
-            if(t==='tasks')updateTasks();
-            if(t==='achs')updateAchs();
+            if(t==='rank')updateRank();if(t==='tasks')updateTasks();if(t==='achs')updateAchs();
             if(t==='wheel'){drawWheel();document.getElementById('wheelResult').textContent='';}
             if(t==='shop')updateShop();
             if(t==='out'){document.getElementById('withdrawForm').style.display='block';document.getElementById('withdrawDone').style.display='none';document.getElementById('wAddr').value='';}
         }
         function closeM(t){document.getElementById('m-'+t).classList.remove('active');}
-        
+
         setInterval(function(){restoreEnergy();if(boost&&Date.now()>bEnd){boost=false;U();S2();}},60000);
         setInterval(checkReferralRewards,300000);
     </script>
