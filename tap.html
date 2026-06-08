@@ -21,14 +21,14 @@
         .icon-btn { width:30px;height:30px;border-radius:9px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);cursor:pointer;font-size:13px;color:#fff;display:flex;align-items:center;justify-content:center; }
         .icon-btn:active { background:rgba(56,189,248,0.2); }
         .balance-area { text-align:center;margin:1px 0; }
-        .balance { font-size:40px;font-weight:900;color:#fbbf24;line-height:1; }
+        .balance { font-size:40px;font-weight:900;color:#fbbf24;line-height:1;text-shadow:0 0 20px rgba(251,191,36,0.3); }
         .balance-sub { font-size:9px;color:#64748b;letter-spacing:1px; }
         .level-badge { display:inline-block;background:rgba(168,120,250,0.12);border:1px solid rgba(168,120,250,0.25);padding:2px 9px;border-radius:20px;font-size:9px;font-weight:700;color:#a78bfa;margin:1px 0; }
         .coin-area { flex:1;display:flex;align-items:center;justify-content:center; }
-        .coin { width:160px;height:160px;border-radius:50%;cursor:pointer;transition:transform 0.06s;box-shadow:0 0 50px rgba(56,189,248,0.25),0 0 100px rgba(56,189,248,0.1);background:radial-gradient(circle at 40% 35%,rgba(56,189,248,0.5),rgba(56,189,248,0.12) 70%,rgba(56,189,248,0.02));border:2.5px solid rgba(56,189,248,0.35);display:flex;align-items:center;justify-content:center;position:relative; }
-        .coin img { width:105px;height:105px;border-radius:50%;object-fit:contain;z-index:2;pointer-events:none;-webkit-touch-callout:none;user-select:none; }
-        .coin-fallback { width:105px;height:105px;border-radius:50%;z-index:2;pointer-events:none;display:none; }
-        .coin::after { content:'';position:absolute;top:-6px;left:-6px;width:calc(100% + 12px);height:calc(100% + 12px);border-radius:50%;border:1.5px solid rgba(56,189,248,0.1);animation:ringRotate 10s linear infinite; }
+        .coin { width:160px;height:160px;border-radius:50%;cursor:pointer;transition:transform 0.06s;box-shadow:0 0 50px rgba(56,189,248,0.35),0 0 100px rgba(56,189,248,0.15);background:radial-gradient(circle at 40% 35%,rgba(56,189,248,0.6),rgba(56,189,248,0.15) 70%,rgba(56,189,248,0.03));border:2.5px solid rgba(56,189,248,0.5);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden; }
+        .coin img { width:105px;height:105px;border-radius:50%;object-fit:contain;z-index:2;pointer-events:none;-webkit-touch-callout:none;user-select:none;position:relative; }
+        .coin-fallback { width:105px;height:105px;border-radius:50%;z-index:2;pointer-events:none;display:none;position:relative; }
+        .coin::after { content:'';position:absolute;top:-6px;left:-6px;width:calc(100% + 12px);height:calc(100% + 12px);border-radius:50%;border:1.5px solid rgba(56,189,248,0.2);animation:ringRotate 10s linear infinite; }
         @keyframes ringRotate { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
         .coin:active { transform:scale(0.9); }
         .float-text { position:fixed;font-size:22px;font-weight:900;pointer-events:none;z-index:10;animation:floatUp 0.8s ease-out forwards; }
@@ -37,15 +37,15 @@
         .energy-bar { width:60%;height:3.5px;background:rgba(255,255,255,0.06);border-radius:2px;margin:4px auto;overflow:hidden; }
         .energy-fill { height:100%;background:linear-gradient(90deg,#38bdf8,#a78bfa);border-radius:2px;transition:width 0.3s; }
         .energy-text { font-size:9px;color:#64748b; }
-        .bottom-panel { width:100%;background:rgba(15,23,42,0.75);backdrop-filter:blur(25px);border-radius:16px;padding:8px;border:1px solid rgba(255,255,255,0.05); }
+        .bottom-panel { width:100%;background:rgba(15,23,42,0.85);backdrop-filter:blur(25px);border-radius:16px;padding:8px;border:1px solid rgba(255,255,255,0.08); }
         .bottom-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:4px; }
-        .action-btn { background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:8px 2px;cursor:pointer;text-align:center;color:#fff; }
-        .action-btn:active { background:rgba(56,189,248,0.1);transform:scale(0.95); }
+        .action-btn { background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:8px 2px;cursor:pointer;text-align:center;color:#fff;transition:all 0.2s; }
+        .action-btn:active { background:rgba(56,189,248,0.15);transform:scale(0.95); }
         .action-btn .icon { font-size:17px;display:block;margin-bottom:1px; }
         .action-btn .label { font-size:8px;font-weight:600;color:#64748b; }
-        .modal { position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s; }
+        .modal { position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s; }
         .modal.active { opacity:1;pointer-events:all; }
-        .modal-content { background:#0f172a;border-radius:18px;padding:18px;width:88%;max-width:380px;border:1px solid rgba(255,255,255,0.08);max-height:80vh;overflow-y:auto; }
+        .modal-content { background:#0f172a;border-radius:18px;padding:18px;width:88%;max-width:380px;border:1px solid rgba(255,255,255,0.1);max-height:80vh;overflow-y:auto; }
         .modal h2 { font-size:15px;margin-bottom:6px; }
         .modal .close { background:rgba(255,255,255,0.06);border:none;color:white;padding:9px;border-radius:10px;margin-top:6px;cursor:pointer;width:100%;font-weight:700;font-size:12px; }
         .wheel-container { text-align:center; } canvas#wheelCanvas { max-width:100%; }
@@ -69,13 +69,13 @@
         @keyframes glowPulse { 0%,100%{box-shadow:0 0 5px rgba(251,191,36,0.2);} 50%{box-shadow:0 0 15px rgba(251,191,36,0.5);} }
         input { width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:#020617;color:#fff;margin:8px 0;font-size:12px; }
         .section-title { color:#38bdf8;font-size:10px;font-weight:700;margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px; }
-        .welcome-bonus { background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(245,158,11,0.1));border:1px solid rgba(251,191,36,0.3);border-radius:12px;padding:12px;margin:8px 0;text-align:center; }
-        .welcome-bonus strong { color:#fbbf24;font-size:14px; }
+        .node-stat { background:rgba(56,189,248,0.05);border:1px solid rgba(56,189,248,0.1);border-radius:8px;padding:6px 10px;margin:4px 0;font-size:9px;color:#94a3b8;text-align:center; }
+        .node-stat span { color:#38bdf8;font-weight:700; }
     </style>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
-    <div id="loading"><div class="loader-icon">⚡</div><div class="loader-title">RAMCOIN</div><div class="loader-sub">Загрузка обновлений...</div></div>
+    <div id="loading"><div class="loader-icon">⚡</div><div class="loader-title">RAMCOIN</div><div class="loader-sub">Подключение к сети...</div></div>
 
     <div class="app" id="app">
         <div class="header">
@@ -92,25 +92,16 @@
         <div class="level-badge" id="lvl">🟢 Уровень 1</div>
         <div class="coin-area">
             <div class="coin" id="coin" ontouchstart="tap(event)" onmousedown="tap(event)">
-                <img id="coinImg" src="https://ramcoinnode-debug.github.io/ramcoin_logo.png" alt="RAMCOIN" draggable="false" oncontextmenu="return false;" style="pointer-events:none;-webkit-touch-callout:none;user-select:none;">
+                <img id="coinImg" src="https://ramcoinnode-debug.github.io/ramcoin_logo.png" alt="RAMCOIN" draggable="false" oncontextmenu="return false;" style="pointer-events:none;-webkit-touch-callout:none;user-select:none;" crossorigin="anonymous">
                 <svg id="coinFallback" class="coin-fallback" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#38bdf8;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#a78bfa;stop-opacity:1" />
-                        </linearGradient>
-                        <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
-                        </linearGradient>
+                        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient>
+                        <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient>
                     </defs>
-                    <circle cx="100" cy="100" r="95" fill="url(#grad1)" opacity="0.9"/>
-                    <circle cx="100" cy="100" r="88" fill="#020617"/>
-                    <circle cx="100" cy="100" r="88" fill="url(#grad1)" opacity="0.15"/>
-                    <text x="100" y="130" text-anchor="middle" font-size="90" font-weight="900" font-family="Arial, sans-serif" fill="url(#grad2)">R</text>
-                    <polygon points="75,95 100,95 90,65 125,105 100,105 110,135" fill="#fbbf24" opacity="0.9"/>
-                    <circle cx="100" cy="100" r="95" fill="none" stroke="url(#grad1)" stroke-width="3" opacity="0.6"/>
-                    <circle cx="100" cy="100" r="88" fill="none" stroke="#38bdf8" stroke-width="1" opacity="0.3"/>
+                    <circle cx="100" cy="100" r="95" fill="url(#g1)"/><circle cx="100" cy="100" r="85" fill="#020617"/><circle cx="100" cy="100" r="85" fill="url(#g1)" opacity="0.15"/>
+                    <text x="100" y="135" text-anchor="middle" font-size="100" font-weight="900" font-family="Arial" fill="url(#g2)">R</text>
+                    <polygon points="72,95 100,92 88,60 128,105 100,108 112,140" fill="#fbbf24"/>
+                    <circle cx="100" cy="100" r="95" fill="none" stroke="url(#g1)" stroke-width="3"/>
                 </svg>
             </div>
         </div>
@@ -130,223 +121,133 @@
             </div>
         </div>
     </div>
-    
-    <!-- МОДАЛЬНЫЕ ОКНА -->
+
     <div class="modal" id="m-wheel"><div class="modal-content"><h2>🎰 Колесо фортуны</h2><p style="color:#94a3b8;font-size:11px;text-align:center;">Крути раз в день!</p><div class="wheel-container"><canvas id="wheelCanvas" width="260" height="260"></canvas></div><div id="wheelResult" style="text-align:center;font-size:16px;font-weight:900;margin:6px 0;"></div><button class="wheel-btn" id="spinBtn" onclick="spinWheel()">🎰 КРУТИТЬ</button><p style="font-size:9px;color:#94a3b8;text-align:center;">Призы: 10-5000 nRAM</p><button class="close" onclick="closeM('wheel')">Закрыть</button></div></div>
-    
     <div class="modal" id="m-rank"><div class="modal-content"><h2>🏆 Рейтинг игроков</h2><div id="rankList"></div><button class="close" onclick="closeM('rank')">Закрыть</button></div></div>
-    
     <div class="modal" id="m-tasks"><div class="modal-content"><h2>📋 Задания (20)</h2>
         <div class="section-title">🖐️ Тапы</div>
-        <div class="shop-item" id="task-tap100"><strong>100 тапов</strong> <span class="price-tag">+50</span><div class="task-bar"><div class="task-fill" id="tf1" style="width:0%"></div></div></div>
-        <div class="shop-item" id="task-tap1000"><strong>1 000 тапов</strong> <span class="price-tag">+200</span><div class="task-bar"><div class="task-fill" id="tf2" style="width:0%"></div></div></div>
-        <div class="shop-item" id="task-tap5000"><strong>5 000 тапов</strong> <span class="price-tag">+500</span><div class="task-bar"><div class="task-fill" id="tf3" style="width:0%"></div></div></div>
-        <div class="shop-item" id="task-tap10000"><strong>10 000 тапов</strong> <span class="price-tag">+1 000</span><div class="task-bar"><div class="task-fill" id="tf4" style="width:0%"></div></div></div>
-        <div class="shop-item" id="task-tap50000"><strong>50 000 тапов</strong> <span class="price-tag">+5 000</span><div class="task-bar"><div class="task-fill" id="tf5" style="width:0%"></div></div></div>
-        <div class="shop-item" id="task-tap100000"><strong>100 000 тапов</strong> <span class="price-tag">+10 000</span><div class="task-bar"><div class="task-fill" id="tf6" style="width:0%"></div></div></div>
-        <div class="shop-item" id="task-tap500000"><strong>500 000 тапов</strong> <span class="price-tag">+25 000</span><div class="task-bar"><div class="task-fill" id="tf7" style="width:0%"></div></div></div>
-        <div class="shop-item" id="task-tap1000000"><strong>1 000 000 тапов</strong> <span class="price-tag">+100 000</span><div class="task-bar"><div class="task-fill" id="tf8" style="width:0%"></div></div></div>
-        
+        <div class="shop-item"><strong>100 тапов</strong> <span class="price-tag">+50</span><div class="task-bar"><div class="task-fill" id="tf1" style="width:0%"></div></div></div>
+        <div class="shop-item"><strong>1 000 тапов</strong> <span class="price-tag">+200</span><div class="task-bar"><div class="task-fill" id="tf2" style="width:0%"></div></div></div>
+        <div class="shop-item"><strong>5 000 тапов</strong> <span class="price-tag">+500</span><div class="task-bar"><div class="task-fill" id="tf3" style="width:0%"></div></div></div>
+        <div class="shop-item"><strong>10 000 тапов</strong> <span class="price-tag">+1 000</span><div class="task-bar"><div class="task-fill" id="tf4" style="width:0%"></div></div></div>
+        <div class="shop-item"><strong>50 000 тапов</strong> <span class="price-tag">+5 000</span><div class="task-bar"><div class="task-fill" id="tf5" style="width:0%"></div></div></div>
+        <div class="shop-item"><strong>100 000 тапов</strong> <span class="price-tag">+10 000</span><div class="task-bar"><div class="task-fill" id="tf6" style="width:0%"></div></div></div>
+        <div class="shop-item"><strong>500 000 тапов</strong> <span class="price-tag">+25 000</span><div class="task-bar"><div class="task-fill" id="tf7" style="width:0%"></div></div></div>
+        <div class="shop-item"><strong>1 000 000 тапов</strong> <span class="price-tag">+100 000</span><div class="task-bar"><div class="task-fill" id="tf8" style="width:0%"></div></div></div>
         <div class="section-title">📢 Соцсети</div>
-        <div class="shop-item" id="task-channel" onclick="doTask('channel')"><strong>Подписаться на канал</strong> <span class="price-tag" id="tag-channel">+200</span><br><small style="color:#94a3b8;">@ramcoin_pow</small></div>
-        <div class="shop-item" id="task-group" onclick="doTask('group')"><strong>Вступить в группу</strong> <span class="price-tag" id="tag-group">+500</span><br><small style="color:#94a3b8;">@ramcoin_chat</small></div>
-        <div class="shop-item" id="task-invite" onclick="invite()"><strong>Пригласить 1 друга</strong> <span class="price-tag">+500</span></div>
-        <div class="shop-item" id="task-invite5"><strong>Пригласить 5 друзей</strong> <span class="price-tag">+2 500</span></div>
-        <div class="shop-item" id="task-invite10"><strong>Пригласить 10 друзей</strong> <span class="price-tag">+10 000</span></div>
-        
+        <div class="shop-item" onclick="doTask('channel')"><strong>Подписаться на канал</strong> <span class="price-tag" id="tag-channel">+200</span><br><small style="color:#94a3b8;">@ramcoin_pow</small></div>
+        <div class="shop-item" onclick="doTask('group')"><strong>Вступить в группу</strong> <span class="price-tag" id="tag-group">+500</span><br><small style="color:#94a3b8;">@ramcoin_chat</small></div>
+        <div class="shop-item" onclick="invite()"><strong>Пригласить 1 друга</strong> <span class="price-tag">+500</span></div>
+        <div class="shop-item"><strong>Пригласить 5 друзей</strong> <span class="price-tag">+2 500</span></div>
+        <div class="shop-item"><strong>Пригласить 10 друзей</strong> <span class="price-tag">+10 000</span></div>
         <div class="section-title">📅 Ежедневные</div>
-        <div class="shop-item" id="task-day3"><strong>3 дня подряд</strong> <span class="price-tag">+200</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp">0</span>/3</small></div>
-        <div class="shop-item" id="task-day7"><strong>7 дней подряд</strong> <span class="price-tag">+500</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp7">0</span>/7</small></div>
-        <div class="shop-item" id="task-day30"><strong>30 дней подряд</strong> <span class="price-tag">+5 000</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp30">0</span>/30</small></div>
-        <div class="shop-item" id="task-day100"><strong>100 дней подряд</strong> <span class="price-tag">+50 000</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp100">0</span>/100</small></div>
-        
+        <div class="shop-item"><strong>3 дня подряд</strong> <span class="price-tag">+200</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp">0</span>/3</small></div>
+        <div class="shop-item"><strong>7 дней подряд</strong> <span class="price-tag">+500</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp7">0</span>/7</small></div>
+        <div class="shop-item"><strong>30 дней подряд</strong> <span class="price-tag">+5 000</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp30">0</span>/30</small></div>
+        <div class="shop-item"><strong>100 дней подряд</strong> <span class="price-tag">+50 000</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp100">0</span>/100</small></div>
         <div class="section-title">🆙 Уровни</div>
-        <div class="shop-item" id="task-lvl2"><strong>Достичь уровня 2</strong> <span class="price-tag">+1 000</span></div>
-        <div class="shop-item" id="task-lvl3"><strong>Достичь уровня 3</strong> <span class="price-tag">+2 000</span></div>
-        <div class="shop-item" id="task-lvl5"><strong>Достичь уровня 5</strong> <span class="price-tag">+10 000</span></div>
+        <div class="shop-item"><strong>Достичь уровня 2</strong> <span class="price-tag">+1 000</span></div>
+        <div class="shop-item"><strong>Достичь уровня 3</strong> <span class="price-tag">+2 000</span></div>
+        <div class="shop-item"><strong>Достичь уровня 5</strong> <span class="price-tag">+10 000</span></div>
         <button class="close" onclick="closeM('tasks')">Закрыть</button>
     </div></div>
-    
     <div class="modal" id="m-achs"><div class="modal-content"><h2>⭐ Достижения (15)</h2><div id="achList"></div><button class="close" onclick="closeM('achs')">Закрыть</button></div></div>
-    
     <div class="modal" id="m-boost"><div class="modal-content"><h2>⚡ Бустер ×2</h2><p style="color:#94a3b8;">Двойной заработок на 1 час!</p><button class="close" onclick="activateBoost()" style="background:linear-gradient(135deg,#a78bfa,#38bdf8);">Активировать</button><button class="close" onclick="closeM('boost')" style="margin-top:4px;background:rgba(255,255,255,0.05);">Отмена</button></div></div>
-    
     <div class="modal" id="m-shop"><div class="modal-content"><h2>🛒 Магазин улучшений</h2><div id="shop-items"></div><button class="close" onclick="closeM('shop')">Закрыть</button></div></div>
-    
-    <div class="modal" id="m-out"><div class="modal-content">
-        <h2>💳 Вывод RAM</h2>
-        <p style="color:#94a3b8;font-size:11px;text-align:center;">Курс: 1 млрд nRAM = 1 RAM</p>
-        <p style="color:#94a3b8;font-size:11px;text-align:center;">Минимум: 10 млн nRAM</p>
-        <div id="withdrawForm">
-            <input type="text" id="wAddr" placeholder="Ваш RAM адрес (RAM_...)">
-            <button class="wheel-btn" onclick="submitWithdraw()">💳 ОТПРАВИТЬ ЗАЯВКУ</button>
-        </div>
+    <div class="modal" id="m-out"><div class="modal-content"><h2>💳 Вывод RAM</h2><p style="color:#94a3b8;font-size:11px;text-align:center;">Курс: 1 млрд nRAM = 1 RAM</p><p style="color:#94a3b8;font-size:11px;text-align:center;">Минимум: 10 млн nRAM</p>
+        <div id="withdrawForm"><input type="text" id="wAddr" placeholder="Ваш RAM адрес (RAM_...)"><button class="wheel-btn" onclick="submitWithdraw()">💳 ОТПРАВИТЬ ЗАЯВКУ</button></div>
         <div id="withdrawDone" style="display:none;text-align:center;color:#10b981;font-weight:700;">✅ Заявка отправлена!<br><small style="color:#94a3b8;">Ожидайте зачисления в течение 24 часов</small></div>
         <button class="close" onclick="closeM('out')">Закрыть</button>
     </div></div>
 
     <script>
-        // ========== ЗАЩИТА ЛОГОТИПА ==========
-        (function() {
-            const img = document.getElementById('coinImg');
-            const fallback = document.getElementById('coinFallback');
-            let retryCount = 0;
-            const maxRetries = 10;
-            const logoUrl = 'https://ramcoinnode-debug.github.io/ramcoin_logo.png';
-            function showPNG() { img.style.display = 'block'; fallback.style.display = 'none'; }
-            function showFallback() { img.style.display = 'none'; fallback.style.display = 'block'; }
-            function tryLoadLogo() {
-                const testImg = new Image();
-                const cacheBuster = '?t=' + Date.now();
-                testImg.onload = function() { img.src = logoUrl + cacheBuster; showPNG(); retryCount = 0; };
-                testImg.onerror = function() {
-                    retryCount++;
-                    if (retryCount >= maxRetries) { showFallback(); setTimeout(() => { retryCount = 0; tryLoadLogo(); }, 60000); }
-                    else { setTimeout(tryLoadLogo, 2000); }
-                };
-                testImg.src = logoUrl + cacheBuster;
+        // ========== ЛОГОТИП - НАДЁЖНАЯ ЗАГРУЗКА ==========
+        (function(){
+            var img=document.getElementById('coinImg');
+            var fb=document.getElementById('coinFallback');
+            var url='https://ramcoinnode-debug.github.io/ramcoin_logo.png';
+            function load(){
+                var t=new Image();
+                t.crossOrigin='anonymous';
+                t.onload=function(){img.src=url+'?t='+Date.now();img.style.display='block';fb.style.display='none';};
+                t.onerror=function(){img.style.display='none';fb.style.display='block';setTimeout(load,5000);};
+                t.src=url+'?t='+Date.now();
             }
-            tryLoadLogo();
-            setInterval(() => { if (img.style.display !== 'none' && (!img.complete || img.naturalWidth === 0)) tryLoadLogo(); }, 30000);
-            setInterval(() => { if (fallback.style.display === 'block') { retryCount = 0; tryLoadLogo(); } }, 120000);
+            load();
+            setInterval(function(){if(img.style.display!=='none'&&(!img.complete||img.naturalWidth===0)){img.style.display='none';fb.style.display='block';setTimeout(load,3000);}},15000);
         })();
+
+        var tg=window.Telegram.WebApp;tg.expand();
+        var uid=tg.initDataUnsafe?.user?.id||'anon';
         
-        const tg = window.Telegram.WebApp; tg.expand();
-        const uid = tg.initDataUnsafe?.user?.id || 'anon';
+        // ПРЕФИКСЫ ДЛЯ СОХРАНЕНИЯ (v2 - старый, v5 - новый)
+        var P_old='v2_'+uid+'_';
+        var P='v5_'+uid+'_';
         
-        // ИСПОЛЬЗУЕМ СТАРЫЙ ПРЕФИКС ЧТОБЫ СОХРАНИТЬ БАЛАНС
-        const P_old = 'v2_'+uid+'_'; // старые данные
-        const P = 'v4_'+uid+'_';     // новые данные
+        // ПРОБУЕМ ЗАГРУЗИТЬ СТАРЫЙ БАЛАНС
+        var B_old=parseInt(localStorage.getItem(P_old+'B')||'0');
+        var T_old=parseInt(localStorage.getItem(P_old+'T')||'0');
+        var L_old=parseInt(localStorage.getItem(P_old+'L')||'1');
+        var R_old=parseInt(localStorage.getItem(P_old+'R')||'0');
+        var S_old=parseInt(localStorage.getItem(P_old+'S')||'0');
+        var D_old=parseInt(localStorage.getItem(P_old+'D')||'0');
         
-        // ЗАГРУЖАЕМ СНАЧАЛА СТАРЫЕ ДАННЫЕ
-        let B_old = parseInt(localStorage.getItem(P_old+'B')||'0');
-        let E_old = parseInt(localStorage.getItem(P_old+'E')||'500');
-        let T_old = parseInt(localStorage.getItem(P_old+'T')||'0');
-        let L_old = parseInt(localStorage.getItem(P_old+'L')||'1');
-        let R_old = parseInt(localStorage.getItem(P_old+'R')||'0');
-        let S_old = parseInt(localStorage.getItem(P_old+'S')||'0');
-        let D_old = parseInt(localStorage.getItem(P_old+'D')||'0');
+        // ЗАГРУЖАЕМ НОВЫЕ ДАННЫЕ
+        var B=parseInt(localStorage.getItem(P+'B')||'0');
+        var E=parseInt(localStorage.getItem(P+'E')||'500');
+        var T=parseInt(localStorage.getItem(P+'T')||'0');
+        var L=parseInt(localStorage.getItem(P+'L')||'1');
+        var R=parseInt(localStorage.getItem(P+'R')||'0');
+        var S=parseInt(localStorage.getItem(P+'S')||'0');
+        var D=parseInt(localStorage.getItem(P+'D')||'0');
         
-        // ЗАГРУЖАЕМ НОВЫЕ ДАННЫЕ (ЕСЛИ УЖЕ БЫЛИ СОХРАНЕНЫ)
-        let B_new = parseInt(localStorage.getItem(P+'B')||'0');
-        let E_new = parseInt(localStorage.getItem(P+'E')||'0');
-        let T_new = parseInt(localStorage.getItem(P+'T')||'0');
-        let L_new = parseInt(localStorage.getItem(P+'L')||'0');
-        let R_new = parseInt(localStorage.getItem(P+'R')||'0');
-        let S_new = parseInt(localStorage.getItem(P+'S')||'0');
-        let D_new = parseInt(localStorage.getItem(P+'D')||'0');
-        
-        // МИГРАЦИЯ: ЕСЛИ ЕСТЬ СТАРЫЕ ДАННЫЕ И НОВЫХ НЕТ - ПЕРЕНОСИМ
-        let migrated = localStorage.getItem(P+'migrated');
-        if(!migrated && (B_old > 0 || T_old > 0)) {
-            B = B_old;
-            E = E_old > 0 ? E_old : 500;
-            T = T_old;
-            L = L_old > 0 ? L_old : 1;
-            R = R_old;
-            S = S_old;
-            D = D_old;
-            
-            // Даём бонус за обновление!
-            B += 10000;
-            alert('🎉 ОБНОВЛЕНИЕ!\n\nВаш баланс сохранён: ' + B_old.toLocaleString() + ' nRAM\n💰 Бонус за лояльность: +10 000 nRAM!\n\nНовые возможности:\n📋 20 заданий\n⭐ 15 достижений\n⚡ Улучшения до x50\n👥 Реферальные награды');
-            
-            localStorage.setItem(P+'migrated', '1');
-            S2();
-        } else if(B_new > 0 || T_new > 0) {
-            // Используем уже сохранённые новые данные
-            B = B_new;
-            E = E_new > 0 ? E_new : 500;
-            T = T_new;
-            L = L_new > 0 ? L_new : 1;
-            R = R_new;
-            S = S_new;
-            D = D_new;
-        } else {
-            // Новый игрок
-            B = 0;
-            E = 500;
-            T = 0;
-            L = 1;
-            R = 0;
-            S = 0;
-            D = 0;
+        // МИГРАЦИЯ: ЕСЛИ СТАРЫЙ БАЛАНС БОЛЬШЕ НОВОГО - БЕРЁМ СТАРЫЙ
+        if(B_old>0&&B===0){
+            B=B_old;T=T_old;L=L_old||1;R=R_old;S=S_old;D=D_old;
+            E=parseInt(localStorage.getItem(P_old+'E')||'500');
+            if(E<500)E=500;
+            localStorage.setItem(P+'migrated','1');
+            B+=10000;
+            setTimeout(function(){alert('🎉 ОБНОВЛЕНИЕ!\n\nВаш баланс: '+B.toLocaleString()+' nRAM\n💰 Бонус: +10 000 nRAM!\n\n⚡ Улучшения до x50\n📋 20 заданий\n⭐ 15 достижений\n👥 Реферальные награды');U();S2();},1500);
         }
         
-        // ОСТАЛЬНЫЕ ПЕРЕМЕННЫЕ
-        let boost = localStorage.getItem(P+'X')==='1';
-        let bEnd = parseInt(localStorage.getItem(P+'BE')||'0');
-        let tasksDone = JSON.parse(localStorage.getItem(P+'TD')||'[]');
-        let achs = JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]');
-        let wheelUsed = localStorage.getItem(P+'W')||'';
-        let pendingTask = localStorage.getItem(P+'pending')||'';
+        var boost=localStorage.getItem(P+'X')==='1';
+        var bEnd=parseInt(localStorage.getItem(P+'BE')||'0');
+        var tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]');
+        var achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]');
+        var wheelUsed=localStorage.getItem(P+'W')||'';
+        var pendingTask=localStorage.getItem(P+'pending')||'';
+        
+        // ПЕРЕНОС СТАРЫХ ЗАДАНИЙ
+        var oldTasks=JSON.parse(localStorage.getItem(P_old+'TD')||'[]');
+        oldTasks.forEach(function(t){if(tasksDone.indexOf(t)===-1)tasksDone.push(t);});
+        var oldAchs=JSON.parse(localStorage.getItem(P_old+'A')||'[0,0,0,0,0]');
+        for(var i=0;i<oldAchs.length;i++){if(oldAchs[i]===1&&achs[i]===0)achs[i]=1;}
         
         // УЛУЧШЕНИЯ
-        let tapMultiplier = parseInt(localStorage.getItem(P+'TM')||'1');
-        let upgradeCost = parseInt(localStorage.getItem(P+'UC')||'50000');
-        let upgradesBought = parseInt(localStorage.getItem(P+'UB')||'0');
-        const MAX_MULTIPLIER = 50;
+        var tapMultiplier=parseInt(localStorage.getItem(P+'TM')||'1');
+        var upgradeCost=parseInt(localStorage.getItem(P+'UC')||'50000');
+        var upgradesBought=parseInt(localStorage.getItem(P+'UB')||'0');
+        var MAX_MULTIPLIER=50;
         
         // РЕФЕРАЛЫ
-        let referralMilestones = JSON.parse(localStorage.getItem(P+'REF')||'[]');
-        const referralRewards = {5:1000,10:5000,15:10000,20:25000,30:50000,40:100000,50:500000};
+        var referralMilestones=JSON.parse(localStorage.getItem(P+'REF')||'[]');
+        var referralRewards={5:1000,10:5000,15:10000,20:25000,30:50000,40:100000,50:500000};
         
-        const levels = [0, 100, 1000, 10000, 50000, 100000, 500000, 1000000];
-        const energyPerLevel = [0, 500, 1000, 2000, 3000, 5000, 7500, 10000];
-        const levelNames = ['','🟢','🔵','🟣','🟡','🔴','💎','👑'];
+        var levels=[0,100,1000,10000,50000,100000,500000,1000000];
+        var energyPerLevel=[0,500,1000,2000,3000,5000,7500,10000];
+        var levelNames=['','🟢','🔵','🟣','🟡','🔴','💎','👑'];
         
         function getMaxEnergy(){return energyPerLevel[Math.min(L,7)];}
-        const prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
-        let tapTimes=[],tapLock=false;
-        
-        // Проверяем старые выполненные задания и выдаём награды
-        function migrateOldTasks() {
-            let oldTasks = JSON.parse(localStorage.getItem(P_old+'TD')||'[]');
-            let givenBonus = false;
-            
-            // Переносим старые задания
-            oldTasks.forEach(task => {
-                if(tasksDone.indexOf(task) === -1) {
-                    tasksDone.push(task);
-                }
-            });
-            
-            // Выдаём награды за уже выполненные задания
-            const tapTasks = {100:'tap100',1000:'tap1000',5000:'tap5000',10000:'tap10000',50000:'tap50000',100000:'tap100000',500000:'tap500000',1000000:'tap1000000'};
-            const tapRewards = {100:50,1000:200,5000:500,10000:1000,50000:5000,100000:10000,500000:25000,1000000:100000};
-            
-            for(let count in tapTasks) {
-                if(T >= count && tasksDone.indexOf(tapTasks[count]) === -1) {
-                    tasksDone.push(tapTasks[count]);
-                    B += tapRewards[count];
-                    givenBonus = true;
-                }
-            }
-            
-            // Проверяем старые достижения
-            let oldAchs = JSON.parse(localStorage.getItem(P_old+'A')||'[0,0,0,0,0]');
-            for(let i=0; i<oldAchs.length; i++) {
-                if(oldAchs[i] === 1 && achs[i] === 0) {
-                    achs[i] = 1;
-                }
-            }
-            
-            if(givenBonus) {
-                setTimeout(() => {
-                    alert('✅ Награды за ваши прошлые тапы начислены!');
-                    U(); S2();
-                }, 2000);
-            }
-            
-            S2();
-        }
+        var prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
+        var tapTimes=[],tapLock=false;
         
         function checkLevelUp(){
-            let newL = 1;
-            for(let i=1;i<levels.length;i++){if(T>=levels[i])newL=i+1;else break;}
+            var newL=1;
+            for(var i=1;i<levels.length;i++){if(T>=levels[i])newL=i+1;else break;}
             if(newL>L){
                 L=newL;
-                let rewards=[0,0,1000,2000,3000,5000,10000,20000];
+                var rewards=[0,0,1000,2000,3000,5000,10000,20000];
                 if(rewards[L]){B+=rewards[L];alert('🎉 Уровень '+L+'! +'+rewards[L]+' nRAM!');}
                 E=energyPerLevel[L];
                 if(L>=2&&tasksDone.indexOf('lvl2')===-1){tasksDone.push('lvl2');B+=1000;}
@@ -357,8 +258,8 @@
         checkLevelUp();
         
         function restoreEnergy(){
-            let today=new Date().toDateString();
-            let last=localStorage.getItem(P+'LR')||'';
+            var today=new Date().toDateString();
+            var last=localStorage.getItem(P+'LR')||'';
             if(today!==last){E=getMaxEnergy();localStorage.setItem(P+'LR',today);U();S2();}
         }
         restoreEnergy();
@@ -366,117 +267,207 @@
         if(pendingTask){
             if(tasksDone.indexOf(pendingTask)===-1){
                 tasksDone.push(pendingTask);
-                let reward = pendingTask==='group'?500:200;
-                B+=reward;
-                localStorage.setItem(P+'pending','');
-                pendingTask='';
-                alert('✅ +'+reward+' nRAM! Задание выполнено!');
-                U();S2();updateTasks();
-            } else { localStorage.setItem(P+'pending',''); pendingTask=''; }
+                B+=pendingTask==='group'?500:200;
+                localStorage.setItem(P+'pending','');pendingTask='';
+                alert('✅ Задание выполнено!');U();S2();updateTasks();
+            }else{localStorage.setItem(P+'pending','');pendingTask='';}
         }
         
-        let sp=tg.initDataUnsafe?.start_param||'';
-        if(sp.startsWith('ref_')){
-            let refId=sp.replace('ref_','');
+        var sp=tg.initDataUnsafe?.start_param||'';
+        if(sp.indexOf('ref_')===0){
+            var refId=sp.replace('ref_','');
             if(refId!==String(uid)){
                 if(!localStorage.getItem(P+'joined')){B+=250;localStorage.setItem(P+'joined','1');U();S2();}
-                let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
+                var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
                 if(!refs[refId]){refs[refId]=1;localStorage.setItem('ram_refs',JSON.stringify(refs));}
             }
         }
-        let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
+        var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
         if(refs[uid]){B+=500;R++;delete refs[uid];localStorage.setItem('ram_refs',JSON.stringify(refs));alert('🎉 +500 nRAM! Друг присоединился!');U();S2();}
         
-        // ФОН
-        const bg=document.getElementById('bgCanvas'),ctx=bg.getContext('2d');
-        bg.width=window.innerWidth;bg.height=window.innerHeight;
-        const nodes=Array.from({length:18},()=>({x:Math.random()*bg.width,y:Math.random()*bg.height,vx:(Math.random()-0.5)*0.25,vy:(Math.random()-0.5)*0.25,size:Math.random()*1.5+1,phase:Math.random()*Math.PI*2}));
-        const particles=[];let tm=0;
+        // ========== БЛОКЧЕЙН-ФОН ==========
+        var bg=document.getElementById('bgCanvas'),ctx=bg.getContext('2d');
+        function resize(){bg.width=window.innerWidth;bg.height=window.innerHeight;}
+        resize();window.addEventListener('resize',resize);
+        
+        // Блоки цепочки
+        var blocks=[];
+        for(var i=0;i<30;i++){
+            blocks.push({
+                x:Math.random()*bg.width,
+                y:Math.random()*bg.height,
+                w:60+Math.random()*40,
+                h:25+Math.random()*15,
+                vx:(Math.random()-0.5)*0.3,
+                vy:(Math.random()-0.5)*0.3,
+                hash:'0000'+Math.random().toString(16).substr(2,8),
+                opacity:0.3+Math.random()*0.4
+            });
+        }
+        
+        // Линии между блоками
+        var connections=[];
+        for(var i=0;i<blocks.length;i++){
+            for(var j=i+1;j<blocks.length;j++){
+                if(Math.random()<0.3){
+                    connections.push({a:i,b:j,opacity:0.05+Math.random()*0.1});
+                }
+            }
+        }
+        
+        var particles=[];
+        var tm=0;
+        
         function drawBg(){
-            tm+=0.004;ctx.clearRect(0,0,bg.width,bg.height);
-            ctx.strokeStyle='rgba(56,189,248,0.04)';ctx.lineWidth=0.3;
-            for(let x=0;x<bg.width;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,bg.height);ctx.stroke();}
-            for(let y=0;y<bg.height;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(bg.width,y);ctx.stroke();}
-            for(let y=0;y<bg.height;y+=80){let a=0.03+Math.sin(tm*1.5+y*0.01)*0.02;ctx.strokeStyle='rgba(56,189,248,'+a+')';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(bg.width,y);ctx.stroke();}
-            for(let x=0;x<bg.width;x+=120){let a=0.025+Math.cos(tm*1.3+x*0.01)*0.015;ctx.strokeStyle='rgba(168,120,250,'+a+')';ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,bg.width);ctx.stroke();}
-            for(let x=40;x<bg.width;x+=80){for(let y=40;y<bg.height;y+=80){let ox=x+Math.sin(tm*2+x*0.1)*8,oy=y+Math.cos(tm*2+y*0.1)*8;ctx.strokeStyle='rgba(56,189,248,0.06)';ctx.lineWidth=0.4;ctx.beginPath();ctx.moveTo(ox,oy-6);ctx.lineTo(ox+6,oy);ctx.lineTo(ox,oy+6);ctx.lineTo(ox-6,oy);ctx.closePath();ctx.stroke();}}
-            for(let x=80;x<bg.width;x+=200){for(let y=80;y<bg.height;y+=200){let ox=x+Math.sin(tm*1.2+x*0.05)*15,oy=y+Math.cos(tm*1.2+y*0.05)*15;ctx.strokeStyle='rgba(168,120,250,0.05)';ctx.lineWidth=0.6;ctx.beginPath();ctx.moveTo(ox,oy-14);ctx.lineTo(ox+14,oy);ctx.lineTo(ox,oy+14);ctx.lineTo(ox-14,oy);ctx.closePath();ctx.stroke();}}
-            nodes.forEach((a,i)=>{nodes.forEach((b,j)=>{if(i<j){let d=Math.hypot(a.x-b.x,a.y-b.y);if(d<130){ctx.strokeStyle='rgba(56,189,248,'+(0.05*(1-d/130))+')';ctx.lineWidth=0.35;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}});});
-            nodes.forEach(n=>{n.x+=n.vx;n.y+=n.vy;if(n.x<0)n.x=bg.width;if(n.x>bg.width)n.x=0;if(n.y<0)n.y=bg.height;if(n.y>bg.height)n.y=0;let p=1+0.2*Math.sin(tm*3+n.phase);let s=n.size*p;ctx.fillStyle='rgba(56,189,248,0.06)';ctx.beginPath();ctx.arc(n.x,n.y,s*5,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(56,189,248,0.8)';ctx.beginPath();ctx.arc(n.x,n.y,s,0,Math.PI*2);ctx.fill();});
-            if(Math.random()<0.3)particles.push({x:bg.width/2+Math.random()*120-60,y:bg.height/2+Math.random()*140-70,vx:(Math.random()-0.5)*0.3,vy:-Math.random()*1.8,life:1,size:Math.random()*2+0.8});
-            particles.forEach((p,i)=>{p.x+=p.vx;p.y+=p.vy;p.life-=0.003;if(p.life<=0){particles.splice(i,1);return;}ctx.fillStyle='rgba(251,191,36,'+(p.life*0.55)+')';ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();});
+            tm+=0.003;
+            ctx.clearRect(0,0,bg.width,bg.height);
+            
+            // Сетка
+            ctx.strokeStyle='rgba(56,189,248,0.03)';ctx.lineWidth=0.3;
+            for(var x=0;x<bg.width;x+=50){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,bg.height);ctx.stroke();}
+            for(var y=0;y<bg.height;y+=50){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(bg.width,y);ctx.stroke();}
+            
+            // Соединения между блоками
+            connections.forEach(function(c){
+                var a=blocks[c.a],b=blocks[c.b];
+                var dx=a.x-b.x,dy=a.y-b.y;
+                var dist=Math.sqrt(dx*dx+dy*dy);
+                if(dist<300){
+                    ctx.strokeStyle='rgba(56,189,248,'+c.opacity+')';
+                    ctx.lineWidth=0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(a.x,a.y);
+                    ctx.lineTo(b.x,b.y);
+                    ctx.stroke();
+                }
+            });
+            
+            // Блоки
+            blocks.forEach(function(b){
+                b.x+=b.vx;b.y+=b.vy;
+                if(b.x<0||b.x>bg.width)b.vx*=-1;
+                if(b.y<0||b.y>bg.height)b.vy*=-1;
+                
+                ctx.fillStyle='rgba(15,23,42,'+(0.7+b.opacity*0.3)+')';
+                ctx.strokeStyle='rgba(56,189,248,'+b.opacity+')';
+                ctx.lineWidth=1;
+                roundRect(b.x-b.w/2,b.y-b.h/2,b.w,b.h,4);
+                ctx.fill();ctx.stroke();
+                
+                ctx.fillStyle='rgba(56,189,248,0.5)';
+                ctx.font='7px monospace';
+                ctx.fillText(b.hash,b.x-b.w/2+3,b.y+3);
+            });
+            
+            // Хеши летающие
+            if(Math.random()<0.5){
+                particles.push({
+                    x:Math.random()*bg.width,
+                    y:-10,
+                    vy:0.3+Math.random()*0.5,
+                    text:'0x'+Math.random().toString(16).substr(2,6),
+                    life:1
+                });
+            }
+            
+            particles.forEach(function(p,i){
+                p.y+=p.vy;p.life-=0.002;
+                if(p.life<=0){particles.splice(i,1);return;}
+                ctx.fillStyle='rgba(56,189,248,'+(p.life*0.4)+')';
+                ctx.font='8px monospace';
+                ctx.fillText(p.text,p.x,p.y);
+            });
+            
+            if(particles.length>50)particles.splice(0,10);
             requestAnimationFrame(drawBg);
+        }
+        
+        function roundRect(x,y,w,h,r){
+            ctx.beginPath();
+            ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+            ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+            ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+            ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+            ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);
+            ctx.closePath();
         }
         drawBg();
         
-        window.addEventListener('load',()=>{
-            setTimeout(()=>{
+        // ========== ЗАПУСК ==========
+        window.addEventListener('load',function(){
+            setTimeout(function(){
                 document.getElementById('loading').style.display='none';
                 document.getElementById('app').style.display='flex';
-                migrateOldTasks(); // Миграция старых заданий
+                // Выдача наград за старые тапы
+                var tapTasks={100:'tap100',1000:'tap1000',5000:'tap5000',10000:'tap10000',50000:'tap50000',100000:'tap100000',500000:'tap500000',1000000:'tap1000000'};
+                var tapRewards={100:50,1000:200,5000:500,10000:1000,50000:5000,100000:10000,500000:25000,1000000:100000};
+                var given=false;
+                for(var count in tapTasks){
+                    if(T>=parseInt(count)&&tasksDone.indexOf(tapTasks[count])===-1){
+                        tasksDone.push(tapTasks[count]);B+=tapRewards[count];given=true;
+                    }
+                }
+                if(given){alert('✅ Награды за прошлые тапы начислены!');}
                 U();drawWheel();updateTasks();updateAchs();updateRank();updateShop();
                 checkReferralRewards();checkMultiplierBonuses();
-            },800);
+            },600);
         });
         
-        // ТАП
+        // ========== ТАП ==========
         function tap(e){
             e.preventDefault();
-            if(tapLock)return;
-            tapLock=true;
-            let n=Date.now();
-            tapTimes=tapTimes.filter(t=>n-t<1000);
+            if(tapLock)return;tapLock=true;
+            var n=Date.now();
+            tapTimes=tapTimes.filter(function(t){return n-t<1000;});
             if(tapTimes.length>15){tapLock=false;return;}
             if(E<=0){tapLock=false;return;}
-            let boostMultiplier = (boost && n < bEnd) ? 2 : 1;
-            let gain = 1 * tapMultiplier * boostMultiplier;
-            B += gain; E--; T++;
-            tapTimes.push(n);
-            let lv = Math.floor(T/1000)+1;
+            var boostMul=(boost&&n<bEnd)?2:1;
+            var gain=1*tapMultiplier*boostMul;
+            B+=gain;E--;T++;tapTimes.push(n);
+            var lv=Math.floor(T/1000)+1;
             if(lv>L){L=lv;F('⬆ УРОВЕНЬ!','#a78bfa',e);checkLevelUp();}
-            let displayText = '+'+gain;
-            if(tapMultiplier>1||boost) displayText += ' (x'+tapMultiplier+(boost&&n<bEnd?'🔥':'')+')';
-            F(displayText,'#fbbf24',e);
-            checkAchs(); U(); S2(); updateTasks();
-            setTimeout(()=>{tapLock=false;},200);
+            var txt='+'+gain;
+            if(tapMultiplier>1||boost)txt+=' (x'+tapMultiplier+(boost&&n<bEnd?'🔥':'')+')';
+            F(txt,'#fbbf24',e);
+            checkAchs();U();S2();updateTasks();
+            setTimeout(function(){tapLock=false;},200);
         }
         
         function F(t,c,e){
-            let el=document.createElement('div');
-            el.className='float-text'; el.textContent=t; el.style.color=c;
+            var el=document.createElement('div');
+            el.className='float-text';el.textContent=t;el.style.color=c;
             el.style.left=((e.touches?.[0]?.clientX||e.clientX||innerWidth/2)-15)+'px';
             el.style.top=((e.touches?.[0]?.clientY||e.clientY||innerHeight/2)-20)+'px';
             document.body.appendChild(el);
-            setTimeout(()=>el.remove(),800);
+            setTimeout(function(){el.remove();},800);
         }
         
         function U(){
-            let maxE=getMaxEnergy();
+            var maxE=getMaxEnergy();
             document.getElementById('bal').textContent=B.toLocaleString();
             document.getElementById('eFill').style.width=(E/maxE*100)+'%';
             document.getElementById('eText').textContent=E+' / '+maxE;
-            let lvlText=levelNames[Math.min(L,7)]+' Ур.'+L;
+            var lvlText=levelNames[Math.min(L,7)]+' Ур.'+L;
             if(boost&&Date.now()<bEnd)lvlText+=' | 🔥×2';
             if(tapMultiplier>1)lvlText+=' | ⚡x'+tapMultiplier;
             document.getElementById('lvl').textContent=lvlText;
         }
         
         function S2(){
-            let d={};
+            var d={};
             d[P+'B']=B;d[P+'E']=E;d[P+'T']=T;d[P+'L']=L;d[P+'R']=R;d[P+'S']=S;d[P+'D']=D;
             d[P+'X']=boost?'1':'0';d[P+'BE']=bEnd;d[P+'TD']=JSON.stringify(tasksDone);
             d[P+'A']=JSON.stringify(achs);d[P+'W']=wheelUsed;d[P+'pending']=pendingTask;
             d[P+'TM']=tapMultiplier;d[P+'UC']=upgradeCost;d[P+'UB']=upgradesBought;
             d[P+'REF']=JSON.stringify(referralMilestones);
-            if(localStorage.getItem(P+'migrated')) d[P+'migrated'] = '1';
-            Object.entries(d).forEach(([k,v])=>localStorage.setItem(k,v));
+            for(var k in d)localStorage.setItem(k,d[k].toString());
         }
         
         function daily(){
-            let n=Date.now(),day=86400000;
+            var n=Date.now(),day=86400000;
             if(n-D<day){alert('🎁 Уже получен!');return;}
             S=(n-D<day*2)?S+1:1;
-            let bonus=Math.min(S*100,3000);
+            var bonus=Math.min(S*100,3000);
             B+=bonus;D=n;
             if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200;}
             if(S>=7&&tasksDone.indexOf('day7')===-1){tasksDone.push('day7');B+=500;alert('🔥 7 дней! +500 nRAM!');}
@@ -494,11 +485,11 @@
         }
         
         function buyUpgrade(){
-            if(upgradesBought>=MAX_MULTIPLIER-1){alert('👑 АБСОЛЮТНЫЙ МАКСИМУМ x50!\n\nТы легенда RAMCOIN!');return;}
+            if(upgradesBought>=MAX_MULTIPLIER-1){alert('👑 x50! Легенда RAMCOIN!');return;}
             if(B<upgradeCost){
-                let need=upgradeCost-B;
-                let hoursLeft=Math.ceil(need/(getMaxEnergy()*tapMultiplier*2));
-                alert('❌ МАЛО RAM!\n\n💰 Нужно: '+upgradeCost.toLocaleString()+' nRAM\n💎 У вас: '+B.toLocaleString()+' nRAM\n📉 Не хватает: '+need.toLocaleString()+' nRAM\n\n⏰ Тапать ещё ~'+hoursLeft+' часов\n🔥 Пригласи друзей для бонуса!');
+                var need=upgradeCost-B;
+                var hoursLeft=Math.ceil(need/(getMaxEnergy()*tapMultiplier*2));
+                alert('❌ Нужно: '+upgradeCost.toLocaleString()+'\nУ вас: '+B.toLocaleString()+'\nНе хватает: '+need.toLocaleString()+'\n⏰ ~'+hoursLeft+' ч тапать');
                 return;
             }
             B-=upgradeCost;upgradesBought++;tapMultiplier=upgradesBought+1;
@@ -513,105 +504,92 @@
             else if(upgradesBought<45)upgradeCost=Math.floor(upgradeCost*20);
             else upgradeCost=Math.floor(upgradeCost*30);
             checkMultiplierBonuses();
-            alert('✅ УЛУЧШЕНИЕ x'+tapMultiplier+'!\n\n💰 Следующее: '+upgradeCost.toLocaleString()+' nRAM\n📊 Прогресс: '+upgradesBought+'/'+(MAX_MULTIPLIER-1));
+            alert('✅ x'+tapMultiplier+'!\n💰 Далее: '+upgradeCost.toLocaleString()+'\n📊 '+upgradesBought+'/'+(MAX_MULTIPLIER-1));
             U();S2();updateShop();
         }
         
         function checkMultiplierBonuses(){
-            const bonuses={5:1000,10:10000,15:50000,20:100000,25:200000,30:300000,35:400000,40:500000,45:750000,50:1000000};
-            for(let lvl in bonuses){
+            var bonuses={5:1000,10:10000,15:50000,20:100000,25:200000,30:300000,35:400000,40:500000,45:750000,50:1000000};
+            for(var lvl in bonuses){
                 if(tapMultiplier>=lvl&&!localStorage.getItem(P+'MB_'+lvl)){
-                    B+=bonuses[lvl];
-                    localStorage.setItem(P+'MB_'+lvl,'1');
-                    alert('🎉 МНОЖИТЕЛЬ x'+lvl+'!\n💰 Бонус: +'+bonuses[lvl].toLocaleString()+' nRAM!');
+                    B+=bonuses[lvl];localStorage.setItem(P+'MB_'+lvl,'1');
+                    alert('🎉 x'+lvl+'! Бонус: +'+bonuses[lvl].toLocaleString()+' nRAM!');
                     U();S2();
                 }
             }
         }
         
         function updateShop(){
-            let shop=document.getElementById('shop-items');
+            var shop=document.getElementById('shop-items');
             if(!shop)return;
-            let progress=(upgradesBought/(MAX_MULTIPLIER-1))*100;
-            let h='<div style="margin-bottom:8px;padding:12px;background:rgba(56,189,248,0.1);border-radius:10px;text-align:center;">';
+            var progress=(upgradesBought/(MAX_MULTIPLIER-1))*100;
+            var h='<div style="margin-bottom:8px;padding:12px;background:rgba(56,189,248,0.1);border-radius:10px;text-align:center;">';
             h+='<div style="font-size:24px;font-weight:900;color:#38bdf8;">⚡ x'+tapMultiplier+'</div>';
-            h+='<div style="color:#94a3b8;font-size:11px;">Текущий множитель тапа</div>';
+            h+='<div style="color:#94a3b8;font-size:11px;">Текущий множитель</div>';
             h+='<div style="background:rgba(255,255,255,0.1);border-radius:5px;height:6px;margin-top:8px;overflow:hidden;">';
-            h+='<div style="background:linear-gradient(90deg,#38bdf8,#a78bfa);height:100%;width:'+progress+'%;transition:width 0.5s;"></div></div>';
-            h+='<div style="color:#94a3b8;font-size:9px;margin-top:4px;">'+upgradesBought+' / '+(MAX_MULTIPLIER-1)+' улучшений</div></div>';
-            h+='<div class="shop-item" onclick="activateBoost()"><strong>🔥 Бустер ×2 (1 час)</strong><br><span class="price-tag">Бесплатно</span></div>';
+            h+='<div style="background:linear-gradient(90deg,#38bdf8,#a78bfa);height:100%;width:'+progress+'%;"></div></div>';
+            h+='<div style="color:#94a3b8;font-size:9px;margin-top:4px;">'+upgradesBought+'/'+(MAX_MULTIPLIER-1)+'</div></div>';
+            h+='<div class="shop-item" onclick="activateBoost()"><strong>🔥 Бустер ×2 (1ч)</strong><br><span class="price-tag">Бесплатно</span></div>';
             if(upgradesBought<MAX_MULTIPLIER-1){
-                h+='<div class="shop-item upgrade-highlight" onclick="buyUpgrade()"><strong>🔧 Улучшить до x'+(tapMultiplier+1)+'</strong><br><span class="price-tag" style="font-size:11px;">💰 '+upgradeCost.toLocaleString()+' nRAM</span><br><small style="color:#10b981;">Постоянное улучшение!</small></div>';
+                h+='<div class="shop-item upgrade-highlight" onclick="buyUpgrade()"><strong>🔧 Улучшить до x'+(tapMultiplier+1)+'</strong><br><span class="price-tag">💰 '+upgradeCost.toLocaleString()+'</span><br><small style="color:#10b981;">Навсегда!</small></div>';
             }else{
-                h+='<div class="shop-item" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);"><strong>👑 МАКСИМУМ x50</strong><br><span class="price-tag done">🏆 Достигнут!</span></div>';
+                h+='<div class="shop-item" style="background:rgba(251,191,36,0.1);"><strong>👑 x50</strong><br><span class="price-tag done">🏆 Максимум!</span></div>';
             }
-            h+='<div style="margin-top:10px;padding:10px;background:rgba(0,0,0,0.2);border-radius:8px;"><small style="color:#fbbf24;">🎯 Бонусы за множители:</small><br>';
-            h+='<small style="color:#94a3b8;">x5:+1K x10:+10K x15:+50K x20:+100K</small><br>';
-            h+='<small style="color:#94a3b8;">x25:+200K x30:+300K x35:+400K</small><br>';
-            h+='<small style="color:#94a3b8;">x40:+500K x45:+750K</small><br>';
-            h+='<small style="color:#fbbf24;">x50:+1 000 000 nRAM 👑</small></div>';
+            h+='<div style="margin-top:8px;padding:8px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:9px;color:#94a3b8;">';
+            h+='🎯 Бонусы: x5:+1K x10:+10K x15:+50K x20:+100K<br>x25:+200K x30:+300K x35:+400K x40:+500K<br>x45:+750K <span style="color:#fbbf24;">x50:+1M 👑</span></div>';
             shop.innerHTML=h;
         }
         
         function checkReferralRewards(){
-            let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
-            let totalRefs=Object.keys(refs).length+R;
-            for(let count in referralRewards){
+            var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
+            var totalRefs=Object.keys(refs).length+R;
+            for(var count in referralRewards){
                 count=parseInt(count);
                 if(totalRefs>=count&&referralMilestones.indexOf(count)===-1){
-                    let reward=referralRewards[count];
-                    B+=reward;
-                    referralMilestones.push(count);
+                    B+=referralRewards[count];referralMilestones.push(count);
                     localStorage.setItem(P+'REF',JSON.stringify(referralMilestones));
-                    alert('🎉 '+count+' ДРУЗЕЙ!\n💰 Награда: +'+reward.toLocaleString()+' nRAM!');
+                    alert('🎉 '+count+' друзей! +'+referralRewards[count].toLocaleString()+' nRAM!');
                     U();S2();
                 }
             }
-            if(totalRefs>=5&&tasksDone.indexOf('invite5')===-1){tasksDone.push('invite5');B+=2500;alert('✅ +2 500 nRAM за 5 друзей!');}
-            if(totalRefs>=10&&tasksDone.indexOf('invite10')===-1){tasksDone.push('invite10');B+=10000;alert('✅ +10 000 nRAM за 10 друзей!');}
-            if(totalRefs>=5&&achs[3]===0){achs[3]=1;}
-            if(totalRefs>=10&&achs[4]===0){achs[4]=1;}
-            if(totalRefs>=25&&achs[5]===0){achs[5]=1;}
-            if(totalRefs>=50&&achs[6]===0){achs[6]=1;}
+            if(totalRefs>=5&&tasksDone.indexOf('invite5')===-1){tasksDone.push('invite5');B+=2500;}
+            if(totalRefs>=10&&tasksDone.indexOf('invite10')===-1){tasksDone.push('invite10');B+=10000;}
+            if(totalRefs>=5&&achs[3]===0)achs[3]=1;
+            if(totalRefs>=10&&achs[4]===0)achs[4]=1;
+            if(totalRefs>=25&&achs[5]===0)achs[5]=1;
+            if(totalRefs>=50&&achs[6]===0)achs[6]=1;
             updateAchs();S2();
         }
         
         function invite(){
-            let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
-            let totalRefs=Object.keys(refs).length+R;
-            let nextMilestone=null;
-            for(let count in referralRewards){count=parseInt(count);if(totalRefs<count){nextMilestone=count;break;}}
-            let msg='📤 Пригласи друзей!\n\n👥 Друзей: '+totalRefs+'\n\n🎁 Награды:\n• 5: +1K • 10: +5K\n• 15: +10K • 20: +25K\n• 30: +50K • 40: +100K\n• 50: +500K 👑\n\n';
-            if(nextMilestone)msg+='🎯 До '+nextMilestone+' друзей: '+(nextMilestone-totalRefs);
+            var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
+            var totalRefs=Object.keys(refs).length+R;
+            var next=null;
+            for(var c in referralRewards){c=parseInt(c);if(totalRefs<c){next=c;break;}}
+            var msg='📤 Друзей: '+totalRefs+'\n\n🎁 Награды:\n5:+1K 10:+5K 15:+10K 20:+25K\n30:+50K 40:+100K 50:+500K\n\n';
+            if(next)msg+='🎯 До '+next+': '+(next-totalRefs);
             alert(msg);
-            let refLink='https://t.me/ramcoin_tap_bot?startapp=ref_'+uid;
-            tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(refLink)+'&text=⚡%20RAMCOIN%20Tap!%20Присоединяйся!');
+            tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent('https://t.me/ramcoin_tap_bot?startapp=ref_'+uid)+'&text=⚡%20RAMCOIN%20Tap!');
         }
         
         function doTask(t){
-            if(t==='channel'){tg.openTelegramLink('https://t.me/ramcoin_pow');pendingTask='channel';localStorage.setItem(P+'pending','channel');S2();alert('📢 Подпишись на @ramcoin_pow и возвращайся!');}
-            else if(t==='group'){tg.openTelegramLink('https://t.me/ramcoin_chat');pendingTask='group';localStorage.setItem(P+'pending','group');S2();alert('👥 Вступи в @ramcoin_chat и возвращайся!');}
-            else if(t==='invite'){invite();}
+            if(t==='channel'){tg.openTelegramLink('https://t.me/ramcoin_pow');pendingTask='channel';localStorage.setItem(P+'pending','channel');S2();alert('📢 Подпишись и возвращайся!');}
+            else if(t==='group'){tg.openTelegramLink('https://t.me/ramcoin_chat');pendingTask='group';localStorage.setItem(P+'pending','group');S2();alert('👥 Вступи и возвращайся!');}
+            else invite();
         }
         
         function updateTasks(){
-            document.getElementById('tf1').style.width=Math.min(100,T/100*100)+'%';
-            document.getElementById('tf2').style.width=Math.min(100,T/1000*100)+'%';
-            document.getElementById('tf3').style.width=Math.min(100,T/5000*100)+'%';
-            document.getElementById('tf4').style.width=Math.min(100,T/10000*100)+'%';
-            document.getElementById('tf5').style.width=Math.min(100,T/50000*100)+'%';
-            document.getElementById('tf6').style.width=Math.min(100,T/100000*100)+'%';
-            document.getElementById('tf7').style.width=Math.min(100,T/500000*100)+'%';
-            document.getElementById('tf8').style.width=Math.min(100,T/1000000*100)+'%';
+            var ids=['tf1','tf2','tf3','tf4','tf5','tf6','tf7','tf8'];
+            var counts=[100,1000,5000,10000,50000,100000,500000,1000000];
+            var taskNames=['tap100','tap1000','tap5000','tap10000','tap50000','tap100000','tap500000','tap1000000'];
+            var rewards=[50,200,500,1000,5000,10000,25000,100000];
             
-            const tapTasks={100:'tap100',1000:'tap1000',5000:'tap5000',10000:'tap10000',50000:'tap50000',100000:'tap100000',500000:'tap500000',1000000:'tap1000000'};
-            const tapRewards={100:50,1000:200,5000:500,10000:1000,50000:5000,100000:10000,500000:25000,1000000:100000};
-            for(let count in tapTasks){
-                if(T>=count&&tasksDone.indexOf(tapTasks[count])===-1){
-                    tasksDone.push(tapTasks[count]);
-                    B+=tapRewards[count];
-                    if(count>=50000)alert('✅ +'+tapRewards[count].toLocaleString()+' nRAM за '+count.toLocaleString()+' тапов!');
-                    U();S2();
+            for(var i=0;i<ids.length;i++){
+                var el=document.getElementById(ids[i]);
+                if(el)el.style.width=Math.min(100,T/counts[i]*100)+'%';
+                if(T>=counts[i]&&tasksDone.indexOf(taskNames[i])===-1){
+                    tasksDone.push(taskNames[i]);B+=rewards[i];
+                    if(counts[i]>=50000)alert('✅ +'+rewards[i].toLocaleString()+' за '+counts[i].toLocaleString()+' тапов!');
                 }
             }
             
@@ -620,11 +598,9 @@
             document.getElementById('tdp30').textContent=Math.min(S,30);
             document.getElementById('tdp100').textContent=Math.min(S,100);
             
-            if(tasksDone.indexOf('channel')!==-1){document.getElementById('task-channel').classList.add('completed');document.getElementById('tag-channel').classList.add('done');document.getElementById('tag-channel').textContent='✅';}
-            if(tasksDone.indexOf('group')!==-1){document.getElementById('task-group').classList.add('completed');document.getElementById('tag-group').classList.add('done');document.getElementById('tag-group').textContent='✅';}
-            if(tasksDone.indexOf('invite5')!==-1){document.getElementById('task-invite5').classList.add('completed');}
-            if(tasksDone.indexOf('invite10')!==-1){document.getElementById('task-invite10').classList.add('completed');}
-            checkReferralRewards();
+            if(tasksDone.indexOf('channel')!==-1)document.getElementById('tag-channel').textContent='✅';
+            if(tasksDone.indexOf('group')!==-1)document.getElementById('tag-group').textContent='✅';
+            U();S2();
         }
         
         function checkAchs(){
@@ -633,12 +609,12 @@
             if(T>=10000&&achs[2]===0)achs[2]=1;
             if(T>=100000&&achs[7]===0)achs[7]=1;
             if(T>=1000000&&achs[8]===0)achs[8]=1;
-            let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
-            let totalRefs=Object.keys(refs).length+R;
-            if(totalRefs>=5&&achs[3]===0)achs[3]=1;
-            if(totalRefs>=10&&achs[4]===0)achs[4]=1;
-            if(totalRefs>=25&&achs[5]===0)achs[5]=1;
-            if(totalRefs>=50&&achs[6]===0)achs[6]=1;
+            var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
+            var tr=Object.keys(refs).length+R;
+            if(tr>=5&&achs[3]===0)achs[3]=1;
+            if(tr>=10&&achs[4]===0)achs[4]=1;
+            if(tr>=25&&achs[5]===0)achs[5]=1;
+            if(tr>=50&&achs[6]===0)achs[6]=1;
             if(B>=1000000&&achs[9]===0)achs[9]=1;
             if(B>=10000000&&achs[10]===0)achs[10]=1;
             if(B>=100000000&&achs[11]===0)achs[11]=1;
@@ -649,81 +625,56 @@
         }
         
         function updateAchs(){
-            let names=[
-                '🥉 Новичок (100 тапов)',
-                '🥈 Тапер (1 000 тапов)',
-                '🥇 Мастер (10 000 тапов)',
-                '👥 Друг (5 друзей)',
-                '👥 Популярный (10 друзей)',
-                '👥 Звезда (25 друзей)',
-                '👥 Легенда (50 друзей)',
-                '💪 Железный палец (100K)',
-                '💪 Стальной палец (1M)',
-                '💰 Миллионер (1M nRAM)',
-                '💰 Магнат (10M nRAM)',
-                '💰 Олигарх (100M nRAM)',
-                '⚡ Улучшатель (x10)',
-                '⚡ Прокачанный (x25)',
-                '👑 Бог тапа (x50)'
-            ];
-            let h='';
-            for(let i=0;i<15;i++){
-                let c=achs[i]===1?'done':'locked';
-                let s=achs[i]===1?'✅':'🔒';
-                h+='<div class="achievement '+c+'"><span>'+names[i]+'</span><span>'+s+'</span></div>';
-            }
+            var names=['🥉 Новичок (100)','🥈 Тапер (1K)','🥇 Мастер (10K)','👥 Друг (5)','👥 Популярный (10)','👥 Звезда (25)','👥 Легенда (50)','💪 Железный палец (100K)','💪 Стальной палец (1M)','💰 Миллионер (1M)','💰 Магнат (10M)','💰 Олигарх (100M)','⚡ Улучшатель (x10)','⚡ Прокачанный (x25)','👑 Бог тапа (x50)'];
+            var h='';
+            for(var i=0;i<15;i++){h+='<div class="achievement '+(achs[i]===1?'done':'locked')+'"><span>'+names[i]+'</span><span>'+(achs[i]===1?'✅':'🔒')+'</span></div>';}
             document.getElementById('achList').innerHTML=h;
         }
         
         function updateRank(){
-            let h='<div class="rank-item" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);"><span class="rank-pos">🥇</span><span class="rank-name">⭐ Вы</span><span class="rank-score">'+B.toLocaleString()+' nRAM</span></div>';
-            h+='<p style="color:#94a3b8;text-align:center;margin-top:18px;font-size:11px;">🏆 Реальные игроки появятся здесь,<br>когда к сети присоединятся участники!</p>';
+            var h='<div class="rank-item" style="background:rgba(251,191,36,0.1);"><span class="rank-pos">🥇</span><span class="rank-name">⭐ Вы</span><span class="rank-score">'+B.toLocaleString()+' nRAM</span></div>';
+            h+='<div class="node-stat">🖥️ RAMCOIN NODE<br><span>Блоков: 18 617</span> | <span>Сложность: 40 KRam/s</span><br><span>Supply: 183 830 RAM</span> | <span>Майнеров: 5</span></div>';
+            h+='<p style="color:#94a3b8;text-align:center;margin-top:8px;font-size:10px;">👥 Пригласи друга — займи первое место!</p>';
             document.getElementById('rankList').innerHTML=h;
         }
         
         function drawWheel(){
-            let c=document.getElementById('wheelCanvas'),ctx=c.getContext('2d'),cx=130,cy=130,r=120,n=prizes.length,colors=['#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b'];
+            var c=document.getElementById('wheelCanvas'),ctx=c.getContext('2d'),cx=130,cy=130,r=120,n=prizes.length;
+            var colors=['#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b'];
             ctx.clearRect(0,0,260,260);
-            for(let i=0;i<n;i++){
-                let a=(i*2*Math.PI)/n-Math.PI/2;
+            for(var i=0;i<n;i++){
+                var a=(i*2*Math.PI)/n-Math.PI/2;
                 ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+(2*Math.PI)/n);
                 ctx.fillStyle=colors[i];ctx.fill();
                 ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.stroke();
-                ctx.save();
-                ctx.translate(cx+Math.cos(a+Math.PI/n)*r*0.65,cy+Math.sin(a+Math.PI/n)*r*0.65);
-                ctx.rotate(a+Math.PI/n);
-                ctx.fillStyle='#000';ctx.font='bold 12px sans-serif';ctx.fillText(prizes[i]+'n',-16,4);
-                ctx.restore();
+                ctx.save();ctx.translate(cx+Math.cos(a+Math.PI/n)*r*0.65,cy+Math.sin(a+Math.PI/n)*r*0.65);
+                ctx.rotate(a+Math.PI/n);ctx.fillStyle='#000';ctx.font='bold 11px sans-serif';ctx.fillText(prizes[i]+'n',-14,4);ctx.restore();
             }
             ctx.beginPath();ctx.arc(cx,cy,14,0,2*Math.PI);ctx.fillStyle='#0f172a';ctx.fill();
             ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.moveTo(cx,cy-11);ctx.lineTo(cx-5,cy-20);ctx.lineTo(cx+5,cy-20);ctx.fill();
         }
         
         function spinWheel(){
-            let today=new Date().toDateString();
-            if(wheelUsed===today){alert('🎰 Уже крутили сегодня!');return;}
+            var today=new Date().toDateString();
+            if(wheelUsed===today){alert('🎰 Уже крутили!');return;}
             wheelUsed=today;
-            let btn=document.getElementById('spinBtn');btn.disabled=true;
-            let idx=Math.floor(Math.random()*prizes.length),deg=360*5+idx*(360/prizes.length),c=document.getElementById('wheelCanvas');
+            var btn=document.getElementById('spinBtn');btn.disabled=true;
+            var idx=Math.floor(Math.random()*prizes.length),deg=360*5+idx*(360/prizes.length),c=document.getElementById('wheelCanvas');
             c.style.transition='transform 3s ease-out';c.style.transform='rotate('+deg+'deg)';
-            setTimeout(()=>{
-                let prize=prizes[idx];B+=prize;
-                document.getElementById('wheelResult').textContent='🎉 +'+prize+' nRAM!';
-                U();S2();
-                c.style.transition='none';c.style.transform='rotate('+(deg%360)+'deg)';
-                btn.disabled=false;
+            setTimeout(function(){
+                B+=prizes[idx];document.getElementById('wheelResult').textContent='🎉 +'+prizes[idx]+' nRAM!';
+                U();S2();c.style.transition='none';c.style.transform='rotate('+(deg%360)+'deg)';btn.disabled=false;
             },3100);
         }
         
         function submitWithdraw(){
-            let addr=document.getElementById('wAddr').value.trim();
+            var addr=document.getElementById('wAddr').value.trim();
             if(!addr.startsWith('RAM_')){alert('❌ Неверный адрес!');return;}
             if(addr.length<20){alert('❌ Неверный адрес!');return;}
-            let min=10000000;
-            if(B<min){alert('❌ Минимум: 10 млн nRAM. У вас: '+B.toLocaleString());return;}
-            let ramAmount=(B/1000000000).toFixed(6);
-            let requests=JSON.parse(localStorage.getItem('rc_requests')||'[]');
-            requests.push({tg:uid,address:addr,amount_nRAM:B,amount_RAM:ramAmount,status:'pending',date:new Date().toISOString()});
+            if(B<10000000){alert('❌ Минимум: 10 млн nRAM');return;}
+            var ramAmount=(B/1000000000).toFixed(6);
+            var requests=JSON.parse(localStorage.getItem('rc_requests')||'[]');
+            requests.push({tg:uid,address:addr,amount:B,ram:ramAmount,date:new Date().toISOString()});
             localStorage.setItem('rc_requests',JSON.stringify(requests));
             B=0;U();S2();
             document.getElementById('withdrawForm').style.display='none';
@@ -740,10 +691,9 @@
             if(t==='shop')updateShop();
             if(t==='out'){document.getElementById('withdrawForm').style.display='block';document.getElementById('withdrawDone').style.display='none';document.getElementById('wAddr').value='';}
         }
-        
         function closeM(t){document.getElementById('m-'+t).classList.remove('active');}
         
-        setInterval(()=>{restoreEnergy();if(boost&&Date.now()>bEnd){boost=false;U();S2();}},60000);
+        setInterval(function(){restoreEnergy();if(boost&&Date.now()>bEnd){boost=false;U();S2();}},60000);
         setInterval(checkReferralRewards,300000);
     </script>
 </body>
