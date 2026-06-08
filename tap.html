@@ -45,7 +45,7 @@
         .action-btn .label { font-size:8px;font-weight:600;color:#64748b; }
         .modal { position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s; }
         .modal.active { opacity:1;pointer-events:all; }
-        .modal-content { background:#0f172a;border-radius:18px;padding:18px;width:88%;max-width:360px;border:1px solid rgba(255,255,255,0.08);max-height:80vh;overflow-y:auto; }
+        .modal-content { background:#0f172a;border-radius:18px;padding:18px;width:88%;max-width:380px;border:1px solid rgba(255,255,255,0.08);max-height:80vh;overflow-y:auto; }
         .modal h2 { font-size:15px;margin-bottom:6px; }
         .modal .close { background:rgba(255,255,255,0.06);border:none;color:white;padding:9px;border-radius:10px;margin-top:6px;cursor:pointer;width:100%;font-weight:700;font-size:12px; }
         .wheel-container { text-align:center; } canvas#wheelCanvas { max-width:100%; }
@@ -60,20 +60,22 @@
         .rank-item { display:flex;align-items:center;padding:8px;background:rgba(255,255,255,0.02);border-radius:10px;margin:3px 0;gap:7px; }
         .rank-pos { font-size:15px;font-weight:900;width:26px;text-align:center; }
         .rank-name { flex:1;font-size:11px; } .rank-score { font-weight:700;color:#fbbf24;font-size:11px; }
-        .achievement { margin:4px 0;padding:8px;background:rgba(255,255,255,0.02);border-radius:10px;display:flex;justify-content:space-between;align-items:center;font-size:11px; }
+        .achievement { margin:3px 0;padding:7px;background:rgba(255,255,255,0.02);border-radius:10px;display:flex;justify-content:space-between;align-items:center;font-size:10px; }
         .achievement.done { background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15); }
         .achievement.locked { opacity:0.4; }
         .task-bar { height:2.5px;background:rgba(255,255,255,0.04);border-radius:2px;margin-top:2px;overflow:hidden; }
         .task-fill { height:100%;background:linear-gradient(90deg,#38bdf8,#a78bfa);border-radius:2px;transition:width 0.3s; }
         .upgrade-highlight { border:1px solid rgba(251,191,36,0.4) !important; animation:glowPulse 2s infinite; }
         @keyframes glowPulse { 0%,100%{box-shadow:0 0 5px rgba(251,191,36,0.2);} 50%{box-shadow:0 0 15px rgba(251,191,36,0.5);} }
-        .prestige-badge { background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;padding:2px 8px;border-radius:10px;font-size:8px;font-weight:900; }
         input { width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:#020617;color:#fff;margin:8px 0;font-size:12px; }
+        .section-title { color:#38bdf8;font-size:10px;font-weight:700;margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px; }
+        .welcome-bonus { background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(245,158,11,0.1));border:1px solid rgba(251,191,36,0.3);border-radius:12px;padding:12px;margin:8px 0;text-align:center; }
+        .welcome-bonus strong { color:#fbbf24;font-size:14px; }
     </style>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
-    <div id="loading"><div class="loader-icon">⚡</div><div class="loader-title">RAMCOIN</div><div class="loader-sub">Подключение к сети...</div></div>
+    <div id="loading"><div class="loader-icon">⚡</div><div class="loader-title">RAMCOIN</div><div class="loader-sub">Загрузка обновлений...</div></div>
 
     <div class="app" id="app">
         <div class="header">
@@ -129,34 +131,48 @@
         </div>
     </div>
     
+    <!-- МОДАЛЬНЫЕ ОКНА -->
     <div class="modal" id="m-wheel"><div class="modal-content"><h2>🎰 Колесо фортуны</h2><p style="color:#94a3b8;font-size:11px;text-align:center;">Крути раз в день!</p><div class="wheel-container"><canvas id="wheelCanvas" width="260" height="260"></canvas></div><div id="wheelResult" style="text-align:center;font-size:16px;font-weight:900;margin:6px 0;"></div><button class="wheel-btn" id="spinBtn" onclick="spinWheel()">🎰 КРУТИТЬ</button><p style="font-size:9px;color:#94a3b8;text-align:center;">Призы: 10-5000 nRAM</p><button class="close" onclick="closeM('wheel')">Закрыть</button></div></div>
+    
     <div class="modal" id="m-rank"><div class="modal-content"><h2>🏆 Рейтинг игроков</h2><div id="rankList"></div><button class="close" onclick="closeM('rank')">Закрыть</button></div></div>
-    <div class="modal" id="m-tasks"><div class="modal-content"><h2>📋 Задания</h2>
-        <div class="shop-item" id="task-tap100"><strong>🖐️ 100 тапов</strong> <span class="price-tag">+50 nRAM</span><div class="task-bar"><div class="task-fill" id="tf1" style="width:0%"></div></div></div>
-        <div class="shop-item" id="task-tap1000"><strong>💪 1000 тапов</strong> <span class="price-tag">+200 nRAM</span><div class="task-bar"><div class="task-fill" id="tf2" style="width:0%"></div></div></div>
-        <div class="shop-item" id="task-tap10000"><strong>🎯 10000 тапов</strong> <span class="price-tag">+1000 nRAM</span><div class="task-bar"><div class="task-fill" id="tf3" style="width:0%"></div></div></div>
-        <div class="shop-item" id="task-channel" onclick="doTask('channel')"><strong>📢 Подписаться на канал</strong> <span class="price-tag" id="tag-channel">+200 nRAM</span><br><small style="color:#94a3b8;">@ramcoin_pow</small></div>
-        <div class="shop-item" id="task-group" onclick="doTask('group')"><strong>👥 Вступить в группу</strong> <span class="price-tag" id="tag-group">+500 nRAM</span><br><small style="color:#94a3b8;">@ramcoin_chat</small></div>
-        <div class="shop-item" id="task-invite" onclick="invite()"><strong>👤 Пригласить друга</strong> <span class="price-tag">+500 nRAM</span></div>
-        <div style="margin-top:12px;padding:9px;background:rgba(251,191,36,0.05);border-radius:10px;border:1px solid rgba(251,191,36,0.15);">
-            <strong style="color:#fbbf24;">👥 Реферальные награды</strong>
-            <small style="color:#94a3b8;display:block;margin-top:4px;">• 5 друзей: +1 000 nRAM</small>
-            <small style="color:#94a3b8;display:block;">• 10 друзей: +5 000 nRAM</small>
-            <small style="color:#94a3b8;display:block;">• 15 друзей: +10 000 nRAM</small>
-            <small style="color:#94a3b8;display:block;">• 20 друзей: +25 000 nRAM</small>
-            <small style="color:#94a3b8;display:block;">• 30 друзей: +50 000 nRAM</small>
-            <small style="color:#94a3b8;display:block;">• 40 друзей: +100 000 nRAM</small>
-            <small style="color:#fbbf24;display:block;font-weight:700;">• 50 друзей: +500 000 nRAM</small>
-        </div>
-        <div class="shop-item" id="task-day3"><strong>🔥 3 дня подряд</strong> <span class="price-tag">+200 nRAM</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp">0</span>/3</small></div>
-        <div class="shop-item" id="task-day7"><strong>📅 7 дней подряд</strong> <span class="price-tag">+500 nRAM</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp7">0</span>/7</small></div>
-        <div class="shop-item" id="task-lvl2"><strong>🟢 Достичь уровня 2</strong> <span class="price-tag">+1000 nRAM</span></div>
-        <div class="shop-item" id="task-lvl3"><strong>🔵 Достичь уровня 3</strong> <span class="price-tag">+2000 nRAM</span></div>
+    
+    <div class="modal" id="m-tasks"><div class="modal-content"><h2>📋 Задания (20)</h2>
+        <div class="section-title">🖐️ Тапы</div>
+        <div class="shop-item" id="task-tap100"><strong>100 тапов</strong> <span class="price-tag">+50</span><div class="task-bar"><div class="task-fill" id="tf1" style="width:0%"></div></div></div>
+        <div class="shop-item" id="task-tap1000"><strong>1 000 тапов</strong> <span class="price-tag">+200</span><div class="task-bar"><div class="task-fill" id="tf2" style="width:0%"></div></div></div>
+        <div class="shop-item" id="task-tap5000"><strong>5 000 тапов</strong> <span class="price-tag">+500</span><div class="task-bar"><div class="task-fill" id="tf3" style="width:0%"></div></div></div>
+        <div class="shop-item" id="task-tap10000"><strong>10 000 тапов</strong> <span class="price-tag">+1 000</span><div class="task-bar"><div class="task-fill" id="tf4" style="width:0%"></div></div></div>
+        <div class="shop-item" id="task-tap50000"><strong>50 000 тапов</strong> <span class="price-tag">+5 000</span><div class="task-bar"><div class="task-fill" id="tf5" style="width:0%"></div></div></div>
+        <div class="shop-item" id="task-tap100000"><strong>100 000 тапов</strong> <span class="price-tag">+10 000</span><div class="task-bar"><div class="task-fill" id="tf6" style="width:0%"></div></div></div>
+        <div class="shop-item" id="task-tap500000"><strong>500 000 тапов</strong> <span class="price-tag">+25 000</span><div class="task-bar"><div class="task-fill" id="tf7" style="width:0%"></div></div></div>
+        <div class="shop-item" id="task-tap1000000"><strong>1 000 000 тапов</strong> <span class="price-tag">+100 000</span><div class="task-bar"><div class="task-fill" id="tf8" style="width:0%"></div></div></div>
+        
+        <div class="section-title">📢 Соцсети</div>
+        <div class="shop-item" id="task-channel" onclick="doTask('channel')"><strong>Подписаться на канал</strong> <span class="price-tag" id="tag-channel">+200</span><br><small style="color:#94a3b8;">@ramcoin_pow</small></div>
+        <div class="shop-item" id="task-group" onclick="doTask('group')"><strong>Вступить в группу</strong> <span class="price-tag" id="tag-group">+500</span><br><small style="color:#94a3b8;">@ramcoin_chat</small></div>
+        <div class="shop-item" id="task-invite" onclick="invite()"><strong>Пригласить 1 друга</strong> <span class="price-tag">+500</span></div>
+        <div class="shop-item" id="task-invite5"><strong>Пригласить 5 друзей</strong> <span class="price-tag">+2 500</span></div>
+        <div class="shop-item" id="task-invite10"><strong>Пригласить 10 друзей</strong> <span class="price-tag">+10 000</span></div>
+        
+        <div class="section-title">📅 Ежедневные</div>
+        <div class="shop-item" id="task-day3"><strong>3 дня подряд</strong> <span class="price-tag">+200</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp">0</span>/3</small></div>
+        <div class="shop-item" id="task-day7"><strong>7 дней подряд</strong> <span class="price-tag">+500</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp7">0</span>/7</small></div>
+        <div class="shop-item" id="task-day30"><strong>30 дней подряд</strong> <span class="price-tag">+5 000</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp30">0</span>/30</small></div>
+        <div class="shop-item" id="task-day100"><strong>100 дней подряд</strong> <span class="price-tag">+50 000</span><br><small style="color:#94a3b8;">Прогресс: <span id="tdp100">0</span>/100</small></div>
+        
+        <div class="section-title">🆙 Уровни</div>
+        <div class="shop-item" id="task-lvl2"><strong>Достичь уровня 2</strong> <span class="price-tag">+1 000</span></div>
+        <div class="shop-item" id="task-lvl3"><strong>Достичь уровня 3</strong> <span class="price-tag">+2 000</span></div>
+        <div class="shop-item" id="task-lvl5"><strong>Достичь уровня 5</strong> <span class="price-tag">+10 000</span></div>
         <button class="close" onclick="closeM('tasks')">Закрыть</button>
     </div></div>
-    <div class="modal" id="m-achs"><div class="modal-content"><h2>⭐ Достижения</h2><div id="achList"></div><button class="close" onclick="closeM('achs')">Закрыть</button></div></div>
+    
+    <div class="modal" id="m-achs"><div class="modal-content"><h2>⭐ Достижения (15)</h2><div id="achList"></div><button class="close" onclick="closeM('achs')">Закрыть</button></div></div>
+    
     <div class="modal" id="m-boost"><div class="modal-content"><h2>⚡ Бустер ×2</h2><p style="color:#94a3b8;">Двойной заработок на 1 час!</p><button class="close" onclick="activateBoost()" style="background:linear-gradient(135deg,#a78bfa,#38bdf8);">Активировать</button><button class="close" onclick="closeM('boost')" style="margin-top:4px;background:rgba(255,255,255,0.05);">Отмена</button></div></div>
+    
     <div class="modal" id="m-shop"><div class="modal-content"><h2>🛒 Магазин улучшений</h2><div id="shop-items"></div><button class="close" onclick="closeM('shop')">Закрыть</button></div></div>
+    
     <div class="modal" id="m-out"><div class="modal-content">
         <h2>💳 Вывод RAM</h2>
         <p style="color:#94a3b8;font-size:11px;text-align:center;">Курс: 1 млрд nRAM = 1 RAM</p>
@@ -197,18 +213,81 @@
         
         const tg = window.Telegram.WebApp; tg.expand();
         const uid = tg.initDataUnsafe?.user?.id || 'anon';
-        const P = 'v3_'+uid+'_';
         
-        // Основные переменные
-        let B=parseInt(localStorage.getItem(P+'B')||'0'),E=parseInt(localStorage.getItem(P+'E')||'500'),T=parseInt(localStorage.getItem(P+'T')||'0'),L=parseInt(localStorage.getItem(P+'L')||'1'),R=parseInt(localStorage.getItem(P+'R')||'0'),S=parseInt(localStorage.getItem(P+'S')||'0'),D=parseInt(localStorage.getItem(P+'D')||'0'),boost=localStorage.getItem(P+'X')==='1',bEnd=parseInt(localStorage.getItem(P+'BE')||'0'),tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]'),achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0]'),wheelUsed=localStorage.getItem(P+'W')||'',pendingTask=localStorage.getItem(P+'pending')||'';
+        // ИСПОЛЬЗУЕМ СТАРЫЙ ПРЕФИКС ЧТОБЫ СОХРАНИТЬ БАЛАНС
+        const P_old = 'v2_'+uid+'_'; // старые данные
+        const P = 'v4_'+uid+'_';     // новые данные
         
-        // Улучшения тапа
+        // ЗАГРУЖАЕМ СНАЧАЛА СТАРЫЕ ДАННЫЕ
+        let B_old = parseInt(localStorage.getItem(P_old+'B')||'0');
+        let E_old = parseInt(localStorage.getItem(P_old+'E')||'500');
+        let T_old = parseInt(localStorage.getItem(P_old+'T')||'0');
+        let L_old = parseInt(localStorage.getItem(P_old+'L')||'1');
+        let R_old = parseInt(localStorage.getItem(P_old+'R')||'0');
+        let S_old = parseInt(localStorage.getItem(P_old+'S')||'0');
+        let D_old = parseInt(localStorage.getItem(P_old+'D')||'0');
+        
+        // ЗАГРУЖАЕМ НОВЫЕ ДАННЫЕ (ЕСЛИ УЖЕ БЫЛИ СОХРАНЕНЫ)
+        let B_new = parseInt(localStorage.getItem(P+'B')||'0');
+        let E_new = parseInt(localStorage.getItem(P+'E')||'0');
+        let T_new = parseInt(localStorage.getItem(P+'T')||'0');
+        let L_new = parseInt(localStorage.getItem(P+'L')||'0');
+        let R_new = parseInt(localStorage.getItem(P+'R')||'0');
+        let S_new = parseInt(localStorage.getItem(P+'S')||'0');
+        let D_new = parseInt(localStorage.getItem(P+'D')||'0');
+        
+        // МИГРАЦИЯ: ЕСЛИ ЕСТЬ СТАРЫЕ ДАННЫЕ И НОВЫХ НЕТ - ПЕРЕНОСИМ
+        let migrated = localStorage.getItem(P+'migrated');
+        if(!migrated && (B_old > 0 || T_old > 0)) {
+            B = B_old;
+            E = E_old > 0 ? E_old : 500;
+            T = T_old;
+            L = L_old > 0 ? L_old : 1;
+            R = R_old;
+            S = S_old;
+            D = D_old;
+            
+            // Даём бонус за обновление!
+            B += 10000;
+            alert('🎉 ОБНОВЛЕНИЕ!\n\nВаш баланс сохранён: ' + B_old.toLocaleString() + ' nRAM\n💰 Бонус за лояльность: +10 000 nRAM!\n\nНовые возможности:\n📋 20 заданий\n⭐ 15 достижений\n⚡ Улучшения до x50\n👥 Реферальные награды');
+            
+            localStorage.setItem(P+'migrated', '1');
+            S2();
+        } else if(B_new > 0 || T_new > 0) {
+            // Используем уже сохранённые новые данные
+            B = B_new;
+            E = E_new > 0 ? E_new : 500;
+            T = T_new;
+            L = L_new > 0 ? L_new : 1;
+            R = R_new;
+            S = S_new;
+            D = D_new;
+        } else {
+            // Новый игрок
+            B = 0;
+            E = 500;
+            T = 0;
+            L = 1;
+            R = 0;
+            S = 0;
+            D = 0;
+        }
+        
+        // ОСТАЛЬНЫЕ ПЕРЕМЕННЫЕ
+        let boost = localStorage.getItem(P+'X')==='1';
+        let bEnd = parseInt(localStorage.getItem(P+'BE')||'0');
+        let tasksDone = JSON.parse(localStorage.getItem(P+'TD')||'[]');
+        let achs = JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]');
+        let wheelUsed = localStorage.getItem(P+'W')||'';
+        let pendingTask = localStorage.getItem(P+'pending')||'';
+        
+        // УЛУЧШЕНИЯ
         let tapMultiplier = parseInt(localStorage.getItem(P+'TM')||'1');
         let upgradeCost = parseInt(localStorage.getItem(P+'UC')||'50000');
         let upgradesBought = parseInt(localStorage.getItem(P+'UB')||'0');
         const MAX_MULTIPLIER = 50;
         
-        // Реферальные награды
+        // РЕФЕРАЛЫ
         let referralMilestones = JSON.parse(localStorage.getItem(P+'REF')||'[]');
         const referralRewards = {5:1000,10:5000,15:10000,20:25000,30:50000,40:100000,50:500000};
         
@@ -220,16 +299,59 @@
         const prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
         let tapTimes=[],tapLock=false;
         
+        // Проверяем старые выполненные задания и выдаём награды
+        function migrateOldTasks() {
+            let oldTasks = JSON.parse(localStorage.getItem(P_old+'TD')||'[]');
+            let givenBonus = false;
+            
+            // Переносим старые задания
+            oldTasks.forEach(task => {
+                if(tasksDone.indexOf(task) === -1) {
+                    tasksDone.push(task);
+                }
+            });
+            
+            // Выдаём награды за уже выполненные задания
+            const tapTasks = {100:'tap100',1000:'tap1000',5000:'tap5000',10000:'tap10000',50000:'tap50000',100000:'tap100000',500000:'tap500000',1000000:'tap1000000'};
+            const tapRewards = {100:50,1000:200,5000:500,10000:1000,50000:5000,100000:10000,500000:25000,1000000:100000};
+            
+            for(let count in tapTasks) {
+                if(T >= count && tasksDone.indexOf(tapTasks[count]) === -1) {
+                    tasksDone.push(tapTasks[count]);
+                    B += tapRewards[count];
+                    givenBonus = true;
+                }
+            }
+            
+            // Проверяем старые достижения
+            let oldAchs = JSON.parse(localStorage.getItem(P_old+'A')||'[0,0,0,0,0]');
+            for(let i=0; i<oldAchs.length; i++) {
+                if(oldAchs[i] === 1 && achs[i] === 0) {
+                    achs[i] = 1;
+                }
+            }
+            
+            if(givenBonus) {
+                setTimeout(() => {
+                    alert('✅ Награды за ваши прошлые тапы начислены!');
+                    U(); S2();
+                }, 2000);
+            }
+            
+            S2();
+        }
+        
         function checkLevelUp(){
             let newL = 1;
             for(let i=1;i<levels.length;i++){if(T>=levels[i])newL=i+1;else break;}
             if(newL>L){
                 L=newL;
                 let rewards=[0,0,1000,2000,3000,5000,10000,20000];
-                if(rewards[L]){B+=rewards[L];alert('🎉 Уровень '+L+'! +'+rewards[L]+' nRAM! Энергия: '+energyPerLevel[L]);}
+                if(rewards[L]){B+=rewards[L];alert('🎉 Уровень '+L+'! +'+rewards[L]+' nRAM!');}
                 E=energyPerLevel[L];
-                if(L>=2&&tasksDone.indexOf('lvl2')===-1){tasksDone.push('lvl2');B+=1000;alert('✅ +1000 nRAM за уровень 2!');}
-                if(L>=3&&tasksDone.indexOf('lvl3')===-1){tasksDone.push('lvl3');B+=2000;alert('✅ +2000 nRAM за уровень 3!');}
+                if(L>=2&&tasksDone.indexOf('lvl2')===-1){tasksDone.push('lvl2');B+=1000;}
+                if(L>=3&&tasksDone.indexOf('lvl3')===-1){tasksDone.push('lvl3');B+=2000;}
+                if(L>=5&&tasksDone.indexOf('lvl5')===-1){tasksDone.push('lvl5');B+=10000;alert('🎉 Уровень 5! +10 000 nRAM!');}
             }
         }
         checkLevelUp();
@@ -265,7 +387,7 @@
         let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
         if(refs[uid]){B+=500;R++;delete refs[uid];localStorage.setItem('ram_refs',JSON.stringify(refs));alert('🎉 +500 nRAM! Друг присоединился!');U();S2();}
         
-        // Фон
+        // ФОН
         const bg=document.getElementById('bgCanvas'),ctx=bg.getContext('2d');
         bg.width=window.innerWidth;bg.height=window.innerHeight;
         const nodes=Array.from({length:18},()=>({x:Math.random()*bg.width,y:Math.random()*bg.height,vx:(Math.random()-0.5)*0.25,vy:(Math.random()-0.5)*0.25,size:Math.random()*1.5+1,phase:Math.random()*Math.PI*2}));
@@ -287,7 +409,15 @@
         }
         drawBg();
         
-        window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loading').style.display='none';document.getElementById('app').style.display='flex';U();drawWheel();updateTasks();updateAchs();updateRank();updateShop();checkReferralRewards();checkMultiplierBonuses();},500);});
+        window.addEventListener('load',()=>{
+            setTimeout(()=>{
+                document.getElementById('loading').style.display='none';
+                document.getElementById('app').style.display='flex';
+                migrateOldTasks(); // Миграция старых заданий
+                U();drawWheel();updateTasks();updateAchs();updateRank();updateShop();
+                checkReferralRewards();checkMultiplierBonuses();
+            },800);
+        });
         
         // ТАП
         function tap(e){
@@ -298,33 +428,22 @@
             tapTimes=tapTimes.filter(t=>n-t<1000);
             if(tapTimes.length>15){tapLock=false;return;}
             if(E<=0){tapLock=false;return;}
-            
             let boostMultiplier = (boost && n < bEnd) ? 2 : 1;
             let gain = 1 * tapMultiplier * boostMultiplier;
-            
-            B += gain;
-            E--;
-            T++;
+            B += gain; E--; T++;
             tapTimes.push(n);
-            
             let lv = Math.floor(T/1000)+1;
             if(lv>L){L=lv;F('⬆ УРОВЕНЬ!','#a78bfa',e);checkLevelUp();}
-            
             let displayText = '+'+gain;
             if(tapMultiplier>1||boost) displayText += ' (x'+tapMultiplier+(boost&&n<bEnd?'🔥':'')+')';
             F(displayText,'#fbbf24',e);
-            
-            checkAchs();
-            U();
-            S2();
+            checkAchs(); U(); S2(); updateTasks();
             setTimeout(()=>{tapLock=false;},200);
         }
         
         function F(t,c,e){
             let el=document.createElement('div');
-            el.className='float-text';
-            el.textContent=t;
-            el.style.color=c;
+            el.className='float-text'; el.textContent=t; el.style.color=c;
             el.style.left=((e.touches?.[0]?.clientX||e.clientX||innerWidth/2)-15)+'px';
             el.style.top=((e.touches?.[0]?.clientY||e.clientY||innerHeight/2)-20)+'px';
             document.body.appendChild(el);
@@ -349,10 +468,10 @@
             d[P+'A']=JSON.stringify(achs);d[P+'W']=wheelUsed;d[P+'pending']=pendingTask;
             d[P+'TM']=tapMultiplier;d[P+'UC']=upgradeCost;d[P+'UB']=upgradesBought;
             d[P+'REF']=JSON.stringify(referralMilestones);
+            if(localStorage.getItem(P+'migrated')) d[P+'migrated'] = '1';
             Object.entries(d).forEach(([k,v])=>localStorage.setItem(k,v));
         }
         
-        // Ежедневный бонус
         function daily(){
             let n=Date.now(),day=86400000;
             if(n-D<day){alert('🎁 Уже получен!');return;}
@@ -361,11 +480,12 @@
             B+=bonus;D=n;
             if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200;}
             if(S>=7&&tasksDone.indexOf('day7')===-1){tasksDone.push('day7');B+=500;alert('🔥 7 дней! +500 nRAM!');}
+            if(S>=30&&tasksDone.indexOf('day30')===-1){tasksDone.push('day30');B+=5000;alert('🔥 30 дней! +5 000 nRAM!');}
+            if(S>=100&&tasksDone.indexOf('day100')===-1){tasksDone.push('day100');B+=50000;alert('👑 100 дней! +50 000 nRAM!');}
             alert('🎁 +'+bonus+' nRAM! День '+S);
             U();S2();updateTasks();
         }
         
-        // Бустер
         function activateBoost(){
             if(boost&&Date.now()<bEnd){alert('Уже активен!');closeM('boost');return;}
             boost=true;bEnd=Date.now()+3600000;
@@ -373,7 +493,6 @@
             closeM('boost');U();S2();updateTasks();
         }
         
-        // Покупка улучшения тапа
         function buyUpgrade(){
             if(upgradesBought>=MAX_MULTIPLIER-1){alert('👑 АБСОЛЮТНЫЙ МАКСИМУМ x50!\n\nТы легенда RAMCOIN!');return;}
             if(B<upgradeCost){
@@ -393,7 +512,6 @@
             else if(upgradesBought<40)upgradeCost=Math.floor(upgradeCost*15);
             else if(upgradesBought<45)upgradeCost=Math.floor(upgradeCost*20);
             else upgradeCost=Math.floor(upgradeCost*30);
-            
             checkMultiplierBonuses();
             alert('✅ УЛУЧШЕНИЕ x'+tapMultiplier+'!\n\n💰 Следующее: '+upgradeCost.toLocaleString()+' nRAM\n📊 Прогресс: '+upgradesBought+'/'+(MAX_MULTIPLIER-1));
             U();S2();updateShop();
@@ -411,7 +529,6 @@
             }
         }
         
-        // Магазин
         function updateShop(){
             let shop=document.getElementById('shop-items');
             if(!shop)return;
@@ -422,25 +539,20 @@
             h+='<div style="background:rgba(255,255,255,0.1);border-radius:5px;height:6px;margin-top:8px;overflow:hidden;">';
             h+='<div style="background:linear-gradient(90deg,#38bdf8,#a78bfa);height:100%;width:'+progress+'%;transition:width 0.5s;"></div></div>';
             h+='<div style="color:#94a3b8;font-size:9px;margin-top:4px;">'+upgradesBought+' / '+(MAX_MULTIPLIER-1)+' улучшений</div></div>';
-            
             h+='<div class="shop-item" onclick="activateBoost()"><strong>🔥 Бустер ×2 (1 час)</strong><br><span class="price-tag">Бесплатно</span></div>';
-            
             if(upgradesBought<MAX_MULTIPLIER-1){
                 h+='<div class="shop-item upgrade-highlight" onclick="buyUpgrade()"><strong>🔧 Улучшить до x'+(tapMultiplier+1)+'</strong><br><span class="price-tag" style="font-size:11px;">💰 '+upgradeCost.toLocaleString()+' nRAM</span><br><small style="color:#10b981;">Постоянное улучшение!</small></div>';
             }else{
                 h+='<div class="shop-item" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);"><strong>👑 МАКСИМУМ x50</strong><br><span class="price-tag done">🏆 Достигнут!</span></div>';
             }
-            
             h+='<div style="margin-top:10px;padding:10px;background:rgba(0,0,0,0.2);border-radius:8px;"><small style="color:#fbbf24;">🎯 Бонусы за множители:</small><br>';
-            h+='<small style="color:#94a3b8;">x5: +1K | x10: +10K | x15: +50K</small><br>';
-            h+='<small style="color:#94a3b8;">x20: +100K | x25: +200K | x30: +300K</small><br>';
-            h+='<small style="color:#94a3b8;">x35: +400K | x40: +500K | x45: +750K</small><br>';
-            h+='<small style="color:#fbbf24;">x50: +1 000 000 nRAM 👑</small></div>';
-            
+            h+='<small style="color:#94a3b8;">x5:+1K x10:+10K x15:+50K x20:+100K</small><br>';
+            h+='<small style="color:#94a3b8;">x25:+200K x30:+300K x35:+400K</small><br>';
+            h+='<small style="color:#94a3b8;">x40:+500K x45:+750K</small><br>';
+            h+='<small style="color:#fbbf24;">x50:+1 000 000 nRAM 👑</small></div>';
             shop.innerHTML=h;
         }
         
-        // Реферальные награды
         function checkReferralRewards(){
             let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
             let totalRefs=Object.keys(refs).length+R;
@@ -455,7 +567,13 @@
                     U();S2();
                 }
             }
-            if(totalRefs>=5&&achs[3]===0){achs[3]=1;updateAchs();}
+            if(totalRefs>=5&&tasksDone.indexOf('invite5')===-1){tasksDone.push('invite5');B+=2500;alert('✅ +2 500 nRAM за 5 друзей!');}
+            if(totalRefs>=10&&tasksDone.indexOf('invite10')===-1){tasksDone.push('invite10');B+=10000;alert('✅ +10 000 nRAM за 10 друзей!');}
+            if(totalRefs>=5&&achs[3]===0){achs[3]=1;}
+            if(totalRefs>=10&&achs[4]===0){achs[4]=1;}
+            if(totalRefs>=25&&achs[5]===0){achs[5]=1;}
+            if(totalRefs>=50&&achs[6]===0){achs[6]=1;}
+            updateAchs();S2();
         }
         
         function invite(){
@@ -464,13 +582,12 @@
             let nextMilestone=null;
             for(let count in referralRewards){count=parseInt(count);if(totalRefs<count){nextMilestone=count;break;}}
             let msg='📤 Пригласи друзей!\n\n👥 Друзей: '+totalRefs+'\n\n🎁 Награды:\n• 5: +1K • 10: +5K\n• 15: +10K • 20: +25K\n• 30: +50K • 40: +100K\n• 50: +500K 👑\n\n';
-            if(nextMilestone)msg+='🎯 До '+nextMilestone+' друзей осталось: '+(nextMilestone-totalRefs);
+            if(nextMilestone)msg+='🎯 До '+nextMilestone+' друзей: '+(nextMilestone-totalRefs);
             alert(msg);
             let refLink='https://t.me/ramcoin_tap_bot?startapp=ref_'+uid;
             tg.openTelegramLink('https://t.me/share/url?url='+encodeURIComponent(refLink)+'&text=⚡%20RAMCOIN%20Tap!%20Присоединяйся!');
         }
         
-        // Задания
         function doTask(t){
             if(t==='channel'){tg.openTelegramLink('https://t.me/ramcoin_pow');pendingTask='channel';localStorage.setItem(P+'pending','channel');S2();alert('📢 Подпишись на @ramcoin_pow и возвращайся!');}
             else if(t==='group'){tg.openTelegramLink('https://t.me/ramcoin_chat');pendingTask='group';localStorage.setItem(P+'pending','group');S2();alert('👥 Вступи в @ramcoin_chat и возвращайся!');}
@@ -478,32 +595,152 @@
         }
         
         function updateTasks(){
-            document.getElementById('tf1').style.width=Math.min(100,T)+'%';
-            document.getElementById('tf2').style.width=Math.min(100,T/10)+'%';
-            document.getElementById('tf3').style.width=Math.min(100,T/100)+'%';
-            if(T>=100&&tasksDone.indexOf('tap100')===-1){tasksDone.push('tap100');B+=50;U();S2();}
-            if(T>=1000&&tasksDone.indexOf('tap1000')===-1){tasksDone.push('tap1000');B+=200;U();S2();alert('✅ +200 nRAM за 1000 тапов!');}
-            if(T>=10000&&tasksDone.indexOf('tap10000')===-1){tasksDone.push('tap10000');B+=1000;U();S2();alert('✅ +1000 nRAM за 10000 тапов!');}
+            document.getElementById('tf1').style.width=Math.min(100,T/100*100)+'%';
+            document.getElementById('tf2').style.width=Math.min(100,T/1000*100)+'%';
+            document.getElementById('tf3').style.width=Math.min(100,T/5000*100)+'%';
+            document.getElementById('tf4').style.width=Math.min(100,T/10000*100)+'%';
+            document.getElementById('tf5').style.width=Math.min(100,T/50000*100)+'%';
+            document.getElementById('tf6').style.width=Math.min(100,T/100000*100)+'%';
+            document.getElementById('tf7').style.width=Math.min(100,T/500000*100)+'%';
+            document.getElementById('tf8').style.width=Math.min(100,T/1000000*100)+'%';
+            
+            const tapTasks={100:'tap100',1000:'tap1000',5000:'tap5000',10000:'tap10000',50000:'tap50000',100000:'tap100000',500000:'tap500000',1000000:'tap1000000'};
+            const tapRewards={100:50,1000:200,5000:500,10000:1000,50000:5000,100000:10000,500000:25000,1000000:100000};
+            for(let count in tapTasks){
+                if(T>=count&&tasksDone.indexOf(tapTasks[count])===-1){
+                    tasksDone.push(tapTasks[count]);
+                    B+=tapRewards[count];
+                    if(count>=50000)alert('✅ +'+tapRewards[count].toLocaleString()+' nRAM за '+count.toLocaleString()+' тапов!');
+                    U();S2();
+                }
+            }
+            
             document.getElementById('tdp').textContent=Math.min(S,3);
             document.getElementById('tdp7').textContent=Math.min(S,7);
-            if(tasksDone.indexOf('channel')!==-1){document.getElementById('task-channel').classList.add('completed');document.getElementById('tag-channel').classList.add('done');document.getElementById('tag-channel').textContent='✅ +200';}
-            if(tasksDone.indexOf('group')!==-1){document.getElementById('task-group').classList.add('completed');document.getElementById('tag-group').classList.add('done');document.getElementById('tag-group').textContent='✅ +500';}
+            document.getElementById('tdp30').textContent=Math.min(S,30);
+            document.getElementById('tdp100').textContent=Math.min(S,100);
+            
+            if(tasksDone.indexOf('channel')!==-1){document.getElementById('task-channel').classList.add('completed');document.getElementById('tag-channel').classList.add('done');document.getElementById('tag-channel').textContent='✅';}
+            if(tasksDone.indexOf('group')!==-1){document.getElementById('task-group').classList.add('completed');document.getElementById('tag-group').classList.add('done');document.getElementById('tag-group').textContent='✅';}
+            if(tasksDone.indexOf('invite5')!==-1){document.getElementById('task-invite5').classList.add('completed');}
+            if(tasksDone.indexOf('invite10')!==-1){document.getElementById('task-invite10').classList.add('completed');}
             checkReferralRewards();
         }
         
-        function checkAchs(){if(T>=100&&achs[0]===0){achs[0]=1;}if(T>=1000&&achs[1]===0){achs[1]=1;}if(T>=10000&&achs[2]===0){achs[2]=1;}let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');if(Object.keys(refs).length+R>=5&&achs[3]===0){achs[3]=1;}if(B>=1000000&&achs[4]===0){achs[4]=1;}updateAchs();S2();}
+        function checkAchs(){
+            if(T>=100&&achs[0]===0)achs[0]=1;
+            if(T>=1000&&achs[1]===0)achs[1]=1;
+            if(T>=10000&&achs[2]===0)achs[2]=1;
+            if(T>=100000&&achs[7]===0)achs[7]=1;
+            if(T>=1000000&&achs[8]===0)achs[8]=1;
+            let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
+            let totalRefs=Object.keys(refs).length+R;
+            if(totalRefs>=5&&achs[3]===0)achs[3]=1;
+            if(totalRefs>=10&&achs[4]===0)achs[4]=1;
+            if(totalRefs>=25&&achs[5]===0)achs[5]=1;
+            if(totalRefs>=50&&achs[6]===0)achs[6]=1;
+            if(B>=1000000&&achs[9]===0)achs[9]=1;
+            if(B>=10000000&&achs[10]===0)achs[10]=1;
+            if(B>=100000000&&achs[11]===0)achs[11]=1;
+            if(tapMultiplier>=10&&achs[12]===0)achs[12]=1;
+            if(tapMultiplier>=25&&achs[13]===0)achs[13]=1;
+            if(tapMultiplier>=50&&achs[14]===0)achs[14]=1;
+            updateAchs();S2();
+        }
         
-        function updateAchs(){let names=['Новичок (100 тапов)','Тапер (1000 тапов)','Мастер (10000 тапов)','Друг (5 друзей)','Миллионер (1M nRAM)'];let h='';for(let i=0;i<5;i++){let c=achs[i]===1?'done':'locked';let s=achs[i]===1?'✅':'🔒';h+='<div class="achievement '+c+'"><span>'+names[i]+'</span><span>'+s+'</span></div>';}document.getElementById('achList').innerHTML=h;}
+        function updateAchs(){
+            let names=[
+                '🥉 Новичок (100 тапов)',
+                '🥈 Тапер (1 000 тапов)',
+                '🥇 Мастер (10 000 тапов)',
+                '👥 Друг (5 друзей)',
+                '👥 Популярный (10 друзей)',
+                '👥 Звезда (25 друзей)',
+                '👥 Легенда (50 друзей)',
+                '💪 Железный палец (100K)',
+                '💪 Стальной палец (1M)',
+                '💰 Миллионер (1M nRAM)',
+                '💰 Магнат (10M nRAM)',
+                '💰 Олигарх (100M nRAM)',
+                '⚡ Улучшатель (x10)',
+                '⚡ Прокачанный (x25)',
+                '👑 Бог тапа (x50)'
+            ];
+            let h='';
+            for(let i=0;i<15;i++){
+                let c=achs[i]===1?'done':'locked';
+                let s=achs[i]===1?'✅':'🔒';
+                h+='<div class="achievement '+c+'"><span>'+names[i]+'</span><span>'+s+'</span></div>';
+            }
+            document.getElementById('achList').innerHTML=h;
+        }
         
-        function updateRank(){let h='<div class="rank-item" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);"><span class="rank-pos">🥇</span><span class="rank-name">⭐ Вы</span><span class="rank-score">'+B.toLocaleString()+' nRAM</span></div>';h+='<p style="color:#94a3b8;text-align:center;margin-top:18px;font-size:11px;">🏆 Реальные игроки появятся здесь,<br>когда к сети присоединятся участники!</p>';h+='<p style="color:#38bdf8;text-align:center;margin-top:8px;font-size:12px;">👥 Пригласи друга — займи первое место!</p>';document.getElementById('rankList').innerHTML=h;}
+        function updateRank(){
+            let h='<div class="rank-item" style="background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);"><span class="rank-pos">🥇</span><span class="rank-name">⭐ Вы</span><span class="rank-score">'+B.toLocaleString()+' nRAM</span></div>';
+            h+='<p style="color:#94a3b8;text-align:center;margin-top:18px;font-size:11px;">🏆 Реальные игроки появятся здесь,<br>когда к сети присоединятся участники!</p>';
+            document.getElementById('rankList').innerHTML=h;
+        }
         
-        function drawWheel(){let c=document.getElementById('wheelCanvas'),ctx=c.getContext('2d'),cx=130,cy=130,r=120,n=prizes.length,colors=['#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b'];ctx.clearRect(0,0,260,260);for(let i=0;i<n;i++){let a=(i*2*Math.PI)/n-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+(2*Math.PI)/n);ctx.fillStyle=colors[i];ctx.fill();ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.stroke();ctx.save();ctx.translate(cx+Math.cos(a+Math.PI/n)*r*0.65,cy+Math.sin(a+Math.PI/n)*r*0.65);ctx.rotate(a+Math.PI/n);ctx.fillStyle='#000';ctx.font='bold 12px sans-serif';ctx.fillText(prizes[i]+'n',-16,4);ctx.restore();}ctx.beginPath();ctx.arc(cx,cy,14,0,2*Math.PI);ctx.fillStyle='#0f172a';ctx.fill();ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.moveTo(cx,cy-11);ctx.lineTo(cx-5,cy-20);ctx.lineTo(cx+5,cy-20);ctx.fill();}
+        function drawWheel(){
+            let c=document.getElementById('wheelCanvas'),ctx=c.getContext('2d'),cx=130,cy=130,r=120,n=prizes.length,colors=['#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b'];
+            ctx.clearRect(0,0,260,260);
+            for(let i=0;i<n;i++){
+                let a=(i*2*Math.PI)/n-Math.PI/2;
+                ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+(2*Math.PI)/n);
+                ctx.fillStyle=colors[i];ctx.fill();
+                ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.stroke();
+                ctx.save();
+                ctx.translate(cx+Math.cos(a+Math.PI/n)*r*0.65,cy+Math.sin(a+Math.PI/n)*r*0.65);
+                ctx.rotate(a+Math.PI/n);
+                ctx.fillStyle='#000';ctx.font='bold 12px sans-serif';ctx.fillText(prizes[i]+'n',-16,4);
+                ctx.restore();
+            }
+            ctx.beginPath();ctx.arc(cx,cy,14,0,2*Math.PI);ctx.fillStyle='#0f172a';ctx.fill();
+            ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.moveTo(cx,cy-11);ctx.lineTo(cx-5,cy-20);ctx.lineTo(cx+5,cy-20);ctx.fill();
+        }
         
-        function spinWheel(){let today=new Date().toDateString();if(wheelUsed===today){alert('🎰 Уже крутили сегодня!');return;}wheelUsed=today;let btn=document.getElementById('spinBtn');btn.disabled=true;let idx=Math.floor(Math.random()*prizes.length),deg=360*5+idx*(360/prizes.length),c=document.getElementById('wheelCanvas');c.style.transition='transform 3s ease-out';c.style.transform='rotate('+deg+'deg)';setTimeout(()=>{let prize=prizes[idx];B+=prize;document.getElementById('wheelResult').textContent='🎉 +'+prize+' nRAM!';U();S2();c.style.transition='none';c.style.transform='rotate('+(deg%360)+'deg)';btn.disabled=false;},3100);}
+        function spinWheel(){
+            let today=new Date().toDateString();
+            if(wheelUsed===today){alert('🎰 Уже крутили сегодня!');return;}
+            wheelUsed=today;
+            let btn=document.getElementById('spinBtn');btn.disabled=true;
+            let idx=Math.floor(Math.random()*prizes.length),deg=360*5+idx*(360/prizes.length),c=document.getElementById('wheelCanvas');
+            c.style.transition='transform 3s ease-out';c.style.transform='rotate('+deg+'deg)';
+            setTimeout(()=>{
+                let prize=prizes[idx];B+=prize;
+                document.getElementById('wheelResult').textContent='🎉 +'+prize+' nRAM!';
+                U();S2();
+                c.style.transition='none';c.style.transform='rotate('+(deg%360)+'deg)';
+                btn.disabled=false;
+            },3100);
+        }
         
-        function submitWithdraw(){let addr=document.getElementById('wAddr').value.trim();if(!addr.startsWith('RAM_')){alert('❌ Неверный адрес!');return;}if(addr.length<20){alert('❌ Неверный адрес!');return;}let min=10000000;if(B<min){alert('❌ Минимум: 10 млн nRAM. У вас: '+B.toLocaleString());return;}let ramAmount=(B/1000000000).toFixed(6);let requests=JSON.parse(localStorage.getItem('rc_requests')||'[]');requests.push({tg:uid,address:addr,amount_nRAM:B,amount_RAM:ramAmount,status:'pending',date:new Date().toISOString()});localStorage.setItem('rc_requests',JSON.stringify(requests));B=0;U();S2();document.getElementById('withdrawForm').style.display='none';document.getElementById('withdrawDone').style.display='block';alert('✅ Заявка отправлена!');}
+        function submitWithdraw(){
+            let addr=document.getElementById('wAddr').value.trim();
+            if(!addr.startsWith('RAM_')){alert('❌ Неверный адрес!');return;}
+            if(addr.length<20){alert('❌ Неверный адрес!');return;}
+            let min=10000000;
+            if(B<min){alert('❌ Минимум: 10 млн nRAM. У вас: '+B.toLocaleString());return;}
+            let ramAmount=(B/1000000000).toFixed(6);
+            let requests=JSON.parse(localStorage.getItem('rc_requests')||'[]');
+            requests.push({tg:uid,address:addr,amount_nRAM:B,amount_RAM:ramAmount,status:'pending',date:new Date().toISOString()});
+            localStorage.setItem('rc_requests',JSON.stringify(requests));
+            B=0;U();S2();
+            document.getElementById('withdrawForm').style.display='none';
+            document.getElementById('withdrawDone').style.display='block';
+            alert('✅ Заявка отправлена!');
+        }
         
-        function openM(t){document.getElementById('m-'+t).classList.add('active');if(t==='rank')updateRank();if(t==='tasks')updateTasks();if(t==='achs')updateAchs();if(t==='wheel'){drawWheel();document.getElementById('wheelResult').textContent='';}if(t==='shop')updateShop();if(t==='out'){document.getElementById('withdrawForm').style.display='block';document.getElementById('withdrawDone').style.display='none';document.getElementById('wAddr').value='';}}
+        function openM(t){
+            document.getElementById('m-'+t).classList.add('active');
+            if(t==='rank')updateRank();
+            if(t==='tasks')updateTasks();
+            if(t==='achs')updateAchs();
+            if(t==='wheel'){drawWheel();document.getElementById('wheelResult').textContent='';}
+            if(t==='shop')updateShop();
+            if(t==='out'){document.getElementById('withdrawForm').style.display='block';document.getElementById('withdrawDone').style.display='none';document.getElementById('wAddr').value='';}
+        }
+        
         function closeM(t){document.getElementById('m-'+t).classList.remove('active');}
         
         setInterval(()=>{restoreEnergy();if(boost&&Date.now()>bEnd){boost=false;U();S2();}},60000);
