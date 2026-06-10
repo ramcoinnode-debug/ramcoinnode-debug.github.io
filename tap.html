@@ -7,19 +7,19 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        body{background:#020617;color:#f1f5f9;font-family:-apple-system,sans-serif;touch-action:manipulation;user-select:none;-webkit-user-select:none;overflow-y:auto;min-height:100vh}
-        .app{display:flex;flex-direction:column;align-items:center;padding:10px;max-width:500px;margin:0 auto}
-        .header{display:flex;justify-content:space-between;align-items:center;width:100%;padding:8px 0}
+        body{background:#020617;color:#f1f5f9;font-family:-apple-system,sans-serif;touch-action:manipulation;user-select:none;-webkit-user-select:none;height:100vh;width:100vw;position:fixed;overflow:hidden}
+        .app{display:flex;flex-direction:column;align-items:center;height:100%;padding:10px;max-width:500px;margin:0 auto;overflow-y:auto}
+        .header{display:flex;justify-content:space-between;align-items:center;width:100%;padding:8px 0;flex-shrink:0}
         .title{font-size:18px;font-weight:900;background:linear-gradient(135deg,#38bdf8,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
         .header-btns{display:flex;gap:5px}
         .icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);cursor:pointer;font-size:15px;color:#fff;display:flex;align-items:center;justify-content:center;position:relative}
         .icon-btn:active{background:rgba(56,189,248,0.2)}
         .icon-btn .badge{position:absolute;top:-3px;right:-3px;background:#ef4444;color:#fff;font-size:7px;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
-        .balance-area{text-align:center;margin:2px 0}
+        .balance-area{text-align:center;margin:2px 0;flex-shrink:0}
         .balance{font-size:40px;font-weight:900;color:#fbbf24;line-height:1;text-shadow:0 0 20px rgba(251,191,36,0.3)}
         .balance-sub{font-size:9px;color:#64748b;letter-spacing:1px}
         .level-badge{display:inline-block;background:rgba(168,120,250,0.12);border:1px solid rgba(168,120,250,0.25);padding:2px 9px;border-radius:20px;font-size:9px;font-weight:700;color:#a78bfa;margin:2px 0}
-        .coin-area{display:flex;align-items:center;justify-content:center;margin:5px 0}
+        .coin-area{display:flex;align-items:center;justify-content:center;margin:5px 0;flex-shrink:0}
         .coin{width:150px;height:150px;border-radius:50%;cursor:pointer;transition:transform 0.06s;box-shadow:0 0 40px rgba(56,189,248,0.3),0 0 80px rgba(56,189,248,0.12);background:radial-gradient(circle at 40% 35%,rgba(56,189,248,0.5),rgba(56,189,248,0.12) 70%,rgba(56,189,248,0.02));border:2.5px solid rgba(56,189,248,0.35);display:flex;align-items:center;justify-content:center;position:relative}
         .coin img{width:100px;height:100px;border-radius:50%;object-fit:contain;z-index:2;pointer-events:none}
         .coin-fallback{width:100px;height:100px;border-radius:50%;z-index:2;pointer-events:none;display:none}
@@ -28,13 +28,13 @@
         .coin:active{transform:scale(0.9)}
         .float-text{position:fixed;font-size:22px;font-weight:900;pointer-events:none;z-index:10;animation:floatUp 0.8s ease-out forwards}
         @keyframes floatUp{0%{opacity:1;transform:translateY(0)scale(1)}100%{opacity:0;transform:translateY(-50px)scale(1.3)}}
-        .energy-area{width:100%;text-align:center;margin:3px 0}
+        .energy-area{width:100%;text-align:center;margin:3px 0;flex-shrink:0}
         .energy-bar{width:60%;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin:3px auto;overflow:hidden}
         .energy-fill{height:100%;background:linear-gradient(90deg,#38bdf8,#a78bfa);border-radius:2px;transition:width 0.3s}
         .energy-text{font-size:9px;color:#64748b}
-        .bottom-panel{width:100%;background:rgba(15,23,42,0.8);backdrop-filter:blur(20px);border-radius:14px;padding:8px;border:1px solid rgba(255,255,255,0.05);margin-top:4px}
+        .bottom-panel{width:100%;background:rgba(15,23,42,0.8);backdrop-filter:blur(20px);border-radius:14px;padding:8px;border:1px solid rgba(255,255,255,0.05);margin-top:4px;flex-shrink:0}
         .bottom-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-        .action-btn{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:8px 2px;cursor:pointer;text-align:center;color:#fff;transition:all 0.2s}
+        .action-btn{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:8px 2px;cursor:pointer;text-align:center;color:#fff;transition:all 0.2s;font-size:11px}
         .action-btn:active{background:rgba(56,189,248,0.1);transform:scale(0.95)}
         .action-btn .icon{font-size:16px;display:block;margin-bottom:1px}
         .action-btn .label{font-size:8px;font-weight:600;color:#64748b}
@@ -42,26 +42,22 @@
         .modal.active{opacity:1;pointer-events:all}
         .modal-content{background:#0f172a;border-radius:16px;padding:16px;width:90%;max-width:400px;border:1px solid rgba(255,255,255,0.08);max-height:80vh;overflow-y:auto}
         .modal h2{font-size:14px;margin-bottom:6px}
-        .modal .close{background:rgba(255,255,255,0.06);border:none;color:white;padding:9px;border-radius:10px;margin-top:6px;cursor:pointer;width:100%;font-weight:700;font-size:12px}
+        .modal .close-btn{background:rgba(255,255,255,0.06);border:none;color:white;padding:9px;border-radius:10px;margin-top:6px;cursor:pointer;width:100%;font-weight:700;font-size:12px}
         .wheel-btn{background:linear-gradient(135deg,#fbbf24,#f59e0b);border:none;color:#000;padding:10px;border-radius:12px;font-size:14px;font-weight:900;cursor:pointer;width:100%;margin-top:6px}
-        .wheel-btn:active{transform:scale(0.96)}
-        .wheel-btn:disabled{opacity:0.5}
+        .wheel-btn:active{transform:scale(0.96)}.wheel-btn:disabled{opacity:0.5}
         .shop-item{margin:3px 0;padding:8px;background:rgba(255,255,255,0.02);border-radius:10px;cursor:pointer;border:1px solid transparent}
         .shop-item:active{background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.3)}
         .shop-item strong{display:block;margin-bottom:1px;font-size:11px}
         .price-tag{background:rgba(16,185,129,0.12);color:#10b981;padding:1px 5px;border-radius:5px;font-size:8px;font-weight:700}
-        .price-tag.done{background:rgba(16,185,129,0.3);color:#fff}
-        .shop-item.completed{opacity:0.5;pointer-events:none;border-color:rgba(16,185,129,0.3)}
+        .price-tag.done{background:rgba(16,185,129,0.3);color:#fff}.shop-item.completed{opacity:0.5;pointer-events:none}
         .achievement{margin:2px 0;padding:6px;background:rgba(255,255,255,0.02);border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:10px}
-        .achievement.done{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15)}
-        .achievement.locked{opacity:0.4}
+        .achievement.done{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15)}.achievement.locked{opacity:0.4}
         .task-bar{height:2px;background:rgba(255,255,255,0.04);border-radius:2px;margin-top:2px;overflow:hidden}
         .task-fill{height:100%;background:linear-gradient(90deg,#38bdf8,#a78bfa);border-radius:2px;transition:width 0.3s}
         .section-title{color:#38bdf8;font-size:9px;font-weight:700;margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px}
         .nft-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%}
         .nft-card{background:rgba(0,0,0,0.3);border-radius:8px;padding:4px;text-align:center;cursor:pointer;border:1px solid transparent}
-        .nft-card:active{border-color:rgba(168,120,250,0.5)}
-        .nft-card canvas{width:100%;border-radius:5px}
+        .nft-card:active{border-color:rgba(168,120,250,0.5)}.nft-card canvas{width:100%;border-radius:5px}
         .nft-card .nft-num{color:#fff;font-size:8px;margin-top:2px}
         .nft-empty{background:rgba(255,255,255,0.02);border:2px dashed rgba(255,255,255,0.05);border-radius:10px;padding:25px;text-align:center;color:#64748b;font-size:11px;grid-column:span 3}
         .dl-btn{background:#10b981;border:none;color:white;padding:10px;border-radius:10px;margin:6px 0;cursor:pointer;width:100%;font-weight:700;font-size:13px}
@@ -73,7 +69,7 @@
         <div class="header">
             <span class="title">⚡ RAMCOIN TAP</span>
             <div class="header-btns">
-                <button class="icon-btn" onclick="openNFTGallery()" title="Мои NFT">🎨<span class="badge" id="nftBadge" style="display:none">0</span></button>
+                <button class="icon-btn" onclick="openNFTGallery()">🎨<span class="badge" id="nftBadge" style="display:none">0</span></button>
                 <button class="icon-btn" onclick="window.open('https://t.me/ramcoin_pow')">💬</button>
                 <button class="icon-btn" onclick="openM('wheel')">🎰</button>
                 <button class="icon-btn" onclick="openM('tasks')">📋</button>
@@ -83,8 +79,8 @@
         <div class="balance-area"><div class="balance" id="bal">0</div><div class="balance-sub">NANO RAM</div></div>
         <div class="level-badge" id="lvl">🟢 Уровень 1</div>
         <div class="coin-area">
-            <div class="coin" id="coin" ontouchstart="tap(event)" onmousedown="tap(event)">
-                <img id="coinImg" src="https://ramcoinnode-debug.github.io/ramcoin_logo.png" alt="RAMCOIN" draggable="false" oncontextmenu="return false;" style="pointer-events:none;-webkit-touch-callout:none;user-select:none">
+            <div class="coin" id="coin" onclick="tap(event)" ontouchstart="tap(event)">
+                <img id="coinImg" src="https://ramcoinnode-debug.github.io/ramcoin_logo.png" alt="R" draggable="false" style="pointer-events:none">
                 <svg id="coinFallback" class="coin-fallback" viewBox="0 0 200 200"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient></defs><circle cx="100" cy="100" r="95" fill="url(#g1)"/><circle cx="100" cy="100" r="85" fill="#020617"/><text x="100" y="135" text-anchor="middle" font-size="100" font-weight="900" fill="#fbbf24">R</text></svg>
             </div>
         </div>
@@ -106,8 +102,8 @@
     </div>
 
     <!-- МОДАЛКИ -->
-    <div class="modal" id="m-wheel"><div class="modal-content"><h2>🎰 Колесо фортуны</h2><p style="color:#94a3b8;font-size:10px;text-align:center">Крути раз в день!</p><div style="text-align:center"><canvas id="wheelCanvas" width="240" height="240"></canvas></div><div id="wheelResult" style="text-align:center;font-size:15px;font-weight:900;margin:6px 0"></div><button class="wheel-btn" id="spinBtn" onclick="spinWheel()">🎰 КРУТИТЬ</button><button class="close" onclick="closeM('wheel')">Закрыть</button></div></div>
-    <div class="modal" id="m-tasks"><div class="modal-content"><h2>📋 Задания (20)</h2>
+    <div class="modal" id="m-wheel"><div class="modal-content"><h2>🎰 Колесо фортуны</h2><p style="color:#94a3b8;font-size:10px;text-align:center">Крути раз в день!</p><div style="text-align:center"><canvas id="wheelCanvas" width="240" height="240"></canvas></div><div id="wheelResult" style="text-align:center;font-size:15px;font-weight:900;margin:6px 0"></div><button class="wheel-btn" id="spinBtn" onclick="spinWheel()">🎰 КРУТИТЬ</button><button class="close-btn" onclick="closeM('wheel')">Закрыть</button></div></div>
+    <div class="modal" id="m-tasks"><div class="modal-content"><h2>📋 Задания</h2>
         <div class="section-title">🖐️ Тапы</div>
         <div class="shop-item"><strong>100 тапов</strong><span class="price-tag">+50</span><div class="task-bar"><div class="task-fill" id="tf1" style="width:0%"></div></div></div>
         <div class="shop-item"><strong>1 000 тапов</strong><span class="price-tag">+200</span><div class="task-bar"><div class="task-fill" id="tf2" style="width:0%"></div></div></div>
@@ -119,227 +115,154 @@
         <div class="shop-item" onclick="doTask('channel')"><strong>Подписаться на канал</strong><span class="price-tag" id="tag-channel">+200</span></div>
         <div class="shop-item" onclick="doTask('group')"><strong>Вступить в группу</strong><span class="price-tag" id="tag-group">+500</span></div>
         <div class="shop-item" onclick="invite()"><strong>Пригласить друга</strong><span class="price-tag">+500</span></div>
-        <div class="shop-item"><strong>5 друзей</strong><span class="price-tag">+2.5K</span></div>
-        <div class="shop-item"><strong>10 друзей</strong><span class="price-tag">+10K</span></div>
         <div class="section-title">📅 Ежедневные</div>
         <div class="shop-item"><strong>3 дня подряд</strong><span class="price-tag">+200</span><br><small style="color:#94a3b8">Прогресс: <span id="tdp">0</span>/3</small></div>
         <div class="shop-item"><strong>7 дней подряд</strong><span class="price-tag">+500</span><br><small style="color:#94a3b8">Прогресс: <span id="tdp7">0</span>/7</small></div>
         <div class="shop-item"><strong>30 дней подряд</strong><span class="price-tag">+5K</span><br><small style="color:#94a3b8">Прогресс: <span id="tdp30">0</span>/30</small></div>
-        <div class="shop-item"><strong>100 дней подряд</strong><span class="price-tag">+50K</span><br><small style="color:#94a3b8">Прогресс: <span id="tdp100">0</span>/100</small></div>
-        <div class="section-title">🆙 Уровни</div>
-        <div class="shop-item"><strong>Уровень 2</strong><span class="price-tag">+1K</span></div>
-        <div class="shop-item"><strong>Уровень 3</strong><span class="price-tag">+2K</span></div>
-        <div class="shop-item"><strong>Уровень 5</strong><span class="price-tag">+10K</span></div>
-        <button class="close" onclick="closeM('tasks')">Закрыть</button>
+        <button class="close-btn" onclick="closeM('tasks')">Закрыть</button>
     </div></div>
-    <div class="modal" id="m-achs"><div class="modal-content"><h2>⭐ Достижения (15)</h2><div id="achList"></div><button class="close" onclick="closeM('achs')">Закрыть</button></div></div>
-    <div class="modal" id="m-boost"><div class="modal-content"><h2>⚡ Бустер ×2</h2><p style="color:#94a3b8">Двойной заработок на 1 час!</p><button class="close" onclick="activateBoost()" style="background:linear-gradient(135deg,#a78bfa,#38bdf8)">Активировать</button><button class="close" onclick="closeM('boost')" style="margin-top:4px;background:rgba(255,255,255,0.05)">Отмена</button></div></div>
-    <div class="modal" id="m-shop"><div class="modal-content"><h2>🛒 Магазин улучшений</h2><div id="shop-items"></div><button class="close" onclick="closeM('shop')">Закрыть</button></div></div>
-    <div class="modal" id="m-out"><div class="modal-content"><h2>💳 Вывод RAM</h2><p style="color:#94a3b8;font-size:10px;text-align:center">Курс: 1 млрд nRAM = 1 RAM</p><p style="color:#94a3b8;font-size:10px;text-align:center">Минимум: 10 млн nRAM</p><div id="withdrawForm"><input type="text" id="wAddr" placeholder="RAM адрес (RAM_...)"><button class="wheel-btn" onclick="submitWithdraw()">💳 ОТПРАВИТЬ</button></div><div id="withdrawDone" style="display:none;text-align:center;color:#10b981;font-weight:700">✅ Заявка отправлена!</div><button class="close" onclick="closeM('out')">Закрыть</button></div></div>
-    <div class="modal" id="m-rank"><div class="modal-content"><h2>🏆 Рейтинг</h2><div id="rankList"></div><button class="close" onclick="closeM('rank')">Закрыть</button></div></div>
-    <div class="modal" id="m-gallery"><div class="modal-content"><h2>🎨 МОЯ КОЛЛЕКЦИЯ NFT</h2><div class="nft-gallery" id="nftGallery"><div class="nft-empty">Нет NFT<br>Нажми "🎨 NFT"</div></div><button class="close" onclick="closeM('gallery')">Закрыть</button></div></div>
-    <div class="modal" id="m-nft"><div class="modal-content" style="text-align:center"><h2 id="nftTitle">🎨 NFT</h2><canvas id="modalNFT" width="280" height="373"></canvas><p id="nftInfo" style="color:#94a3b8;font-size:10px;margin:6px 0"></p><button class="dl-btn" onclick="downloadCurrentNFT()">💾 СКАЧАТЬ PNG</button><button class="close" onclick="closeM('nft')">Закрыть</button></div></div>
+    <div class="modal" id="m-achs"><div class="modal-content"><h2>⭐ Достижения</h2><div id="achList"></div><button class="close-btn" onclick="closeM('achs')">Закрыть</button></div></div>
+    <div class="modal" id="m-boost"><div class="modal-content"><h2>⚡ Бустер ×2</h2><p style="color:#94a3b8">Двойной заработок на 1 час!</p><button class="close-btn" onclick="activateBoost()" style="background:linear-gradient(135deg,#a78bfa,#38bdf8)">Активировать</button><button class="close-btn" onclick="closeM('boost')" style="margin-top:4px;background:rgba(255,255,255,0.05)">Отмена</button></div></div>
+    <div class="modal" id="m-shop"><div class="modal-content"><h2>🛒 Магазин улучшений</h2><div id="shop-items"></div><button class="close-btn" onclick="closeM('shop')">Закрыть</button></div></div>
+    <div class="modal" id="m-out"><div class="modal-content"><h2>💳 Вывод RAM</h2><p style="color:#94a3b8;font-size:10px;text-align:center">Курс: 1 млрд nRAM = 1 RAM</p><p style="color:#94a3b8;font-size:10px;text-align:center">Минимум: 10 млн nRAM</p><div id="withdrawForm"><input type="text" id="wAddr" placeholder="RAM адрес (RAM_...)"><button class="wheel-btn" onclick="submitWithdraw()">💳 ОТПРАВИТЬ</button></div><div id="withdrawDone" style="display:none;text-align:center;color:#10b981;font-weight:700">✅ Заявка отправлена!</div><button class="close-btn" onclick="closeM('out')">Закрыть</button></div></div>
+    <div class="modal" id="m-rank"><div class="modal-content"><h2>🏆 Рейтинг</h2><div id="rankList"></div><button class="close-btn" onclick="closeM('rank')">Закрыть</button></div></div>
+    <div class="modal" id="m-gallery"><div class="modal-content"><h2>🎨 Мои NFT</h2><div class="nft-gallery" id="nftGallery"><div class="nft-empty">Нет NFT<br>Нажми "🎨 NFT"</div></div><button class="close-btn" onclick="closeM('gallery')">Закрыть</button></div></div>
+    <div class="modal" id="m-nft"><div class="modal-content" style="text-align:center"><h2 id="nftTitle">🎨 NFT</h2><canvas id="modalNFT" width="280" height="373"></canvas><p id="nftInfo" style="color:#94a3b8;font-size:10px;margin:6px 0"></p><button class="dl-btn" onclick="downloadCurrentNFT()">💾 СКАЧАТЬ PNG</button><button class="close-btn" onclick="closeM('nft')">Закрыть</button></div></div>
 
 <script>
-// ==================== ЗАЩИТА ЛОГОТИПА ====================
-(function(){var img=document.getElementById('coinImg');var fb=document.getElementById('coinFallback');var url='https://ramcoinnode-debug.github.io/ramcoin_logo.png';function load(){var t=new Image();t.crossOrigin='anonymous';t.onload=function(){img.src=url+'?t='+Date.now();img.style.display='block';fb.style.display='none'};t.onerror=function(){img.style.display='none';fb.style.display='block';setTimeout(load,5000)};t.src=url+'?t='+Date.now()}load();setInterval(function(){if(img.style.display!=='none'&&(!img.complete||img.naturalWidth===0)){img.style.display='none';fb.style.display='block';setTimeout(load,3000)}},15000)})();
+// ==================== ЛОГОТИП ====================
+(function(){var img=document.getElementById('coinImg');var fb=document.getElementById('coinFallback');var url='https://ramcoinnode-debug.github.io/ramcoin_logo.png';function load(){var t=new Image();t.onload=function(){img.src=url+'?t='+Date.now();img.style.display='block';fb.style.display='none'};t.onerror=function(){img.style.display='none';fb.style.display='block';setTimeout(load,5000)};t.src=url+'?t='+Date.now()}load();setInterval(function(){if(img.style.display!=='none'&&(!img.complete||img.naturalWidth===0)){img.style.display='none';fb.style.display='block';setTimeout(load,3000)}},15000)})();
 
-const tg=window.Telegram?.WebApp;
-const uid=tg?.initDataUnsafe?.user?.id||'anon';
+// ==================== TELEGRAM ====================
+var tg=window.Telegram?.WebApp;
+var uid=tg?.initDataUnsafe?.user?.id||'anon';
+var P='rc_'+uid+'_';
 
-// ==================== АВТО-МИГРАЦИЯ ДАННЫХ ====================
-const VERSION = 'rc1'; // Меняй при обновлении: rc1, rc2, rc3...
-const P = 'rc_'+uid+'_';
-const MIGRATED_KEY = P+'migrated_to_'+VERSION;
-
-// Все старые префиксы для поиска данных
-const OLD_PREFIXES = ['v2_'+uid+'_', 'v3_'+uid+'_', 'v4_'+uid+'_', 'v5_'+uid+'_', 'ramcoin_', 'rc_'+uid+'_'];
-
-function migrateData() {
-    if (localStorage.getItem(MIGRATED_KEY)) return; // Уже мигрировали
-    
-    let foundOld = false;
-    let oldB = 0, oldT = 0, oldL = 1, oldR = 0, oldS = 0, oldD = 0, oldE = 500;
-    let oldTasks = [];
-    let oldAchs = [];
-    let oldTM = 1, oldUC = 50000, oldUB = 0;
-    let oldNFTC = 0;
-    let oldHash = '';
-    
-    // Ищем данные во всех старых префиксах
-    for (let op of OLD_PREFIXES) {
-        let b = parseInt(localStorage.getItem(op+'B')||'0');
-        if (b > 0 && !foundOld) {
-            foundOld = true;
-            oldB = b;
-            oldT = parseInt(localStorage.getItem(op+'T')||'0');
-            oldL = parseInt(localStorage.getItem(op+'L')||'1');
-            oldR = parseInt(localStorage.getItem(op+'R')||'0');
-            oldS = parseInt(localStorage.getItem(op+'S')||'0');
-            oldD = parseInt(localStorage.getItem(op+'D')||'0');
-            oldE = parseInt(localStorage.getItem(op+'E')||'500');
-            oldTM = parseInt(localStorage.getItem(op+'TM')||'1');
-            oldUC = parseInt(localStorage.getItem(op+'UC')||'50000');
-            oldUB = parseInt(localStorage.getItem(op+'UB')||'0');
-            oldNFTC = parseInt(localStorage.getItem(op+'NFTC')||'0');
-            oldHash = localStorage.getItem(op+'hash')||'';
-            
-            // Задания
-            try { oldTasks = JSON.parse(localStorage.getItem(op+'TD')||'[]'); } catch(e) { oldTasks = []; }
-            // Достижения
-            try { oldAchs = JSON.parse(localStorage.getItem(op+'A')||'[]'); } catch(e) { oldAchs = []; }
-            
-            console.log('🔄 Найдены старые данные в: '+op+' B='+oldB+' T='+oldT+' L='+oldL);
+// ==================== МИГРАЦИЯ ====================
+(function(){
+    var migrated=localStorage.getItem(P+'migrated_v1');
+    if(migrated)return;
+    var oldPrefixes=['v2_'+uid+'_','v3_'+uid+'_','v4_'+uid+'_','v5_'+uid+'_'];
+    for(var i=0;i<oldPrefixes.length;i++){
+        var op=oldPrefixes[i];
+        var ob=parseInt(localStorage.getItem(op+'B')||'0');
+        if(ob>0){
+            localStorage.setItem(P+'B',ob);
+            localStorage.setItem(P+'T',localStorage.getItem(op+'T')||'0');
+            localStorage.setItem(P+'L',localStorage.getItem(op+'L')||'1');
+            localStorage.setItem(P+'R',localStorage.getItem(op+'R')||'0');
+            localStorage.setItem(P+'S',localStorage.getItem(op+'S')||'0');
+            localStorage.setItem(P+'D',localStorage.getItem(op+'D')||'0');
+            localStorage.setItem(P+'E',localStorage.getItem(op+'E')||'500');
+            localStorage.setItem(P+'TM',localStorage.getItem(op+'TM')||'1');
+            localStorage.setItem(P+'UC',localStorage.getItem(op+'UC')||'50000');
+            localStorage.setItem(P+'UB',localStorage.getItem(op+'UB')||'0');
+            var nb=ob+10000;
+            localStorage.setItem(P+'B',nb);
+            localStorage.setItem(P+'migrated_v1','1');
+            setTimeout(function(){alert('🎉 ОБНОВЛЕНИЕ!\nБаланс: '+nb.toLocaleString()+' nRAM\nБонус: +10 000!')},800);
             break;
         }
     }
-    
-    if (!foundOld) {
-        localStorage.setItem(MIGRATED_KEY, '1');
-        return; // Нет старых данных — новый игрок
-    }
-    
-    // Загружаем текущие новые данные (если уже есть)
-    let curB = parseInt(localStorage.getItem(P+'B')||'0');
-    
-    // Если новые данные пустые — переносим старые
-    if (curB === 0) {
-        // Переносим основные данные
-        localStorage.setItem(P+'B', oldB);
-        localStorage.setItem(P+'E', oldE > 0 ? oldE : 500);
-        localStorage.setItem(P+'T', oldT);
-        localStorage.setItem(P+'L', oldL > 0 ? oldL : 1);
-        localStorage.setItem(P+'R', oldR);
-        localStorage.setItem(P+'S', oldS);
-        localStorage.setItem(P+'D', oldD);
-        localStorage.setItem(P+'TM', oldTM > 0 ? oldTM : 1);
-        localStorage.setItem(P+'UC', oldUC > 0 ? oldUC : 50000);
-        localStorage.setItem(P+'UB', oldUB);
-        localStorage.setItem(P+'NFTC', oldNFTC);
-        if (oldHash) localStorage.setItem(P+'hash', oldHash);
-        
-        // Переносим задания
-        let newTasks = JSON.parse(localStorage.getItem(P+'TD')||'[]');
-        oldTasks.forEach(t => { if (newTasks.indexOf(t) === -1) newTasks.push(t); });
-        localStorage.setItem(P+'TD', JSON.stringify(newTasks));
-        
-        // Переносим достижения
-        let newAchs = JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]');
-        for (let i = 0; i < Math.min(oldAchs.length, 15); i++) {
-            if (oldAchs[i] === 1 && newAchs[i] === 0) newAchs[i] = 1;
-        }
-        localStorage.setItem(P+'A', JSON.stringify(newAchs));
-        
-        // Бонус за обновление!
-        let bonusB = oldB + 10000;
-        localStorage.setItem(P+'B', bonusB);
-        
-        // Помечаем что мигрировали
-        localStorage.setItem(MIGRATED_KEY, '1');
-        
-        // Уведомление
-        setTimeout(function() {
-            alert('🎉 ОБНОВЛЕНИЕ!\n\nБаланс: '+bonusB.toLocaleString()+' nRAM\nУровень: '+oldL+'\nТапов: '+oldT.toLocaleString()+'\n💰 Бонус: +10 000 nRAM!\n\n🎨 Новые NFT!\n⚡ Все данные сохранены!');
-            location.reload();
-        }, 500);
-        
-        console.log('✅ Миграция завершена! B='+bonusB+' L='+oldL+' T='+oldT);
-    } else {
-        localStorage.setItem(MIGRATED_KEY, '1');
-    }
-}
-
-// Запускаем миграцию
-migrateData();
+    localStorage.setItem(P+'migrated_v1','1');
+})();
 
 // ==================== ПЕРЕМЕННЫЕ ====================
-let B=parseInt(localStorage.getItem(P+'B')||'0'),E=parseInt(localStorage.getItem(P+'E')||'500'),T=parseInt(localStorage.getItem(P+'T')||'0'),L=parseInt(localStorage.getItem(P+'L')||'1'),R=parseInt(localStorage.getItem(P+'R')||'0'),S=parseInt(localStorage.getItem(P+'S')||'0'),D=parseInt(localStorage.getItem(P+'D')||'0');
-let boost=localStorage.getItem(P+'X')==='1',bEnd=parseInt(localStorage.getItem(P+'BE')||'0');
-let tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]');
-let achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]');
-let wheelUsed=localStorage.getItem(P+'W')||'';
-let tapMultiplier=parseInt(localStorage.getItem(P+'TM')||'1');
-let upgradeCost=parseInt(localStorage.getItem(P+'UC')||'50000');
-let upgradesBought=parseInt(localStorage.getItem(P+'UB')||'0');
-let nftCount=parseInt(localStorage.getItem(P+'NFTC')||'0');
-let currentNFT=null;
-if(!localStorage.getItem(P+'hash'))localStorage.setItem(P+'hash',Math.random().toString(36).substring(2,18)+Date.now().toString(36)+uid);
-const myHash=localStorage.getItem(P+'hash');
+var B=parseInt(localStorage.getItem(P+'B')||'0');
+var E=parseInt(localStorage.getItem(P+'E')||'500');
+var T=parseInt(localStorage.getItem(P+'T')||'0');
+var L=parseInt(localStorage.getItem(P+'L')||'1');
+var R=parseInt(localStorage.getItem(P+'R')||'0');
+var S=parseInt(localStorage.getItem(P+'S')||'0');
+var D=parseInt(localStorage.getItem(P+'D')||'0');
+var boost=localStorage.getItem(P+'X')==='1';
+var bEnd=parseInt(localStorage.getItem(P+'BE')||'0');
+var tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]');
+var achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]');
+var wheelUsed=localStorage.getItem(P+'W')||'';
+var tapMul=parseInt(localStorage.getItem(P+'TM')||'1');
+var upgCost=parseInt(localStorage.getItem(P+'UC')||'50000');
+var upgBought=parseInt(localStorage.getItem(P+'UB')||'0');
+var nftCount=parseInt(localStorage.getItem(P+'NFTC')||'0');
+var curNFT=null;
+if(!localStorage.getItem(P+'hash'))localStorage.setItem(P+'hash',Math.random().toString(36).substr(2,16)+Date.now().toString(36));
+var myHash=localStorage.getItem(P+'hash');
 
-const levels=[0,100,1000,10000,50000,100000,500000,1000000];
-const energyPerLevel=[0,500,1000,2000,3000,5000,7500,10000];
-const levelNames=['','🟢','🔵','🟣','🟡','🔴','💎','👑'];
+var levels=[0,100,1000,10000,50000,100000,500000,1000000];
+var energyPerLevel=[0,500,1000,2000,3000,5000,7500,10000];
+var levelNames=['','🟢','🔵','🟣','🟡','🔴','💎','👑'];
 function getMaxEnergy(){return energyPerLevel[Math.min(L,7)]}
-const prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
-let tapTimes=[],tapLock=false;
+var prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
+var tapLock=false;
 
-// ==================== УРОВНИ ====================
-function checkLevelUp(){let nl=1;for(let i=1;i<levels.length;i++){if(T>=levels[i])nl=i+1;else break}if(nl>L){L=nl;let rw=[0,0,1000,2000,3000,5000,10000,20000];if(rw[L]){B+=rw[L];alert('🎉 Уровень '+L+'! +'+rw[L]+' nRAM!')}E=energyPerLevel[L];if(L>=2&&tasksDone.indexOf('lvl2')===-1){tasksDone.push('lvl2');B+=1000}if(L>=3&&tasksDone.indexOf('lvl3')===-1){tasksDone.push('lvl3');B+=2000}if(L>=5&&tasksDone.indexOf('lvl5')===-1){tasksDone.push('lvl5');B+=10000;alert('🎉 Уровень 5! +10 000 nRAM!')}}}
+// ==================== ФУНКЦИИ ====================
+function checkLevelUp(){var nl=1;for(var i=1;i<levels.length;i++){if(T>=levels[i])nl=i+1}if(nl>L){L=nl;var rw=[0,0,1000,2000,3000,5000,10000,20000];if(rw[L]){B+=rw[L];alert('🎉 Уровень '+L+'! +'+rw[L]+' nRAM!')}E=energyPerLevel[L];if(L>=2&&tasksDone.indexOf('lvl2')===-1){tasksDone.push('lvl2');B+=1000}if(L>=3&&tasksDone.indexOf('lvl3')===-1){tasksDone.push('lvl3');B+=2000}if(L>=5&&tasksDone.indexOf('lvl5')===-1){tasksDone.push('lvl5');B+=10000}}}
 checkLevelUp();
 
-function restoreEnergy(){let td=new Date().toDateString();let ls=localStorage.getItem(P+'LR')||'';if(td!==ls){E=getMaxEnergy();localStorage.setItem(P+'LR',td);U();S2()}}
+function restoreEnergy(){var td=new Date().toDateString();var ls=localStorage.getItem(P+'LR')||'';if(td!==ls){E=getMaxEnergy();localStorage.setItem(P+'LR',td);U();S2()}}
 restoreEnergy();
 
-// ==================== ТАП ====================
-function tap(e){e.preventDefault();if(tapLock)return;tapLock=true;let n=Date.now();tapTimes=tapTimes.filter(t=>n-t<1000);if(tapTimes.length>15){tapLock=false;return}if(E<=0){tapLock=false;return}let bm=(boost&&n<bEnd)?2:1;let gain=1*tapMultiplier*bm;B+=gain;E--;T++;tapTimes.push(n);let lv=Math.floor(T/1000)+1;if(lv>L){L=lv;F('⬆ УРОВЕНЬ!','#a78bfa',e);checkLevelUp()}F('+'+gain,'#fbbf24',e);checkAchs();U();S2();updateTasks();setTimeout(()=>{tapLock=false},200)}
-function F(t,c,e){let el=document.createElement('div');el.className='float-text';el.textContent=t;el.style.color=c;el.style.left=((e.touches?.[0]?.clientX||e.clientX||innerWidth/2)-15)+'px';el.style.top=((e.touches?.[0]?.clientY||e.clientY||innerHeight/2)-20)+'px';document.body.appendChild(el);setTimeout(()=>el.remove(),800)}
-function U(){let me=getMaxEnergy();document.getElementById('bal').textContent=B.toLocaleString();document.getElementById('eFill').style.width=(E/me*100)+'%';document.getElementById('eText').textContent=E+' / '+me;let lt=levelNames[Math.min(L,7)]+' Ур.'+L;if(boost&&Date.now()<bEnd)lt+=' | 🔥×2';if(tapMultiplier>1)lt+=' | ⚡x'+tapMultiplier;document.getElementById('lvl').textContent=lt;let bd=document.getElementById('nftBadge');if(nftCount>0){bd.style.display='flex';bd.textContent=nftCount>99?'99+':nftCount}}
-function S2(){let d={};d[P+'B']=B;d[P+'E']=E;d[P+'T']=T;d[P+'L']=L;d[P+'R']=R;d[P+'S']=S;d[P+'D']=D;d[P+'X']=boost?'1':'0';d[P+'BE']=bEnd;d[P+'TD']=JSON.stringify(tasksDone);d[P+'A']=JSON.stringify(achs);d[P+'W']=wheelUsed;d[P+'TM']=tapMultiplier;d[P+'UC']=upgradeCost;d[P+'UB']=upgradesBought;d[P+'NFTC']=nftCount;for(let k in d)localStorage.setItem(k,d[k].toString())}
+function tap(e){e.preventDefault();if(tapLock)return;tapLock=true;var n=Date.now();var bm=(boost&&n<bEnd)?2:1;var gain=1*tapMul*bm;if(E<=0){tapLock=false;return}B+=gain;E--;T++;var lv=Math.floor(T/1000)+1;if(lv>L){L=lv;checkLevelUp()}var el=document.createElement('div');el.className='float-text';el.textContent='+'+gain;el.style.color='#fbbf24';el.style.left=((e.touches?.[0]?.clientX||e.clientX||250)-15)+'px';el.style.top=((e.touches?.[0]?.clientY||e.clientY||400)-20)+'px';document.body.appendChild(el);setTimeout(function(){el.remove()},800);checkAchs();U();S2();updateTasks();setTimeout(function(){tapLock=false},200)}
 
-// ==================== БОНУСЫ ====================
-function daily(){let n=Date.now(),day=86400000;if(n-D<day){alert('🎁 Уже получен!');return}S=(n-D<day*2)?S+1:1;let bonus=Math.min(S*100,3000);B+=bonus;D=n;if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200}if(S>=7&&tasksDone.indexOf('day7')===-1){tasksDone.push('day7');B+=500;alert('🔥 7 дней! +500 nRAM!')}if(S>=30&&tasksDone.indexOf('day30')===-1){tasksDone.push('day30');B+=5000;alert('🔥 30 дней! +5 000 nRAM!')}if(S>=100&&tasksDone.indexOf('day100')===-1){tasksDone.push('day100');B+=50000;alert('👑 100 дней! +50 000 nRAM!')}alert('🎁 +'+bonus+' nRAM! День '+S);U();S2();updateTasks()}
-function activateBoost(){if(boost&&Date.now()<bEnd){alert('Уже активен!');closeM('boost');return}boost=true;bEnd=Date.now()+3600000;closeM('boost');U();S2();updateTasks()}
+function U(){var me=getMaxEnergy();document.getElementById('bal').textContent=B.toLocaleString();document.getElementById('eFill').style.width=(E/me*100)+'%';document.getElementById('eText').textContent=E+' / '+me;var lt=levelNames[Math.min(L,7)]+' Ур.'+L;if(boost&&Date.now()<bEnd)lt+=' | 🔥×2';if(tapMul>1)lt+=' | ⚡x'+tapMul;document.getElementById('lvl').textContent=lt;var bd=document.getElementById('nftBadge');if(nftCount>0){bd.style.display='flex';bd.textContent=nftCount>99?'99+':nftCount}}
+
+function S2(){var d={};d[P+'B']=B;d[P+'E']=E;d[P+'T']=T;d[P+'L']=L;d[P+'R']=R;d[P+'S']=S;d[P+'D']=D;d[P+'X']=boost?'1':'0';d[P+'BE']=bEnd;d[P+'TD']=JSON.stringify(tasksDone);d[P+'A']=JSON.stringify(achs);d[P+'W']=wheelUsed;d[P+'TM']=tapMul;d[P+'UC']=upgCost;d[P+'UB']=upgBought;d[P+'NFTC']=nftCount;for(var k in d)localStorage.setItem(k,d[k].toString())}
+
+function daily(){var n=Date.now(),day=86400000;if(n-D<day){alert('🎁 Уже получен!');return}S=(n-D<day*2)?S+1:1;var bonus=Math.min(S*100,3000);B+=bonus;D=n;if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200}if(S>=7&&tasksDone.indexOf('day7')===-1){tasksDone.push('day7');B+=500}if(S>=30&&tasksDone.indexOf('day30')===-1){tasksDone.push('day30');B+=5000}alert('🎁 +'+bonus+' nRAM! День '+S);U();S2();updateTasks()}
+
+function activateBoost(){if(boost&&Date.now()<bEnd){alert('Уже активен!');closeM('boost');return}boost=true;bEnd=Date.now()+3600000;closeM('boost');U();S2()}
+
 function doTask(t){if(t==='channel'){window.open('https://t.me/ramcoin_pow');if(tasksDone.indexOf('channel')===-1){tasksDone.push('channel');B+=200;alert('✅ +200 nRAM!')}}else if(t==='group'){window.open('https://t.me/ramcoin_chat');if(tasksDone.indexOf('group')===-1){tasksDone.push('group');B+=500;alert('✅ +500 nRAM!')}}U();S2();updateTasks()}
-function invite(){let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');let tr=Object.keys(refs).length+R;let msg='📤 Пригласи друзей!\n\n👥 Друзей: '+tr+'\n\n🎁 Награды:\n5: +1K | 10: +5K\n15: +10K | 20: +25K\n30: +50K | 40: +100K\n50: +500K 👑';alert(msg);let refLink='https://t.me/ramcoin_tap_bot?startapp=ref_'+uid;window.open('https://t.me/share/url?url='+encodeURIComponent(refLink)+'&text=⚡%20RAMCOIN%20Tap!')}
 
-// ==================== МАГАЗИН ====================
-function buyUpgrade(){if(upgradesBought>=49){alert('👑 Максимум x50!');return}if(B<upgradeCost){let need=upgradeCost-B;alert('❌ Нужно: '+upgradeCost.toLocaleString()+'\nУ вас: '+B.toLocaleString()+'\nНе хватает: '+need.toLocaleString()) return}B-=upgradeCost;upgradesBought++;tapMultiplier=upgradesBought+1;if(upgradesBought<5)upgradeCost=Math.floor(upgradeCost*2.5);else if(upgradesBought<10)upgradeCost=Math.floor(upgradeCost*3);else if(upgradesBought<15)upgradeCost=Math.floor(upgradeCost*4);else if(upgradesBought<20)upgradeCost=Math.floor(upgradeCost*5);else if(upgradesBought<25)upgradeCost=Math.floor(upgradeCost*6);else if(upgradesBought<30)upgradeCost=Math.floor(upgradeCost*8);else upgradeCost=Math.floor(upgradeCost*10);let bonuses={5:1000,10:10000,15:50000,20:100000,25:200000,30:300000,35:400000,40:500000,45:750000,50:1000000};for(let lvl in bonuses){if(tapMultiplier>=lvl&&!localStorage.getItem(P+'MB_'+lvl)){B+=bonuses[lvl];localStorage.setItem(P+'MB_'+lvl,'1');alert('🎉 x'+lvl+'! Бонус: +'+bonuses[lvl].toLocaleString()+' nRAM!')}}alert('✅ x'+tapMultiplier+'!\n💰 Далее: '+upgradeCost.toLocaleString());U();S2();updateShop()}
-function updateShop(){let shop=document.getElementById('shop-items');if(!shop)return;let progress=(upgradesBought/49)*100;let h='<div style="margin-bottom:8px;padding:12px;background:rgba(56,189,248,0.1);border-radius:10px;text-align:center"><div style="font-size:24px;font-weight:900;color:#38bdf8">⚡ x'+tapMultiplier+'</div><div style="color:#94a3b8;font-size:10px">Множитель тапа</div><div style="background:rgba(255,255,255,0.1);border-radius:4px;height:5px;margin-top:6px"><div style="background:linear-gradient(90deg,#38bdf8,#a78bfa);height:100%;width:'+progress+'%"></div></div><div style="color:#94a3b8;font-size:8px;margin-top:3px">'+upgradesBought+'/49</div></div>';h+='<div class="shop-item" onclick="activateBoost()"><strong>🔥 Бустер ×2 (1ч)</strong><br><span class="price-tag">Бесплатно</span></div>';if(upgradesBought<49){h+='<div class="shop-item" onclick="buyUpgrade()" style="border:1px solid rgba(251,191,36,0.4)"><strong>🔧 Улучшить до x'+(tapMultiplier+1)+'</strong><br><span class="price-tag">💰 '+upgradeCost.toLocaleString()+'</span></div>'}else{h+='<div class="shop-item"><strong>👑 x50</strong><br><span class="price-tag done">🏆 Максимум!</span></div>'}shop.innerHTML=h}
+function invite(){var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');var tr=Object.keys(refs).length+R;alert('📤 Друзей: '+tr+'\n\n🎁 Награды:\n5:+1K | 10:+5K\n15:+10K | 20:+25K\n30:+50K | 40:+100K\n50:+500K 👑');var refLink='https://t.me/ramcoin_tap_bot?startapp=ref_'+uid;window.open('https://t.me/share/url?url='+encodeURIComponent(refLink))}
 
-// ==================== ЗАДАНИЯ ====================
-function updateTasks(){let ids=['tf1','tf2','tf3','tf4','tf5','tf6'];let counts=[100,1000,5000,10000,50000,100000];let tns=['tap100','tap1000','tap5000','tap10000','tap50000','tap100000'];let rws=[50,200,500,1000,5000,10000];for(let i=0;i<ids.length;i++){let el=document.getElementById(ids[i]);if(el)el.style.width=Math.min(100,T/counts[i]*100)+'%';if(T>=counts[i]&&tasksDone.indexOf(tns[i])===-1){tasksDone.push(tns[i]);B+=rws[i];if(counts[i]>=50000)alert('✅ +'+rws[i].toLocaleString()+' за '+counts[i].toLocaleString()+' тапов!')}}document.getElementById('tdp').textContent=Math.min(S,3);document.getElementById('tdp7').textContent=Math.min(S,7);document.getElementById('tdp30').textContent=Math.min(S,30);document.getElementById('tdp100').textContent=Math.min(S,100);let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');let tr=Object.keys(refs).length+R;if(tr>=5&&tasksDone.indexOf('inv5')===-1){tasksDone.push('inv5');B+=2500}if(tr>=10&&tasksDone.indexOf('inv10')===-1){tasksDone.push('inv10');B+=10000}if(tasksDone.indexOf('channel')!==-1)document.getElementById('tag-channel').textContent='✅';if(tasksDone.indexOf('group')!==-1)document.getElementById('tag-group').textContent='✅';U();S2()}
+function buyUpgrade(){if(upgBought>=49){alert('👑 x50!');return}if(B<upgCost){alert('❌ Нужно: '+upgCost.toLocaleString());return}B-=upgCost;upgBought++;tapMul=upgBought+1;if(upgBought<5)upgCost=Math.floor(upgCost*2.5);else if(upgBought<10)upgCost=Math.floor(upgCost*3);else if(upgBought<15)upgCost=Math.floor(upgCost*4);else upgCost=Math.floor(upgCost*5);alert('✅ x'+tapMul+'!');U();S2();updateShop()}
 
-// ==================== ДОСТИЖЕНИЯ ====================
-function checkAchs(){if(T>=100&&achs[0]===0)achs[0]=1;if(T>=1000&&achs[1]===0)achs[1]=1;if(T>=10000&&achs[2]===0)achs[2]=1;if(T>=100000&&achs[7]===0)achs[7]=1;if(T>=1000000&&achs[8]===0)achs[8]=1;let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');let tr=Object.keys(refs).length+R;if(tr>=5&&achs[3]===0)achs[3]=1;if(tr>=10&&achs[4]===0)achs[4]=1;if(tr>=25&&achs[5]===0)achs[5]=1;if(tr>=50&&achs[6]===0)achs[6]=1;if(B>=1000000&&achs[9]===0)achs[9]=1;if(B>=10000000&&achs[10]===0)achs[10]=1;if(B>=100000000&&achs[11]===0)achs[11]=1;if(tapMultiplier>=10&&achs[12]===0)achs[12]=1;if(tapMultiplier>=25&&achs[13]===0)achs[13]=1;if(tapMultiplier>=50&&achs[14]===0)achs[14]=1;if(nftCount>=1&&achs[5]===0)achs[5]=1;updateAchs();S2()}
-function updateAchs(){let names=['🥉 Новичок (100)','🥈 Тапер (1K)','🥇 Мастер (10K)','👥 Друг (5)','👥 Популярный (10)','🎨 Коллекционер (NFT)','👥 Легенда (50)','💪 Железный палец','💪 Стальной палец','💰 Миллионер','💰 Магнат','💰 Олигарх','⚡ Улучшатель x10','⚡ Прокачанный x25','👑 Бог тапа x50'];let h='';for(let i=0;i<15;i++){h+='<div class="achievement '+(achs[i]===1?'done':'locked')+'"><span>'+names[i]+'</span><span>'+(achs[i]===1?'✅':'🔒')+'</span></div>'}document.getElementById('achList').innerHTML=h}
+function updateShop(){var s=document.getElementById('shop-items');if(!s)return;var p=(upgBought/49)*100;var h='<div style="padding:10px;background:rgba(56,189,248,0.1);border-radius:10px;text-align:center"><b style="color:#38bdf8;font-size:20px">⚡ x'+tapMul+'</b><br><small style="color:#94a3b8">Множитель</small></div>';h+='<div class="shop-item" onclick="activateBoost()"><strong>🔥 Бустер ×2</strong><br><span class="price-tag">Бесплатно</span></div>';if(upgBought<49)h+='<div class="shop-item" onclick="buyUpgrade()"><strong>🔧 Улучшить до x'+(tapMul+1)+'</strong><br><span class="price-tag">💰 '+upgCost.toLocaleString()+'</span></div>';else h+='<div class="shop-item"><strong>👑 x50</strong><br><span class="price-tag done">Максимум!</span></div>';s.innerHTML=h}
 
-// ==================== КОЛЕСО ====================
-function drawWheel(){let c=document.getElementById('wheelCanvas'),ctx=c.getContext('2d'),cx=120,cy=120,r=110,n=prizes.length;let colors=['#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b'];ctx.clearRect(0,0,240,240);for(let i=0;i<n;i++){let a=(i*2*Math.PI)/n-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+(2*Math.PI)/n);ctx.fillStyle=colors[i];ctx.fill();ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.stroke();ctx.save();ctx.translate(cx+Math.cos(a+Math.PI/n)*r*0.6,cy+Math.sin(a+Math.PI/n)*r*0.6);ctx.rotate(a+Math.PI/n);ctx.fillStyle='#000';ctx.font='bold 10px sans-serif';ctx.fillText(prizes[i]+'n',-12,3);ctx.restore()}ctx.beginPath();ctx.arc(cx,cy,12,0,2*Math.PI);ctx.fillStyle='#0f172a';ctx.fill()}
-function spinWheel(){let today=new Date().toDateString();if(wheelUsed===today){alert('🎰 Уже крутили!');return}wheelUsed=today;let btn=document.getElementById('spinBtn');btn.disabled=true;let idx=Math.floor(Math.random()*prizes.length),deg=360*5+idx*(360/prizes.length),c=document.getElementById('wheelCanvas');c.style.transition='transform 3s ease-out';c.style.transform='rotate('+deg+'deg)';setTimeout(()=>{let prize=prizes[idx];B+=prize;document.getElementById('wheelResult').textContent='🎉 +'+prize+' nRAM!';U();S2();c.style.transition='none';c.style.transform='rotate('+(deg%360)+'deg)';btn.disabled=false},3100)}
+function updateTasks(){var ids=['tf1','tf2','tf3','tf4','tf5','tf6'];var counts=[100,1000,5000,10000,50000,100000];var tns=['tap100','tap1000','tap5000','tap10000','tap50000','tap100000'];var rws=[50,200,500,1000,5000,10000];for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.style.width=Math.min(100,T/counts[i]*100)+'%';if(T>=counts[i]&&tasksDone.indexOf(tns[i])===-1){tasksDone.push(tns[i]);B+=rws[i]}}document.getElementById('tdp').textContent=Math.min(S,3);document.getElementById('tdp7').textContent=Math.min(S,7);document.getElementById('tdp30').textContent=Math.min(S,30);if(tasksDone.indexOf('channel')!==-1)document.getElementById('tag-channel').textContent='✅';if(tasksDone.indexOf('group')!==-1)document.getElementById('tag-group').textContent='✅';U();S2()}
 
-// ==================== ВЫВОД ====================
-function submitWithdraw(){let addr=document.getElementById('wAddr').value.trim();if(!addr.startsWith('RAM_')){alert('❌ Неверный адрес!');return}if(B<10000000){alert('❌ Минимум: 10 млн nRAM');return}let requests=JSON.parse(localStorage.getItem('rc_requests')||'[]');requests.push({tg:uid,address:addr,amount:B,date:new Date().toISOString()});localStorage.setItem('rc_requests',JSON.stringify(requests));B=0;U();S2();document.getElementById('withdrawForm').style.display='none';document.getElementById('withdrawDone').style.display='block';alert('✅ Заявка отправлена!')}
+function checkAchs(){if(T>=100&&achs[0]===0)achs[0]=1;if(T>=1000&&achs[1]===0)achs[1]=1;if(T>=10000&&achs[2]===0)achs[2]=1;if(T>=100000&&achs[7]===0)achs[7]=1;if(B>=1000000&&achs[9]===0)achs[9]=1;if(tapMul>=10&&achs[12]===0)achs[12]=1;if(tapMul>=25&&achs[13]===0)achs[13]=1;if(tapMul>=50&&achs[14]===0)achs[14]=1;if(nftCount>=1&&achs[5]===0)achs[5]=1;updateAchs();S2()}
 
-// ==================== РЕЙТИНГ ====================
-function updateRank(){let h='<div style="background:rgba(251,191,36,0.1);padding:8px;border-radius:8px;margin:4px 0;display:flex;justify-content:space-between"><span>🥇 Вы</span><span style="color:#fbbf24;font-weight:700">'+B.toLocaleString()+' nRAM</span></div>';h+='<p style="color:#94a3b8;text-align:center;margin-top:12px;font-size:10px">🏆 Пригласи друга — займи первое место!</p>';document.getElementById('rankList').innerHTML=h}
+function updateAchs(){var names=['🥉 Новичок','🥈 Тапер','🥇 Мастер','👥 Друг','👥 10 друзей','🎨 NFT','👥 Легенда','💪 Железный','💪 Стальной','💰 Миллионер','💰 Магнат','💰 Олигарх','⚡ x10','⚡ x25','👑 x50'];var h='';for(var i=0;i<15;i++){h+='<div class="achievement '+(achs[i]===1?'done':'locked')+'"><span>'+names[i]+'</span><span>'+(achs[i]===1?'✅':'🔒')+'</span></div>'}document.getElementById('achList').innerHTML=h}
 
-// ==================== NFT ГЕНЕРАТОР ====================
-function seedRandom(seed){return function(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff}}
-function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath()}
-function generateNFT(taps,nftId){let canvas=document.createElement('canvas');canvas.width=300;canvas.height=400;let ctx=canvas.getContext('2d');let seed=parseInt(myHash.substring(0,8),16)^nftId;let rng=seedRandom(seed);let grad=ctx.createLinearGradient(0,0,0,400);grad.addColorStop(0,'#020617');grad.addColorStop(0.5,'#0c4a6e');grad.addColorStop(1,'#020617');ctx.fillStyle=grad;ctx.fillRect(0,0,300,400);for(let i=0;i<100;i++){let x=rng()*300,y=rng()*400,s=rng()*1.5+0.5;ctx.fillStyle='rgba(56,189,248,'+(rng()*0.4+0.2)+')';ctx.beginPath();ctx.arc(x,y,s,0,Math.PI*2);ctx.fill()}ctx.strokeStyle='#38bdf8';ctx.lineWidth=3;roundRect(ctx,10,10,280,380,16);ctx.stroke();ctx.lineWidth=1;roundRect(ctx,18,18,264,364,12);ctx.stroke();ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(150,55,28,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.3)';ctx.beginPath();ctx.arc(140,46,10,0,Math.PI*2);ctx.fill();ctx.fillStyle='#020617';ctx.font='bold 28px sans-serif';ctx.textAlign='center';ctx.fillText('R',150,64);ctx.fillStyle='#38bdf8';ctx.font='bold 16px sans-serif';ctx.fillText('RAMCOIN NFT',150,110);ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.fillText('#'+String(nftId).padStart(5,'0'),150,132);ctx.fillStyle='#7dd3fc';ctx.font='bold 10px sans-serif';ctx.fillText('COMMON',150,150);let cellSize=22,startX=(300-8*cellSize)/2,startY=170;for(let i=0;i<8;i++){for(let j=0;j<8;j++){let bit=(seed>>(i*8+j))&1,x=startX+j*cellSize,y=startY+i*cellSize;ctx.strokeStyle='#38bdf8';ctx.lineWidth=1;if(bit){ctx.fillStyle='#38bdf8';ctx.fillRect(x+2,y+2,cellSize-4,cellSize-4);ctx.fillStyle='rgba(255,255,255,0.5)';ctx.beginPath();ctx.arc(x+cellSize/2-2,y+cellSize/2-2,3,0,Math.PI*2);ctx.fill()}else{ctx.strokeRect(x+2,y+2,cellSize-4,cellSize-4)}}}let cx=150,cy=370;for(let r of[55,40,25]){ctx.strokeStyle='#38bdf8';ctx.lineWidth=1;ctx.globalAlpha=0.5;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.stroke()}ctx.globalAlpha=1;ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.5)';ctx.beginPath();ctx.arc(cx-6,cy-5,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#020617';ctx.font='bold 14px sans-serif';ctx.fillText('R',cx,cy+5);ctx.fillStyle='#64748b';ctx.font='8px sans-serif';ctx.textAlign='left';ctx.fillText('Owner: RAM_'+String(uid).substring(0,16)+'...',20,342);ctx.fillText('Taps: '+taps.toLocaleString(),20,355);ctx.fillText('Common • RAMCOIN Network',20,368);ctx.fillStyle='#38bdf8';ctx.textAlign='center';ctx.font='bold 8px sans-serif';ctx.fillText('RAMCOIN NETWORK • BLOCKCHAIN',150,390);return canvas}
+function drawWheel(){var c=document.getElementById('wheelCanvas'),ctx=c.getContext('2d'),cx=120,cy=120,r=110,n=prizes.length;var colors=['#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b'];ctx.clearRect(0,0,240,240);for(var i=0;i<n;i++){var a=(i*2*Math.PI)/n-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+(2*Math.PI)/n);ctx.fillStyle=colors[i];ctx.fill();ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.stroke();ctx.save();ctx.translate(cx+Math.cos(a+Math.PI/n)*r*0.6,cy+Math.sin(a+Math.PI/n)*r*0.6);ctx.rotate(a+Math.PI/n);ctx.fillStyle='#000';ctx.font='bold 10px sans-serif';ctx.fillText(prizes[i]+'n',-12,3);ctx.restore()}ctx.beginPath();ctx.arc(cx,cy,12,0,2*Math.PI);ctx.fillStyle='#0f172a';ctx.fill()}
 
-function mintNFT(){if(T<100){alert('❌ Нужно 100 тапов! У тебя: '+T);return}nftCount++;let nftId=nftCount;let canvas=generateNFT(T,nftId);let dataURL=canvas.toDataURL('image/png');localStorage.setItem(P+'nft_'+nftId,dataURL);showNFTModal(nftId,canvas);updateGallery();S2();U()}
-function showNFTModal(nftId,canvas){currentNFT=nftId;document.getElementById('nftTitle').textContent='🎨 NFT #'+String(nftId).padStart(5,'0');document.getElementById('nftInfo').textContent='Owner: RAM_'+String(uid).substring(0,16)+'... | Taps: '+T.toLocaleString()+' | Common';let mc=document.getElementById('modalNFT');let ctx=mc.getContext('2d');ctx.drawImage(canvas,0,0,280,373);openM('nft')}
-function downloadNFT(nftId){let dataURL=localStorage.getItem(P+'nft_'+nftId);if(!dataURL)return;let a=document.createElement('a');a.download='RAMCOIN_NFT_'+String(nftId).padStart(5,'0')+'.png';a.href=dataURL;a.click()}
-function downloadCurrentNFT(){if(currentNFT)downloadNFT(currentNFT)}
-function openNFTModal(nftId){let dataURL=localStorage.getItem(P+'nft_'+nftId);if(!dataURL)return;let img=new Image();img.onload=function(){let c=document.createElement('canvas');c.width=300;c.height=400;c.getContext('2d').drawImage(img,0,0,300,400);showNFTModal(nftId,c)};img.src=dataURL}
-function updateGallery(){let g=document.getElementById('nftGallery');if(nftCount===0){g.innerHTML='<div class="nft-empty">Нет NFT<br>Нажми "🎨 NFT"</div>';return}let h='';let start=Math.max(1,nftCount-8);for(let i=nftCount;i>=start;i--){h+='<div class="nft-card" onclick="openNFTModal('+i+')"><canvas id="thumb_'+i+'" width="100" height="133"></canvas><div class="nft-num">#'+String(i).padStart(3,'0')+'</div></div>'}g.innerHTML=h;for(let i=nftCount;i>=start;i--){let dataURL=localStorage.getItem(P+'nft_'+i);if(dataURL){(function(idx,url){let img=new Image();img.onload=function(){let thumb=document.getElementById('thumb_'+idx);if(thumb){thumb.getContext('2d').drawImage(img,0,0,100,133)}};img.src=url})(i,dataURL)}}}
+function spinWheel(){var today=new Date().toDateString();if(wheelUsed===today){alert('🎰 Уже крутили!');return}wheelUsed=today;var btn=document.getElementById('spinBtn');btn.disabled=true;var idx=Math.floor(Math.random()*prizes.length),deg=360*5+idx*(360/prizes.length),c=document.getElementById('wheelCanvas');c.style.transition='transform 3s ease-out';c.style.transform='rotate('+deg+'deg)';setTimeout(function(){var prize=prizes[idx];B+=prize;document.getElementById('wheelResult').textContent='🎉 +'+prize+' nRAM!';U();S2();c.style.transition='none';c.style.transform='rotate('+(deg%360)+'deg)';btn.disabled=false},3100)}
+
+function submitWithdraw(){var addr=document.getElementById('wAddr').value.trim();if(!addr.startsWith('RAM_')){alert('❌ Неверный адрес!');return}if(B<10000000){alert('❌ Минимум: 10 млн');return}var rq=JSON.parse(localStorage.getItem('rc_requests')||'[]');rq.push({tg:uid,address:addr,amount:B,date:new Date().toISOString()});localStorage.setItem('rc_requests',JSON.stringify(rq));B=0;U();S2();document.getElementById('withdrawForm').style.display='none';document.getElementById('withdrawDone').style.display='block';alert('✅ Заявка отправлена!')}
+
+function updateRank(){var h='<div style="background:rgba(251,191,36,0.1);padding:8px;border-radius:8px;display:flex;justify-content:space-between"><span>🥇 Вы</span><span style="color:#fbbf24;font-weight:700">'+B.toLocaleString()+' nRAM</span></div>';document.getElementById('rankList').innerHTML=h}
+
+// ==================== NFT ====================
+function seedRandom(s){return function(){s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff}}
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath()}
+
+function generateNFT(taps,nftId){var c=document.createElement('canvas');c.width=300;c.height=400;var ctx=c.getContext('2d');var seed=parseInt(myHash.substring(0,8),16)^nftId;var rng=seedRandom(seed);var grad=ctx.createLinearGradient(0,0,0,400);grad.addColorStop(0,'#020617');grad.addColorStop(0.5,'#0c4a6e');grad.addColorStop(1,'#020617');ctx.fillStyle=grad;ctx.fillRect(0,0,300,400);for(var i=0;i<80;i++){ctx.fillStyle='rgba(56,189,248,'+(rng()*0.3+0.1)+')';ctx.beginPath();ctx.arc(rng()*300,rng()*400,rng()*1.5,0,Math.PI*2);ctx.fill()}ctx.strokeStyle='#38bdf8';ctx.lineWidth=3;rr(ctx,10,10,280,380,16);ctx.stroke();ctx.lineWidth=1;rr(ctx,18,18,264,364,12);ctx.stroke();ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(150,55,28,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.3)';ctx.beginPath();ctx.arc(140,46,10,0,Math.PI*2);ctx.fill();ctx.fillStyle='#020617';ctx.font='bold 28px sans-serif';ctx.textAlign='center';ctx.fillText('R',150,64);ctx.fillStyle='#38bdf8';ctx.font='bold 16px sans-serif';ctx.fillText('RAMCOIN NFT',150,110);ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.fillText('#'+String(nftId).padStart(5,'0'),150,132);ctx.fillStyle='#7dd3fc';ctx.font='bold 10px sans-serif';ctx.fillText('COMMON',150,150);var cs=22,sx=(300-8*cs)/2,sy=170;for(var i=0;i<8;i++){for(var j=0;j<8;j++){var bit=(seed>>(i*8+j))&1,x=sx+j*cs,y=sy+i*cs;ctx.strokeStyle='#38bdf8';ctx.lineWidth=1;if(bit){ctx.fillStyle='#38bdf8';ctx.fillRect(x+2,y+2,cs-4,cs-4);ctx.fillStyle='rgba(255,255,255,0.5)';ctx.beginPath();ctx.arc(x+cs/2-2,y+cs/2-2,3,0,Math.PI*2);ctx.fill()}else{ctx.strokeRect(x+2,y+2,cs-4,cs-4)}}}var cx=150,cy=370;for(var r=0;r<3;r++){var rr2=[55,40,25][r];ctx.strokeStyle='#38bdf8';ctx.lineWidth=1;ctx.globalAlpha=0.5;ctx.beginPath();ctx.arc(cx,cy,rr2,0,Math.PI*2);ctx.stroke()}ctx.globalAlpha=1;ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.5)';ctx.beginPath();ctx.arc(cx-6,cy-5,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#020617';ctx.font='bold 14px sans-serif';ctx.fillText('R',cx,cy+5);ctx.fillStyle='#64748b';ctx.font='8px sans-serif';ctx.textAlign='left';ctx.fillText('Owner: RAM_'+String(uid).substring(0,16)+'...',20,342);ctx.fillText('Taps: '+taps.toLocaleString(),20,355);ctx.fillStyle='#38bdf8';ctx.textAlign='center';ctx.font='bold 8px sans-serif';ctx.fillText('RAMCOIN NETWORK',150,390);return c}
+
+function mintNFT(){if(T<100){alert('❌ Нужно 100 тапов!');return}nftCount++;var id=nftCount;var canvas=generateNFT(T,id);localStorage.setItem(P+'nft_'+id,canvas.toDataURL('image/png'));showNFT(id,canvas);updateGallery();S2();U()}
+
+function showNFT(id,canvas){curNFT=id;document.getElementById('nftTitle').textContent='🎨 NFT #'+String(id).padStart(5,'0');document.getElementById('nftInfo').textContent='Owner: RAM_'+String(uid).substring(0,16)+'... | Taps: '+T.toLocaleString();var mc=document.getElementById('modalNFT');mc.getContext('2d').drawImage(canvas,0,0,280,373);openM('nft')}
+
+function downloadCurrentNFT(){if(curNFT){var u=localStorage.getItem(P+'nft_'+curNFT);if(u){var a=document.createElement('a');a.download='RAMCOIN_NFT_'+String(curNFT).padStart(5,'0')+'.png';a.href=u;a.click()}}}
+
+function openNFTModal(id){var u=localStorage.getItem(P+'nft_'+id);if(!u)return;var img=new Image();img.onload=function(){var c=document.createElement('canvas');c.width=300;c.height=400;c.getContext('2d').drawImage(img,0,0,300,400);showNFT(id,c)};img.src=u}
+
+function updateGallery(){var g=document.getElementById('nftGallery');if(nftCount===0){g.innerHTML='<div class="nft-empty">Нет NFT</div>';return}var h='';var st=Math.max(1,nftCount-8);for(var i=nftCount;i>=st;i--){h+='<div class="nft-card" onclick="openNFTModal('+i+')"><canvas id="thumb_'+i+'" width="100" height="133"></canvas><div class="nft-num">#'+String(i).padStart(3,'0')+'</div></div>'}g.innerHTML=h;for(var i=nftCount;i>=st;i--){var u=localStorage.getItem(P+'nft_'+i);if(u){(function(idx,url){var img=new Image();img.onload=function(){var t=document.getElementById('thumb_'+idx);if(t)t.getContext('2d').drawImage(img,0,0,100,133)};img.src=url})(i,u)}}}
+
 function openNFTGallery(){updateGallery();openM('gallery')}
 
-// ==================== МОДАЛКИ ====================
-function openM(t){document.getElementById('m-'+t).classList.add('active');if(t==='tasks')updateTasks();if(t==='achs')updateAchs();if(t==='wheel'){drawWheel();document.getElementById('wheelResult').textContent=''}if(t==='shop')updateShop();if(t==='rank')updateRank();if(t==='out'){document.getElementById('withdrawForm').style.display='block';document.getElementById('withdrawDone').style.display='none';document.getElementById('wAddr').value=''}}
+function openM(t){document.getElementById('m-'+t).classList.add('active');if(t==='tasks')updateTasks();if(t==='achs')updateAchs();if(t==='wheel'){drawWheel();document.getElementById('wheelResult').textContent=''}if(t==='shop')updateShop();if(t==='rank')updateRank();if(t==='out'){document.getElementById('withdrawForm').style.display='block';document.getElementById('withdrawDone').style.display='none'}}
 function closeM(t){document.getElementById('m-'+t).classList.remove('active')}
 
-// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+// ==================== СТАРТ ====================
 U();updateShop();updateTasks();updateAchs();updateRank();updateGallery();
+setInterval(function(){restoreEnergy();if(boost&&Date.now()>bEnd){boost=false;U();S2()}},60000);
 
-setInterval(()=>{restoreEnergy();if(boost&&Date.now()>bEnd){boost=false;U();S2()}},60000);
-
-// Рефералы
-let sp=tg?.initDataUnsafe?.start_param||'';
-if(sp.startsWith('ref_')){let refId=sp.replace('ref_','');if(refId!==String(uid)){if(!localStorage.getItem(P+'joined')){B+=250;localStorage.setItem(P+'joined','1');U();S2()}let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');if(!refs[refId]){refs[refId]=1;localStorage.setItem('ram_refs',JSON.stringify(refs))}}}
-let refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
-if(refs[uid]){B+=500;R++;delete refs[uid];localStorage.setItem('ram_refs',JSON.stringify(refs));alert('🎉 +500 nRAM! Друг присоединился!');U();S2()}
+var sp=tg?.initDataUnsafe?.start_param||'';
+if(sp.indexOf('ref_')===0){var refId=sp.replace('ref_','');if(refId!==String(uid)){if(!localStorage.getItem(P+'joined')){B+=250;localStorage.setItem(P+'joined','1')}var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');if(!refs[refId]){refs[refId]=1;localStorage.setItem('ram_refs',JSON.stringify(refs))}U();S2()}}
+var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');
+if(refs[uid]){B+=500;R++;delete refs[uid];localStorage.setItem('ram_refs',JSON.stringify(refs));alert('🎉 +500 nRAM! Друг зашёл!');U();S2()}
 </script>
 </body>
 </html>
