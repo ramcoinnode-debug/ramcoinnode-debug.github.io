@@ -8,13 +8,14 @@
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         body{background:#020617;color:#f1f5f9;font-family:-apple-system,sans-serif;touch-action:manipulation;user-select:none;-webkit-user-select:none;height:100vh;width:100vw;position:fixed;overflow:hidden}
-        .app{display:flex;flex-direction:column;align-items:center;height:100%;padding:10px;max-width:500px;margin:0 auto;overflow-y:auto}
+        canvas#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+        .app{display:flex;flex-direction:column;align-items:center;height:100%;padding:10px;max-width:500px;margin:0 auto;overflow-y:auto;position:relative;z-index:1}
         .header{display:flex;justify-content:space-between;align-items:center;width:100%;padding:8px 0;flex-shrink:0}
         .title{font-size:18px;font-weight:900;background:linear-gradient(135deg,#38bdf8,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
         .header-btns{display:flex;gap:5px}
         .icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);cursor:pointer;font-size:15px;color:#fff;display:flex;align-items:center;justify-content:center;position:relative}
         .icon-btn:active{background:rgba(56,189,248,0.2)}
-        .icon-btn .badge{position:absolute;top:-3px;right:-3px;background:#ef4444;color:#fff;font-size:7px;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+        .icon-btn .badge{position:absolute;top:-3px;right:-3px;background:#10b981;color:#fff;font-size:7px;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
         .balance-area{text-align:center;margin:2px 0;flex-shrink:0}
         .balance{font-size:40px;font-weight:900;color:#fbbf24;line-height:1;text-shadow:0 0 20px rgba(251,191,36,0.3)}
         .balance-sub{font-size:9px;color:#64748b;letter-spacing:1px}
@@ -32,25 +33,25 @@
         .energy-bar{width:60%;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin:3px auto;overflow:hidden}
         .energy-fill{height:100%;background:linear-gradient(90deg,#38bdf8,#a78bfa);border-radius:2px;transition:width 0.3s}
         .energy-text{font-size:9px;color:#64748b}
-        .bottom-panel{width:100%;background:rgba(15,23,42,0.8);backdrop-filter:blur(20px);border-radius:14px;padding:8px;border:1px solid rgba(255,255,255,0.05);margin-top:4px;flex-shrink:0}
-        .bottom-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
-        .action-btn{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:8px 2px;cursor:pointer;text-align:center;color:#fff;transition:all 0.2s;font-size:11px}
-        .action-btn:active{background:rgba(56,189,248,0.1);transform:scale(0.95)}
-        .action-btn .icon{font-size:16px;display:block;margin-bottom:1px}
+        .bottom-panel{width:100%;background:rgba(15,23,42,0.85);backdrop-filter:blur(20px);border-radius:14px;padding:10px;border:1px solid rgba(255,255,255,0.08);margin-top:auto;flex-shrink:0}
+        .bottom-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+        .action-btn{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px 4px;cursor:pointer;text-align:center;color:#fff;transition:all 0.2s;font-size:11px}
+        .action-btn:active{background:rgba(56,189,248,0.15);transform:scale(0.95)}
+        .action-btn .icon{font-size:17px;display:block;margin-bottom:2px}
         .action-btn .label{font-size:8px;font-weight:600;color:#64748b}
-        .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
+        .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
         .modal.active{opacity:1;pointer-events:all}
-        .modal-content{background:#0f172a;border-radius:16px;padding:16px;width:90%;max-width:400px;border:1px solid rgba(255,255,255,0.08);max-height:80vh;overflow-y:auto}
-        .modal h2{font-size:14px;margin-bottom:6px}
-        .modal .close-btn{background:rgba(255,255,255,0.06);border:none;color:white;padding:9px;border-radius:10px;margin-top:6px;cursor:pointer;width:100%;font-weight:700;font-size:12px}
-        .wheel-btn{background:linear-gradient(135deg,#fbbf24,#f59e0b);border:none;color:#000;padding:10px;border-radius:12px;font-size:14px;font-weight:900;cursor:pointer;width:100%;margin-top:6px}
+        .modal-content{background:#0f172a;border-radius:16px;padding:16px;width:90%;max-width:400px;border:1px solid rgba(255,255,255,0.1);max-height:80vh;overflow-y:auto}
+        .modal h2{font-size:15px;margin-bottom:8px}
+        .modal .close-btn{background:rgba(255,255,255,0.06);border:none;color:white;padding:10px;border-radius:10px;margin-top:8px;cursor:pointer;width:100%;font-weight:700;font-size:12px}
+        .wheel-btn{background:linear-gradient(135deg,#fbbf24,#f59e0b);border:none;color:#000;padding:11px;border-radius:12px;font-size:14px;font-weight:900;cursor:pointer;width:100%;margin-top:6px}
         .wheel-btn:active{transform:scale(0.96)}.wheel-btn:disabled{opacity:0.5}
         .shop-item{margin:3px 0;padding:8px;background:rgba(255,255,255,0.02);border-radius:10px;cursor:pointer;border:1px solid transparent}
         .shop-item:active{background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.3)}
-        .shop-item strong{display:block;margin-bottom:1px;font-size:11px}
-        .price-tag{background:rgba(16,185,129,0.12);color:#10b981;padding:1px 5px;border-radius:5px;font-size:8px;font-weight:700}
+        .shop-item strong{display:block;margin-bottom:2px;font-size:11px}
+        .price-tag{background:rgba(16,185,129,0.12);color:#10b981;padding:1px 6px;border-radius:5px;font-size:8px;font-weight:700}
         .price-tag.done{background:rgba(16,185,129,0.3);color:#fff}.shop-item.completed{opacity:0.5;pointer-events:none}
-        .achievement{margin:2px 0;padding:6px;background:rgba(255,255,255,0.02);border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:10px}
+        .achievement{margin:2px 0;padding:7px;background:rgba(255,255,255,0.02);border-radius:8px;display:flex;justify-content:space-between;align-items:center;font-size:10px}
         .achievement.done{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15)}.achievement.locked{opacity:0.4}
         .task-bar{height:2px;background:rgba(255,255,255,0.04);border-radius:2px;margin-top:2px;overflow:hidden}
         .task-fill{height:100%;background:linear-gradient(90deg,#38bdf8,#a78bfa);border-radius:2px;transition:width 0.3s}
@@ -65,11 +66,12 @@
     </style>
 </head>
 <body>
+    <canvas id="bgCanvas"></canvas>
     <div class="app" id="app">
         <div class="header">
             <span class="title">⚡ RAMCOIN TAP</span>
             <div class="header-btns">
-                <button class="icon-btn" onclick="openNFTGallery()">🎨<span class="badge" id="nftBadge" style="display:none">0</span></button>
+                <button class="icon-btn" onclick="openNFTGallery()">🎨<span class="badge" id="nftBadge" style="display:none">1</span></button>
                 <button class="icon-btn" onclick="window.open('https://t.me/ramcoin_pow')">💬</button>
                 <button class="icon-btn" onclick="openM('wheel')">🎰</button>
                 <button class="icon-btn" onclick="openM('tasks')">📋</button>
@@ -92,7 +94,7 @@
                 <button class="action-btn" onclick="openM('shop')"><span class="icon">🛒</span><span class="label">Магазин</span></button>
                 <button class="action-btn" onclick="invite()"><span class="icon">👥</span><span class="label">Друзья</span></button>
             </div>
-            <div class="bottom-grid" style="margin-top:4px">
+            <div class="bottom-grid" style="margin-top:6px">
                 <button class="action-btn" onclick="openM('out')"><span class="icon">💳</span><span class="label">Вывод</span></button>
                 <button class="action-btn" onclick="mintNFT()"><span class="icon">🎨</span><span class="label">NFT</span></button>
                 <button class="action-btn" onclick="openM('achs')"><span class="icon">⭐</span><span class="label">Достиж.</span></button>
@@ -126,10 +128,35 @@
     <div class="modal" id="m-shop"><div class="modal-content"><h2>🛒 Магазин улучшений</h2><div id="shop-items"></div><button class="close-btn" onclick="closeM('shop')">Закрыть</button></div></div>
     <div class="modal" id="m-out"><div class="modal-content"><h2>💳 Вывод RAM</h2><p style="color:#94a3b8;font-size:10px;text-align:center">Курс: 1 млрд nRAM = 1 RAM</p><p style="color:#94a3b8;font-size:10px;text-align:center">Минимум: 10 млн nRAM</p><div id="withdrawForm"><input type="text" id="wAddr" placeholder="RAM адрес (RAM_...)"><button class="wheel-btn" onclick="submitWithdraw()">💳 ОТПРАВИТЬ</button></div><div id="withdrawDone" style="display:none;text-align:center;color:#10b981;font-weight:700">✅ Заявка отправлена!</div><button class="close-btn" onclick="closeM('out')">Закрыть</button></div></div>
     <div class="modal" id="m-rank"><div class="modal-content"><h2>🏆 Рейтинг</h2><div id="rankList"></div><button class="close-btn" onclick="closeM('rank')">Закрыть</button></div></div>
-    <div class="modal" id="m-gallery"><div class="modal-content"><h2>🎨 Мои NFT</h2><div class="nft-gallery" id="nftGallery"><div class="nft-empty">Нет NFT<br>Нажми "🎨 NFT"</div></div><button class="close-btn" onclick="closeM('gallery')">Закрыть</button></div></div>
-    <div class="modal" id="m-nft"><div class="modal-content" style="text-align:center"><h2 id="nftTitle">🎨 NFT</h2><canvas id="modalNFT" width="280" height="373"></canvas><p id="nftInfo" style="color:#94a3b8;font-size:10px;margin:6px 0"></p><button class="dl-btn" onclick="downloadCurrentNFT()">💾 СКАЧАТЬ PNG</button><button class="close-btn" onclick="closeM('nft')">Закрыть</button></div></div>
+    <div class="modal" id="m-gallery"><div class="modal-content"><h2>🎨 Моя коллекция NFT</h2><div class="nft-gallery" id="nftGallery"><div class="nft-empty">У тебя пока нет NFT<br>Нажми "🎨 NFT" чтобы получить!</div></div><button class="close-btn" onclick="closeM('gallery')">Закрыть</button></div></div>
+    <div class="modal" id="m-nft"><div class="modal-content" style="text-align:center"><h2 id="nftTitle">🎨 Мой NFT</h2><canvas id="modalNFT" width="280" height="373"></canvas><p id="nftInfo" style="color:#94a3b8;font-size:10px;margin:6px 0"></p><button class="dl-btn" onclick="downloadNFT()">💾 СКАЧАТЬ PNG</button><button class="close-btn" onclick="closeM('nft')">Закрыть</button></div></div>
 
 <script>
+// ==================== БЛОКЧЕЙН-ФОН ====================
+(function(){
+    var canvas=document.getElementById('bgCanvas');
+    var ctx=canvas.getContext('2d');
+    function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+    resize();window.addEventListener('resize',resize);
+    var blocks=[];
+    for(var i=0;i<30;i++){blocks.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,w:50+Math.random()*60,h:18+Math.random()*18,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,hash:'0000'+Math.random().toString(16).substr(2,8),opacity:0.1+Math.random()*0.2})}
+    var connections=[];
+    for(var i=0;i<blocks.length;i++){for(var j=i+1;j<blocks.length;j++){if(Math.random()<0.25)connections.push({a:i,b:j})}}
+    function drawBg(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.strokeStyle='rgba(56,189,248,0.02)';ctx.lineWidth=0.3;
+        for(var x=0;x<canvas.width;x+=50){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke()}
+        for(var y=0;y<canvas.height;y+=50){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke()}
+        connections.forEach(function(c){var a=blocks[c.a],b=blocks[c.b];var dx=a.x-b.x,dy=a.y-b.y;var d=Math.sqrt(dx*dx+dy*dy);if(d<250){ctx.strokeStyle='rgba(56,189,248,'+(0.06*(1-d/250))+')';ctx.lineWidth=0.4;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}});
+        blocks.forEach(function(b){b.x+=b.vx;b.y+=b.vy;if(b.x<0||b.x>canvas.width)b.vx*=-1;if(b.y<0||b.y>canvas.height)b.vy*=-1;
+            ctx.fillStyle='rgba(15,23,42,'+(0.5+b.opacity)+')';ctx.strokeStyle='rgba(56,189,248,'+b.opacity+')';ctx.lineWidth=1;
+            var x=b.x-b.w/2,y=b.y-b.h/2;var r=3;ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+b.w-r,y);ctx.quadraticCurveTo(x+b.w,y,x+b.w,y+r);ctx.lineTo(x+b.w,y+b.h-r);ctx.quadraticCurveTo(x+b.w,y+b.h,x+b.w-r,y+b.h);ctx.lineTo(x+r,y+b.h);ctx.quadraticCurveTo(x,y+b.h,x,y+b.h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();ctx.fill();ctx.stroke();
+            ctx.fillStyle='rgba(56,189,248,0.4)';ctx.font='6px monospace';ctx.fillText(b.hash,b.x-b.w/2+3,b.y+2)});
+        requestAnimationFrame(drawBg)
+    }
+    drawBg()
+})();
+
 // ==================== ЛОГОТИП ====================
 (function(){var img=document.getElementById('coinImg');var fb=document.getElementById('coinFallback');var url='https://ramcoinnode-debug.github.io/ramcoin_logo.png';function load(){var t=new Image();t.onload=function(){img.src=url+'?t='+Date.now();img.style.display='block';fb.style.display='none'};t.onerror=function(){img.style.display='none';fb.style.display='block';setTimeout(load,5000)};t.src=url+'?t='+Date.now()}load();setInterval(function(){if(img.style.display!=='none'&&(!img.complete||img.naturalWidth===0)){img.style.display='none';fb.style.display='block';setTimeout(load,3000)}},15000)})();
 
@@ -140,43 +167,39 @@ var P='rc_'+uid+'_';
 
 // ==================== МИГРАЦИЯ ====================
 (function(){
-    var migrated=localStorage.getItem(P+'migrated_v1');
+    var migrated=localStorage.getItem(P+'migrated_v2');
     if(migrated)return;
-    var oldPrefixes=['v2_'+uid+'_','v3_'+uid+'_','v4_'+uid+'_','v5_'+uid+'_'];
+    var oldPrefixes=['v2_'+uid+'_','v3_'+uid+'_','v4_'+uid+'_','v5_'+uid+'_','rc_'+uid+'_'];
     for(var i=0;i<oldPrefixes.length;i++){
         var op=oldPrefixes[i];
+        if(op===P)continue;
         var ob=parseInt(localStorage.getItem(op+'B')||'0');
         if(ob>0){
-            localStorage.setItem(P+'B',ob);
-            localStorage.setItem(P+'T',localStorage.getItem(op+'T')||'0');
-            localStorage.setItem(P+'L',localStorage.getItem(op+'L')||'1');
-            localStorage.setItem(P+'R',localStorage.getItem(op+'R')||'0');
-            localStorage.setItem(P+'S',localStorage.getItem(op+'S')||'0');
-            localStorage.setItem(P+'D',localStorage.getItem(op+'D')||'0');
-            localStorage.setItem(P+'E',localStorage.getItem(op+'E')||'500');
-            localStorage.setItem(P+'TM',localStorage.getItem(op+'TM')||'1');
-            localStorage.setItem(P+'UC',localStorage.getItem(op+'UC')||'50000');
-            localStorage.setItem(P+'UB',localStorage.getItem(op+'UB')||'0');
-            var nb=ob+10000;
-            localStorage.setItem(P+'B',nb);
-            localStorage.setItem(P+'migrated_v1','1');
-            setTimeout(function(){alert('🎉 ОБНОВЛЕНИЕ!\nБаланс: '+nb.toLocaleString()+' nRAM\nБонус: +10 000!')},800);
+            var curB=parseInt(localStorage.getItem(P+'B')||'0');
+            if(curB===0){
+                localStorage.setItem(P+'B',ob+10000);
+                localStorage.setItem(P+'T',localStorage.getItem(op+'T')||'0');
+                localStorage.setItem(P+'L',localStorage.getItem(op+'L')||'1');
+                localStorage.setItem(P+'R',localStorage.getItem(op+'R')||'0');
+                localStorage.setItem(P+'S',localStorage.getItem(op+'S')||'0');
+                localStorage.setItem(P+'D',localStorage.getItem(op+'D')||'0');
+                localStorage.setItem(P+'E',localStorage.getItem(op+'E')||'500');
+                localStorage.setItem(P+'TM',localStorage.getItem(op+'TM')||'1');
+                localStorage.setItem(P+'UC',localStorage.getItem(op+'UC')||'50000');
+                localStorage.setItem(P+'UB',localStorage.getItem(op+'UB')||'0');
+                var oldHash=localStorage.getItem(op+'hash');
+                if(oldHash)localStorage.setItem(P+'hash',oldHash);
+                setTimeout(function(){alert('🎉 ДАННЫЕ ВОССТАНОВЛЕНЫ!\nБаланс: '+(ob+10000).toLocaleString()+'\nБонус: +10 000 nRAM!')},600);
+            }
             break;
         }
     }
-    localStorage.setItem(P+'migrated_v1','1');
+    localStorage.setItem(P+'migrated_v2','1');
 })();
 
 // ==================== ПЕРЕМЕННЫЕ ====================
-var B=parseInt(localStorage.getItem(P+'B')||'0');
-var E=parseInt(localStorage.getItem(P+'E')||'500');
-var T=parseInt(localStorage.getItem(P+'T')||'0');
-var L=parseInt(localStorage.getItem(P+'L')||'1');
-var R=parseInt(localStorage.getItem(P+'R')||'0');
-var S=parseInt(localStorage.getItem(P+'S')||'0');
-var D=parseInt(localStorage.getItem(P+'D')||'0');
-var boost=localStorage.getItem(P+'X')==='1';
-var bEnd=parseInt(localStorage.getItem(P+'BE')||'0');
+var B=parseInt(localStorage.getItem(P+'B')||'0'),E=parseInt(localStorage.getItem(P+'E')||'500'),T=parseInt(localStorage.getItem(P+'T')||'0'),L=parseInt(localStorage.getItem(P+'L')||'1'),R=parseInt(localStorage.getItem(P+'R')||'0'),S=parseInt(localStorage.getItem(P+'S')||'0'),D=parseInt(localStorage.getItem(P+'D')||'0');
+var boost=localStorage.getItem(P+'X')==='1',bEnd=parseInt(localStorage.getItem(P+'BE')||'0');
 var tasksDone=JSON.parse(localStorage.getItem(P+'TD')||'[]');
 var achs=JSON.parse(localStorage.getItem(P+'A')||'[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]');
 var wheelUsed=localStorage.getItem(P+'W')||'';
@@ -184,7 +207,6 @@ var tapMul=parseInt(localStorage.getItem(P+'TM')||'1');
 var upgCost=parseInt(localStorage.getItem(P+'UC')||'50000');
 var upgBought=parseInt(localStorage.getItem(P+'UB')||'0');
 var nftCount=parseInt(localStorage.getItem(P+'NFTC')||'0');
-var curNFT=null;
 if(!localStorage.getItem(P+'hash'))localStorage.setItem(P+'hash',Math.random().toString(36).substr(2,16)+Date.now().toString(36));
 var myHash=localStorage.getItem(P+'hash');
 
@@ -195,60 +217,100 @@ function getMaxEnergy(){return energyPerLevel[Math.min(L,7)]}
 var prizes=[10,50,100,200,500,1000,5000,50,100,200,10,50];
 var tapLock=false;
 
-// ==================== ФУНКЦИИ ====================
+// ==================== УРОВНИ ====================
 function checkLevelUp(){var nl=1;for(var i=1;i<levels.length;i++){if(T>=levels[i])nl=i+1}if(nl>L){L=nl;var rw=[0,0,1000,2000,3000,5000,10000,20000];if(rw[L]){B+=rw[L];alert('🎉 Уровень '+L+'! +'+rw[L]+' nRAM!')}E=energyPerLevel[L];if(L>=2&&tasksDone.indexOf('lvl2')===-1){tasksDone.push('lvl2');B+=1000}if(L>=3&&tasksDone.indexOf('lvl3')===-1){tasksDone.push('lvl3');B+=2000}if(L>=5&&tasksDone.indexOf('lvl5')===-1){tasksDone.push('lvl5');B+=10000}}}
 checkLevelUp();
 
 function restoreEnergy(){var td=new Date().toDateString();var ls=localStorage.getItem(P+'LR')||'';if(td!==ls){E=getMaxEnergy();localStorage.setItem(P+'LR',td);U();S2()}}
 restoreEnergy();
 
+// ==================== ТАП ====================
 function tap(e){e.preventDefault();if(tapLock)return;tapLock=true;var n=Date.now();var bm=(boost&&n<bEnd)?2:1;var gain=1*tapMul*bm;if(E<=0){tapLock=false;return}B+=gain;E--;T++;var lv=Math.floor(T/1000)+1;if(lv>L){L=lv;checkLevelUp()}var el=document.createElement('div');el.className='float-text';el.textContent='+'+gain;el.style.color='#fbbf24';el.style.left=((e.touches?.[0]?.clientX||e.clientX||250)-15)+'px';el.style.top=((e.touches?.[0]?.clientY||e.clientY||400)-20)+'px';document.body.appendChild(el);setTimeout(function(){el.remove()},800);checkAchs();U();S2();updateTasks();setTimeout(function(){tapLock=false},200)}
 
-function U(){var me=getMaxEnergy();document.getElementById('bal').textContent=B.toLocaleString();document.getElementById('eFill').style.width=(E/me*100)+'%';document.getElementById('eText').textContent=E+' / '+me;var lt=levelNames[Math.min(L,7)]+' Ур.'+L;if(boost&&Date.now()<bEnd)lt+=' | 🔥×2';if(tapMul>1)lt+=' | ⚡x'+tapMul;document.getElementById('lvl').textContent=lt;var bd=document.getElementById('nftBadge');if(nftCount>0){bd.style.display='flex';bd.textContent=nftCount>99?'99+':nftCount}}
+function U(){var me=getMaxEnergy();document.getElementById('bal').textContent=B.toLocaleString();document.getElementById('eFill').style.width=(E/me*100)+'%';document.getElementById('eText').textContent=E+' / '+me;var lt=levelNames[Math.min(L,7)]+' Ур.'+L;if(boost&&Date.now()<bEnd)lt+=' | 🔥×2';if(tapMul>1)lt+=' | ⚡x'+tapMul;document.getElementById('lvl').textContent=lt;var bd=document.getElementById('nftBadge');if(nftCount>0){bd.style.display='flex';bd.textContent='1'}else{bd.style.display='none'}}
 
 function S2(){var d={};d[P+'B']=B;d[P+'E']=E;d[P+'T']=T;d[P+'L']=L;d[P+'R']=R;d[P+'S']=S;d[P+'D']=D;d[P+'X']=boost?'1':'0';d[P+'BE']=bEnd;d[P+'TD']=JSON.stringify(tasksDone);d[P+'A']=JSON.stringify(achs);d[P+'W']=wheelUsed;d[P+'TM']=tapMul;d[P+'UC']=upgCost;d[P+'UB']=upgBought;d[P+'NFTC']=nftCount;for(var k in d)localStorage.setItem(k,d[k].toString())}
 
+// ==================== БОНУСЫ ====================
 function daily(){var n=Date.now(),day=86400000;if(n-D<day){alert('🎁 Уже получен!');return}S=(n-D<day*2)?S+1:1;var bonus=Math.min(S*100,3000);B+=bonus;D=n;if(S>=3&&tasksDone.indexOf('day3')===-1){tasksDone.push('day3');B+=200}if(S>=7&&tasksDone.indexOf('day7')===-1){tasksDone.push('day7');B+=500}if(S>=30&&tasksDone.indexOf('day30')===-1){tasksDone.push('day30');B+=5000}alert('🎁 +'+bonus+' nRAM! День '+S);U();S2();updateTasks()}
-
 function activateBoost(){if(boost&&Date.now()<bEnd){alert('Уже активен!');closeM('boost');return}boost=true;bEnd=Date.now()+3600000;closeM('boost');U();S2()}
-
 function doTask(t){if(t==='channel'){window.open('https://t.me/ramcoin_pow');if(tasksDone.indexOf('channel')===-1){tasksDone.push('channel');B+=200;alert('✅ +200 nRAM!')}}else if(t==='group'){window.open('https://t.me/ramcoin_chat');if(tasksDone.indexOf('group')===-1){tasksDone.push('group');B+=500;alert('✅ +500 nRAM!')}}U();S2();updateTasks()}
-
 function invite(){var refs=JSON.parse(localStorage.getItem('ram_refs')||'{}');var tr=Object.keys(refs).length+R;alert('📤 Друзей: '+tr+'\n\n🎁 Награды:\n5:+1K | 10:+5K\n15:+10K | 20:+25K\n30:+50K | 40:+100K\n50:+500K 👑');var refLink='https://t.me/ramcoin_tap_bot?startapp=ref_'+uid;window.open('https://t.me/share/url?url='+encodeURIComponent(refLink))}
 
+// ==================== МАГАЗИН ====================
 function buyUpgrade(){if(upgBought>=49){alert('👑 x50!');return}if(B<upgCost){alert('❌ Нужно: '+upgCost.toLocaleString());return}B-=upgCost;upgBought++;tapMul=upgBought+1;if(upgBought<5)upgCost=Math.floor(upgCost*2.5);else if(upgBought<10)upgCost=Math.floor(upgCost*3);else if(upgBought<15)upgCost=Math.floor(upgCost*4);else upgCost=Math.floor(upgCost*5);alert('✅ x'+tapMul+'!');U();S2();updateShop()}
+function updateShop(){var s=document.getElementById('shop-items');if(!s)return;var h='<div style="padding:10px;background:rgba(56,189,248,0.1);border-radius:10px;text-align:center"><b style="color:#38bdf8;font-size:20px">⚡ x'+tapMul+'</b><br><small style="color:#94a3b8">Множитель</small></div>';h+='<div class="shop-item" onclick="activateBoost()"><strong>🔥 Бустер ×2</strong><br><span class="price-tag">Бесплатно</span></div>';if(upgBought<49)h+='<div class="shop-item" onclick="buyUpgrade()"><strong>🔧 Улучшить до x'+(tapMul+1)+'</strong><br><span class="price-tag">💰 '+upgCost.toLocaleString()+'</span></div>';else h+='<div class="shop-item"><strong>👑 x50</strong><br><span class="price-tag done">Максимум!</span></div>';s.innerHTML=h}
 
-function updateShop(){var s=document.getElementById('shop-items');if(!s)return;var p=(upgBought/49)*100;var h='<div style="padding:10px;background:rgba(56,189,248,0.1);border-radius:10px;text-align:center"><b style="color:#38bdf8;font-size:20px">⚡ x'+tapMul+'</b><br><small style="color:#94a3b8">Множитель</small></div>';h+='<div class="shop-item" onclick="activateBoost()"><strong>🔥 Бустер ×2</strong><br><span class="price-tag">Бесплатно</span></div>';if(upgBought<49)h+='<div class="shop-item" onclick="buyUpgrade()"><strong>🔧 Улучшить до x'+(tapMul+1)+'</strong><br><span class="price-tag">💰 '+upgCost.toLocaleString()+'</span></div>';else h+='<div class="shop-item"><strong>👑 x50</strong><br><span class="price-tag done">Максимум!</span></div>';s.innerHTML=h}
-
+// ==================== ЗАДАНИЯ ====================
 function updateTasks(){var ids=['tf1','tf2','tf3','tf4','tf5','tf6'];var counts=[100,1000,5000,10000,50000,100000];var tns=['tap100','tap1000','tap5000','tap10000','tap50000','tap100000'];var rws=[50,200,500,1000,5000,10000];for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.style.width=Math.min(100,T/counts[i]*100)+'%';if(T>=counts[i]&&tasksDone.indexOf(tns[i])===-1){tasksDone.push(tns[i]);B+=rws[i]}}document.getElementById('tdp').textContent=Math.min(S,3);document.getElementById('tdp7').textContent=Math.min(S,7);document.getElementById('tdp30').textContent=Math.min(S,30);if(tasksDone.indexOf('channel')!==-1)document.getElementById('tag-channel').textContent='✅';if(tasksDone.indexOf('group')!==-1)document.getElementById('tag-group').textContent='✅';U();S2()}
 
+// ==================== ДОСТИЖЕНИЯ ====================
 function checkAchs(){if(T>=100&&achs[0]===0)achs[0]=1;if(T>=1000&&achs[1]===0)achs[1]=1;if(T>=10000&&achs[2]===0)achs[2]=1;if(T>=100000&&achs[7]===0)achs[7]=1;if(B>=1000000&&achs[9]===0)achs[9]=1;if(tapMul>=10&&achs[12]===0)achs[12]=1;if(tapMul>=25&&achs[13]===0)achs[13]=1;if(tapMul>=50&&achs[14]===0)achs[14]=1;if(nftCount>=1&&achs[5]===0)achs[5]=1;updateAchs();S2()}
-
 function updateAchs(){var names=['🥉 Новичок','🥈 Тапер','🥇 Мастер','👥 Друг','👥 10 друзей','🎨 NFT','👥 Легенда','💪 Железный','💪 Стальной','💰 Миллионер','💰 Магнат','💰 Олигарх','⚡ x10','⚡ x25','👑 x50'];var h='';for(var i=0;i<15;i++){h+='<div class="achievement '+(achs[i]===1?'done':'locked')+'"><span>'+names[i]+'</span><span>'+(achs[i]===1?'✅':'🔒')+'</span></div>'}document.getElementById('achList').innerHTML=h}
 
+// ==================== КОЛЕСО ====================
 function drawWheel(){var c=document.getElementById('wheelCanvas'),ctx=c.getContext('2d'),cx=120,cy=120,r=110,n=prizes.length;var colors=['#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b','#eab308','#d97706','#b45309','#fbbf24','#f59e0b'];ctx.clearRect(0,0,240,240);for(var i=0;i<n;i++){var a=(i*2*Math.PI)/n-Math.PI/2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,a,a+(2*Math.PI)/n);ctx.fillStyle=colors[i];ctx.fill();ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.stroke();ctx.save();ctx.translate(cx+Math.cos(a+Math.PI/n)*r*0.6,cy+Math.sin(a+Math.PI/n)*r*0.6);ctx.rotate(a+Math.PI/n);ctx.fillStyle='#000';ctx.font='bold 10px sans-serif';ctx.fillText(prizes[i]+'n',-12,3);ctx.restore()}ctx.beginPath();ctx.arc(cx,cy,12,0,2*Math.PI);ctx.fillStyle='#0f172a';ctx.fill()}
-
 function spinWheel(){var today=new Date().toDateString();if(wheelUsed===today){alert('🎰 Уже крутили!');return}wheelUsed=today;var btn=document.getElementById('spinBtn');btn.disabled=true;var idx=Math.floor(Math.random()*prizes.length),deg=360*5+idx*(360/prizes.length),c=document.getElementById('wheelCanvas');c.style.transition='transform 3s ease-out';c.style.transform='rotate('+deg+'deg)';setTimeout(function(){var prize=prizes[idx];B+=prize;document.getElementById('wheelResult').textContent='🎉 +'+prize+' nRAM!';U();S2();c.style.transition='none';c.style.transform='rotate('+(deg%360)+'deg)';btn.disabled=false},3100)}
 
+// ==================== ВЫВОД ====================
 function submitWithdraw(){var addr=document.getElementById('wAddr').value.trim();if(!addr.startsWith('RAM_')){alert('❌ Неверный адрес!');return}if(B<10000000){alert('❌ Минимум: 10 млн');return}var rq=JSON.parse(localStorage.getItem('rc_requests')||'[]');rq.push({tg:uid,address:addr,amount:B,date:new Date().toISOString()});localStorage.setItem('rc_requests',JSON.stringify(rq));B=0;U();S2();document.getElementById('withdrawForm').style.display='none';document.getElementById('withdrawDone').style.display='block';alert('✅ Заявка отправлена!')}
-
 function updateRank(){var h='<div style="background:rgba(251,191,36,0.1);padding:8px;border-radius:8px;display:flex;justify-content:space-between"><span>🥇 Вы</span><span style="color:#fbbf24;font-weight:700">'+B.toLocaleString()+' nRAM</span></div>';document.getElementById('rankList').innerHTML=h}
 
-// ==================== NFT ====================
+// ==================== NFT (ТОЛЬКО 1 РАЗ!) ====================
 function seedRandom(s){return function(){s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff}}
 function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath()}
 
 function generateNFT(taps,nftId){var c=document.createElement('canvas');c.width=300;c.height=400;var ctx=c.getContext('2d');var seed=parseInt(myHash.substring(0,8),16)^nftId;var rng=seedRandom(seed);var grad=ctx.createLinearGradient(0,0,0,400);grad.addColorStop(0,'#020617');grad.addColorStop(0.5,'#0c4a6e');grad.addColorStop(1,'#020617');ctx.fillStyle=grad;ctx.fillRect(0,0,300,400);for(var i=0;i<80;i++){ctx.fillStyle='rgba(56,189,248,'+(rng()*0.3+0.1)+')';ctx.beginPath();ctx.arc(rng()*300,rng()*400,rng()*1.5,0,Math.PI*2);ctx.fill()}ctx.strokeStyle='#38bdf8';ctx.lineWidth=3;rr(ctx,10,10,280,380,16);ctx.stroke();ctx.lineWidth=1;rr(ctx,18,18,264,364,12);ctx.stroke();ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(150,55,28,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.3)';ctx.beginPath();ctx.arc(140,46,10,0,Math.PI*2);ctx.fill();ctx.fillStyle='#020617';ctx.font='bold 28px sans-serif';ctx.textAlign='center';ctx.fillText('R',150,64);ctx.fillStyle='#38bdf8';ctx.font='bold 16px sans-serif';ctx.fillText('RAMCOIN NFT',150,110);ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.fillText('#'+String(nftId).padStart(5,'0'),150,132);ctx.fillStyle='#7dd3fc';ctx.font='bold 10px sans-serif';ctx.fillText('COMMON',150,150);var cs=22,sx=(300-8*cs)/2,sy=170;for(var i=0;i<8;i++){for(var j=0;j<8;j++){var bit=(seed>>(i*8+j))&1,x=sx+j*cs,y=sy+i*cs;ctx.strokeStyle='#38bdf8';ctx.lineWidth=1;if(bit){ctx.fillStyle='#38bdf8';ctx.fillRect(x+2,y+2,cs-4,cs-4);ctx.fillStyle='rgba(255,255,255,0.5)';ctx.beginPath();ctx.arc(x+cs/2-2,y+cs/2-2,3,0,Math.PI*2);ctx.fill()}else{ctx.strokeRect(x+2,y+2,cs-4,cs-4)}}}var cx=150,cy=370;for(var r=0;r<3;r++){var rr2=[55,40,25][r];ctx.strokeStyle='#38bdf8';ctx.lineWidth=1;ctx.globalAlpha=0.5;ctx.beginPath();ctx.arc(cx,cy,rr2,0,Math.PI*2);ctx.stroke()}ctx.globalAlpha=1;ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.5)';ctx.beginPath();ctx.arc(cx-6,cy-5,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#020617';ctx.font='bold 14px sans-serif';ctx.fillText('R',cx,cy+5);ctx.fillStyle='#64748b';ctx.font='8px sans-serif';ctx.textAlign='left';ctx.fillText('Owner: RAM_'+String(uid).substring(0,16)+'...',20,342);ctx.fillText('Taps: '+taps.toLocaleString(),20,355);ctx.fillStyle='#38bdf8';ctx.textAlign='center';ctx.font='bold 8px sans-serif';ctx.fillText('RAMCOIN NETWORK',150,390);return c}
 
-function mintNFT(){if(T<100){alert('❌ Нужно 100 тапов!');return}nftCount++;var id=nftCount;var canvas=generateNFT(T,id);localStorage.setItem(P+'nft_'+id,canvas.toDataURL('image/png'));showNFT(id,canvas);updateGallery();S2();U()}
+function mintNFT(){
+    if(nftCount>=1){
+        alert('🎨 У тебя уже есть NFT!\nОн в галерее — нажми иконку 🎨');
+        openNFTGallery();
+        return;
+    }
+    if(T<100){alert('❌ Нужно 100 тапов! У тебя: '+T);return}
+    nftCount=1;
+    var canvas=generateNFT(T,1);
+    localStorage.setItem(P+'nft_1',canvas.toDataURL('image/png'));
+    showNFT(canvas);
+    updateGallery();
+    S2();U();
+    alert('🎉 ПОЗДРАВЛЯЕМ!\nТвой уникальный NFT готов!\nНажми 💾 СКАЧАТЬ чтобы сохранить!');
+}
 
-function showNFT(id,canvas){curNFT=id;document.getElementById('nftTitle').textContent='🎨 NFT #'+String(id).padStart(5,'0');document.getElementById('nftInfo').textContent='Owner: RAM_'+String(uid).substring(0,16)+'... | Taps: '+T.toLocaleString();var mc=document.getElementById('modalNFT');mc.getContext('2d').drawImage(canvas,0,0,280,373);openM('nft')}
+function showNFT(canvas){
+    document.getElementById('nftTitle').textContent='🎨 Мой RAMCOIN NFT';
+    document.getElementById('nftInfo').textContent='Owner: RAM_'+String(uid).substring(0,16)+'... | Taps: '+T.toLocaleString()+' | Common';
+    var mc=document.getElementById('modalNFT');
+    mc.getContext('2d').drawImage(canvas,0,0,280,373);
+    openM('nft');
+}
 
-function downloadCurrentNFT(){if(curNFT){var u=localStorage.getItem(P+'nft_'+curNFT);if(u){var a=document.createElement('a');a.download='RAMCOIN_NFT_'+String(curNFT).padStart(5,'0')+'.png';a.href=u;a.click()}}}
+function downloadNFT(){
+    var u=localStorage.getItem(P+'nft_1');
+    if(!u){alert('❌ NFT не найден!');return}
+    var a=document.createElement('a');
+    a.download='RAMCOIN_NFT.png';
+    a.href=u;a.click();
+    alert('✅ NFT сохранён!');
+}
 
-function openNFTModal(id){var u=localStorage.getItem(P+'nft_'+id);if(!u)return;var img=new Image();img.onload=function(){var c=document.createElement('canvas');c.width=300;c.height=400;c.getContext('2d').drawImage(img,0,0,300,400);showNFT(id,c)};img.src=u}
+function updateGallery(){
+    var g=document.getElementById('nftGallery');
+    if(nftCount===0){g.innerHTML='<div class="nft-empty">Нет NFT<br>Нажми "🎨 NFT"</div>';return}
+    var h='<div class="nft-card" onclick="openNFTView()"><canvas id="thumb_1" width="100" height="133"></canvas><div class="nft-num">Мой NFT</div></div>';
+    g.innerHTML=h;
+    var u=localStorage.getItem(P+'nft_1');
+    if(u){var img=new Image();img.onload=function(){var t=document.getElementById('thumb_1');if(t)t.getContext('2d').drawImage(img,0,0,100,133)};img.src=u}
+}
 
-function updateGallery(){var g=document.getElementById('nftGallery');if(nftCount===0){g.innerHTML='<div class="nft-empty">Нет NFT</div>';return}var h='';var st=Math.max(1,nftCount-8);for(var i=nftCount;i>=st;i--){h+='<div class="nft-card" onclick="openNFTModal('+i+')"><canvas id="thumb_'+i+'" width="100" height="133"></canvas><div class="nft-num">#'+String(i).padStart(3,'0')+'</div></div>'}g.innerHTML=h;for(var i=nftCount;i>=st;i--){var u=localStorage.getItem(P+'nft_'+i);if(u){(function(idx,url){var img=new Image();img.onload=function(){var t=document.getElementById('thumb_'+idx);if(t)t.getContext('2d').drawImage(img,0,0,100,133)};img.src=url})(i,u)}}}
+function openNFTView(){
+    var u=localStorage.getItem(P+'nft_1');
+    if(!u){alert('❌ NFT не найден!');return}
+    var img=new Image();
+    img.onload=function(){var c=document.createElement('canvas');c.width=300;c.height=400;c.getContext('2d').drawImage(img,0,0,300,400);showNFT(c)};
+    img.src=u;
+}
 
 function openNFTGallery(){updateGallery();openM('gallery')}
 
